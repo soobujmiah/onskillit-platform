@@ -1,31 +1,42 @@
-# Development roadmap and milestone gates
+# Execution roadmap
 
-Status: **proposed sequence**, subject to business/technical ADR approval. Phase 0 is in progress; phases 1–8 are not authorized implementation yet. Each phase produces a vertically usable slice and updates specification, ADRs, traceability, security/operations and handoff in the same PR. GitHub Actions/Codespaces provide all builds/tests.
+[PHASES.md](PHASES.md) is the sole canonical phase register, dependency graph and gate definition. This page is a human-readable projection; changing it alone cannot change project scope. Phase 0 is in progress. No implementation phase is authorized.
 
-| Phase | Deliverable | Exit evidence |
-|---|---|---|
-| 0 Research and decisions | verified business catalog, full old-site inventory, UX concept, approved requirements/ADRs, host/merchant capability | founding-partner documentation readiness sign-off |
-| 1 Foundation | chosen stack repository structure, CI, preview/staging, database migrations, design token seed | GitHub clean build, migration/preview smoke, no secrets in public repo |
-| 2 Identity and governance | registration/login/reset, session, roles/scopes, audit, staff shell | permission matrix, recovery procedure review, CI auth/security tests |
-| 3 CMS and public core | typed page builder, media, service catalog, bilingual/theme shell, SEO baseline | editor publish/rollback, locale/theme/responsive gates, published-only sitemap |
-| 4 Learning core | course editions, lessons, resources, student/instructor portals, assessment/progress | real curriculum test fixtures, progress and grade-scope CI evidence |
-| 5 Training and enrollment | programs, batches, sessions, capacity, attendance, transfers, certificates per policy | concurrent capacity, schedule, attendance and eligibility evidence |
-| 6 Client and finance | leads/accounts/activities, service engagement, invoices, online/offline payments, refunds/reconciliation | cross-client isolation; each contracted gateway sandbox end-to-end; finance audit |
-| 7 Content and experience completion | approved blog/portfolio/team, search, notices, analytics, client portal scope, full design polish | real-content review; all P0/P1 routes/states in two languages/themes/viewports |
-| 8 Hardening and release | security, performance, backup restore, incident/runbook, redirects, staging sign-off | GitHub checks, restore/rollback drill, merchant live validation, partner production approval |
+```mermaid
+flowchart LR
+A[00 Discovery] --> B[01 Foundation] --> C[02 Design/localization] --> D[03 Identity/RBAC]
+D --> E[04 CMS] --> F[05 Public core]
+E --> G[06 LMS] --> H[07 TMS] --> I[08 Enrollment/finance]
+E --> J[09 CRM]
+I --> K[10 Portals]
+J --> K
+F --> L[11 Content/operations]
+K --> L --> M[12 Hardening] --> N[13 QA/staging] --> O[14 Launch/stabilization] --> P[15 Evolution]
+```
 
-Phase ordering can change if dependencies require it. V1 **includes** LMS, TMS, enrollment, CRM/client management, multi-admin CMS and real payments; placing them in later phases does not defer them beyond first production release. Do not deploy production from an incomplete middle phase. Use synthetic data in preview; no current-site migration until a separate approved plan. The exact first implementation slice after Phase 0 is an approved repository/CI skeleton followed by identity/RBAC/audit and one reviewed CMS page flow, not a random homepage component.
+| Phase | Milestone |
+|---|---|
+| PHASE-00 | Discovery and documentation |
+| PHASE-01 | GitHub foundation |
+| PHASE-02 | Design and localization shell |
+| PHASE-03 | Identity, RBAC and audit |
+| PHASE-04 | CMS and publishing core |
+| PHASE-05 | Public business site |
+| PHASE-06 | LMS and course catalog |
+| PHASE-07 | TMS and training catalog |
+| PHASE-08 | Enrollment and finance |
+| PHASE-09 | CRM and client operations |
+| PHASE-10 | Student and client portals |
+| PHASE-11 | Content and business operations |
+| PHASE-12 | Cross-system hardening |
+| PHASE-13 | Integrated QA and staging |
+| PHASE-14 | Production launch and stabilization |
+| PHASE-15 | Governed evolution |
 
-## Milestone acceptance and handoff
+Parallel preparation is possible after the CMS gate: the LMS/TMS track and CRM track have separate domain work. Their integration meets at portals and operations. The dependency graph in PHASES.md, not this display order, governs when work may start. V1 includes all P0/P1 modules through PHASE-14; PHASE-15 contains reserved future work. Every page's implementation phase is in [PAGES.md](PAGES.md), and every requirement's chain is in [TRACEABILITY.md](TRACEABILITY.md).
 
-Each milestone has: owner, requirement IDs, ADRs, changed source/schema/API/UI, acceptance criteria, GitHub workflow/run/commit, defects, security/privacy review, updated docs and rollback path. A phase cannot be marked complete because files exist; it needs working behavior and evidence. Physical/production claims require evidence from the actual target environment. At handoff, the next agent reads repository HEAD and documentation, not conversation memory.
+Milestone handoff: record owner role, requirement/page IDs, ADRs, changed source/schema/API, acceptance criteria, GitHub workflow/run/commit, defects, security/privacy review, docs and rollback path. A phase cannot pass because documents or navigation stubs exist; it needs its gate evidence. Physical and production claims require evidence from the target environment. No local builds or tests.
 
-## Phase 0 decision order
+## Immediate work
 
-1. Partners validate public brand/legal/entity and an initial set of actual services/courses with owners, instructors, prices and rights.
-2. Owner-provided CMS/Search Console/hosting/merchant read-only evidence completes site, deployment and payment research.
-3. Original design prototype validates portfolio-derived grading, independent interaction, Bangla/English, dark/light, accessibility and responsive matrix.
-4. Domain schema/API/security/payment/hosting ADRs are compared against real workflows and approved.
-5. Requirements matrix and readiness report are reviewed for gaps/contradictions and signed off.
-
-The plan is intentionally ambitious; each V1 module must be coherently usable in real operations rather than present only as a navigation item.
+Finish Phase 0 evidence and approvals in [READINESS.md](READINESS.md). The first authorized implementation slice after that gate is PHASE-01 repository/CI/runtime foundation, then PHASE-02 shared visual/localization shell and PHASE-03 identity/RBAC/audit. Do not begin a homepage or production deployment merely because its design seems clear.
