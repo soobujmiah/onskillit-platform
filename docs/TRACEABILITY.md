@@ -2,6 +2,8 @@
 
 Status vocabulary: `requested`, `specified`, `approved`, `implemented`, `CI-verified`, `released`. All rows are currently `specified` at conceptual level; none is implemented or approved. “Test” names the required future CI evidence, not a test result. IDs persist across documents and implementation.
 
+For every row, the conceptual data and API columns are further specified in `DATA-MODEL.md` and `API-CONTRACT.md`; the documentation column identifies domain-specific detail. Physical table names, exact endpoints, source files and test paths remain pending approved ADRs and implementation.
+
 | ID / priority | Requirement | Module | Design | Database | API | UI | Required GitHub test | Documentation | Status |
 |---|---|---|---|---|---|---|---|---|---|
 | R01 P0 | Register/login/reset | Identity | Contact recovery | User, Contact, Session | Auth routes | Account | Duplicate, reset, abuse | SPECIFICATION, SECURITY-ARCHITECTURE | specified |
