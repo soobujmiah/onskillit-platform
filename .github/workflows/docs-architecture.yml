@@ -1,0 +1,14 @@
+name: Documentation architecture
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  registers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4 tag resolved 2026-09-24
+      - name: Check canonical phase and page registers
+        run: python3 scripts/check_docs_architecture.py
