@@ -10,7 +10,7 @@ Architecture remains proposed, with conceptual data/API contracts and a phased r
 
 ## Canonical phase/page handoff (2026-09-24)
 
-Read `PHASES.md` for phase state, dependencies and gate; `PAGES.md` for permanent page IDs/routes/owning phase; `SITEMAP.md` for public navigation; `TRACEABILITY.md` for requirement links; `READINESS.md` for blockers. ADR 0005 proposes this governance. Do not infer current phase from chat history. Before implementation record Phase/Gate/Task/Module/Page IDs/Requirement IDs/Dependencies/Acceptance Criteria; after work record GitHub Tests/Security/Docs/Traceability/Phase Status/Page Status/Commit. Phase 0 remains in progress; no app code or local builds/tests.
+Read `PHASES.md` for phase state, dependencies and gate; `PAGES.md` for permanent page IDs/routes/owning phase; `SITEMAP.md` for public navigation; `TRACEABILITY.md` for requirement links; `READINESS.md` for blockers. ADR 0005 records this accepted canonical governance. Do not infer current phase from chat history. Before implementation record Phase/Gate/Task/Module/Page IDs/Requirement IDs/Dependencies/Acceptance Criteria; after work record GitHub Tests/Security/Docs/Traceability/Phase Status/Page Status/Commit. Phase 0 remains in progress; no app code or local builds/tests.
 
 ## Phase 0 gate review update (2026-09-24)
 
