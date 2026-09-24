@@ -83,7 +83,7 @@ for name in required_docs:
         errors.append(f"missing Phase 0 document: {name}")
 readiness = read("docs/READINESS.md")
 section = readiness.split("## Gate matrix", 1)[-1].split("## Completed evidence", 1)[0]
-allowed = {"PASS", "PASS WITH OWNER DECISION", "BLOCKED", "NOT APPLICABLE", "UNKNOWN"}
+allowed = {"PASS", "PASS WITH OWNER DECISION", "EXTERNAL DEPENDENCY", "UNKNOWN NON-BLOCKING", "BLOCKED"}
 gate_rows = [line for line in section.splitlines() if line.startswith("| ")][2:]
 if len(gate_rows) < 25:
     errors.append("Phase 0 gate matrix has too few rows")

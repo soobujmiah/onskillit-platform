@@ -1,49 +1,38 @@
-# Technology evaluation and architecture selection gate
+# Technology evaluation and accepted stack
 
-Status: preliminary research, not a stack decision. Reviewed 2026-09-24. The current domain host's actual runtime, database and worker capabilities have not been inspected. A partner-approved capability report and prototype are required before key technology ADRs can be accepted.
+Status: **architecture accepted 2026-09-25** under the founding partner's Phase 0 delegation. This selects contracts, not a production hosting vendor or credentials. See ADRs 0006–0009 and OWNER-DECISIONS.
 
-## Evaluation criteria
+## Comparative decision
 
-Assess candidates against: public SEO/server rendering, CMS workflow flexibility, LMS/TMS transactional complexity, RBAC, bilingual and dark/light UI, performance, security, maintainability, team skills, available hosting, deployment portability, cost, ecosystem health, documentation, migration/exit path and GitHub CI reproducibility. Weight hosting feasibility and team operation more heavily than popularity. Compare the smallest coherent production stack, not a list of independently fashionable tools.
-
-| Architecture | Advantages supported by docs | Risks/unknowns | Prototype gate |
+| Candidate | Strength | Material cost/risk | Outcome |
 |---|---|---|---|
-| Next.js + TypeScript full stack | [App Router](https://nextjs.org/docs/app) supports server-rendered routes and [metadata](https://nextjs.org/docs/app/api-reference/functions/generate-metadata); [self-hosting](https://nextjs.org/docs/app/guides/self-hosting) is documented. Matches portfolio's existing tool ecosystem. | Needs persistent Node runtime, queue worker strategy, disciplined domain layer and DB transactions. Current host may lack Node/PostgreSQL. | Build one localized public page, scoped admin mutation, background notification and deployment to realistic target in GitHub CI/staging. |
-| Laravel + PHP UI/API | [Laravel](https://laravel.com/docs/12.x) has documented database/migration and [queue](https://laravel.com/docs/12.x/queues) support; PHP fits the observed live LiteSpeed/PHP environment in principle. | Must verify installed PHP version/extensions, worker/cron, database, hosting limits, UI approach and staff skills. Current WordPress availability does not prove Laravel deployability. | Same vertical slice on target host capability profile. |
-| Django + Python UI/API | [Django models/transactions](https://docs.djangoproject.com/en/5.2/topics/db/) and admin are mature starting points for data-heavy workflows. | Needs Python process/worker deployment and bespoke polished multi-portal UI; hosting/team fit unknown. | Same vertical slice and operations review. |
+| Next.js/TypeScript modular monolith + PostgreSQL | Server-rendered SEO, one typed UI/API/domain stack, container self-hosting, relational consistency | Persistent Node, disciplined domain boundaries and worker | **Selected**; old host fit is account-dependent |
+| Laravel/PHP + relational DB | Mature queues/data stack and possible PHP-host fit | React-grade bilingual UI likely adds a second stack; host worker/DB still unverified | Reserve if a genuine deployment constraint invalidates selected stack; ADR required |
+| Django/Python + separate UI | Mature data/admin patterns | Two UI/runtime stacks and more integration surface | Not selected |
+| Early microservices/SaaS modules | Independent vendor scaling | Distributed consistency, lock-in, localization/RBAC fragmentation | Not selected |
 
-Database candidates: PostgreSQL preferred for strong relational constraints, transactions and native [full-text search](https://www.postgresql.org/docs/current/textsearch-intro.html), but Bangla search relevance and host support must be tested. MySQL/MariaDB may be practical if already available on current hosting; compare transaction/index/collation/search needs with actual version. SQLite is not the target for concurrent multi-admin/payment operations. No search engine or cache service should be introduced without a corpus/scale need. Object-storage adapter should work with a compatible service and allow private media; current host disk alone is not a portable long-term assumption.
+The current domain's public server header does not establish new-platform hosting capability. Next.js documents [Node/Docker self-hosting](https://nextjs.org/docs/app/getting-started/deploying); PostgreSQL publishes [support windows](https://www.postgresql.org/support/versioning/). Use currently supported LTS Node and PostgreSQL major/minor at implementation, pin versions in GitHub CI, and review upgrades. Never target the obsolete PostgreSQL 10 listed on a plan-dependent Namecheap product page.
 
-CMS: compare a typed first-party CMS against a headless CMS through editor workflow, localization, versioning, scoped RBAC, page-builder validation and portable export. Authentication: use a well-maintained framework/library strategy; compare session model, future verification/2FA, account recovery and admin security. Payment: compare official merchant integration access, methods, settlement, fees, refunds and sandbox/live behavior, as in `PAYMENTS.md`. Do not select a vendor merely from an SDK's existence.
+## Final V1 technology contract
 
-## Decision process
-
-1. Obtain read-only current-host capability and cost report; document any production constraints.
-2. Confirm actual business workflows, traffic expectations, data volumes and support staffing.
-3. Build a small proof of concept **only after documentation review authorizes Phase 1**, with GitHub-only build/test and a realistic preview/staging target.
-4. Score each candidate against criteria with evidence, cost and operational risks. Record rejected options and reasons.
-5. Founding partners approve stack, database, authentication, CMS, payment and deployment ADRs.
-
-The present recommendation is a **candidate**: modular monolith, server-rendered public UI, relational database, typed CMS, background jobs and provider adapters. The exact framework/database/host remain open.
-
-## Decision register — Phase 0 closeout review, 2026-09-24
-
-Status values here are **recommendation**, **conditional**, or **pending owner/host evidence**, never an implementation claim. [ADR 0006](decisions/0006-runtime-and-hosting-candidate.md), [ADR 0007](decisions/0007-browser-auth-and-rbac.md) and [ADR 0008](decisions/0008-payment-adapter-contract.md) record the major proposed decisions. [HOSTING-CAPABILITY.md](HOSTING-CAPABILITY.md) distinguishes Namecheap network/product documentation from actual account capability.
-
-| Choice | Coherent candidate / alternative | Current disposition and evidence gate |
+| Layer | Decision | Implementation evidence gate |
 |---|---|---|
-| Frontend and backend | One SSR-capable modular monolith; Next.js/TypeScript candidate, Laravel/PHP alternative, Django/Python alternative | **PENDING OWNER/HOST**; compare GitHub-built vertical slice, staff skills and actual host plan |
-| Database | Supported PostgreSQL preferred for relational integrity; current MySQL/MariaDB alternative only after version/constraint review | **PENDING HOST**; Namecheap public listing mentions old, plan-dependent PostgreSQL 10.23, not account proof or an acceptable new production target |
-| ORM/data layer | Framework-supported migration/query layer with explicit transactions and constraints; no generic CRUD bypass | **PENDING FRAMEWORK**; test capacity and finance concurrency in GitHub |
-| API style | Versioned `/api/v1` JSON contracts plus server-side application services; OpenAPI and idempotency | **PROPOSED** in API-CONTRACT; exact payloads pending |
-| Authentication/RBAC | Revocable cookie session, CSRF and scoped permission checks; future factor table | **PROPOSED** in ADR 0007; owner proofing/security review pending |
-| CMS | First-party typed blocks and revisions within domain monolith; compare headless CMS only if editor/workflow and data portability improve | **PROPOSED**; block schema/editor proof pending |
-| Media | Private-by-default object-storage adapter, derivative pipeline and rights metadata | **PROPOSED**; actual service, cost and host networking pending |
-| Background jobs | Durable database-backed queue/outbox initially, separate worker where host supports it | **CONDITIONAL**; Namecheap shared cron policy limits sub-five-minute schedules and multiple simultaneous jobs; host plan/worker policy pending |
-| Cache/search | Framework cache and database search initially; external cache/search only after corpus/load/Bangla relevance evidence | **PROPOSED**; no extra service assumed |
-| Email/notifications | Transactional provider adapter; in-app channel with persisted attempts | **PENDING PROVIDER**; public MX does not prove transactional delivery |
-| Analytics/logging | Privacy-aware events, structured logs, error/uptime monitoring and audit separation | **PROPOSED**; vendor/cost/retention pending |
-| Testing | Domain/API/database/component/E2E/security/a11y/SEO/performance/restore in GitHub Actions | **OWNER-CONFIRMED GitHub-only**, concrete framework tools pending stack |
-| CI/CD and deployment | Pinned, least-privilege GitHub Actions; versioned artifact to isolated preview/staging; protected production promotion | **PROPOSED**; current host deploy mechanism and domain cutover approval pending |
+| Frontend | Next.js App Router, React, TypeScript, server rendering/cached generation for public, request-scoped private UI | GitHub build, bilingual/theme/responsive/SEO checks |
+| Backend | Same TypeScript modular monolith; application/domain layers behind UI and `/api/v1`; separate worker artifact/process | Domain integration, auth and worker failure tests |
+| Database/data layer | Supported PostgreSQL; Drizzle typed queries, reviewed SQL migrations, FK/unique/check constraints and explicit transactions | GitHub isolated PostgreSQL tests and migration review |
+| API | JSON `/api/v1`, OpenAPI, schema validation, problem errors, cursor/page contracts, idempotency | Consumer/contract tests; no internal HTTP from server UI |
+| Identity | Opaque revocable sessions, Argon2id, cookie + CSRF, scoped RBAC, audit | ADR 0007 and negative permission tests |
+| CMS/LMS/TMS/CRM | First-party typed modules on shared IDs/transaction boundary | ADR 0009 and phase-specific workflows |
+| Payments | Intent/attempt/provider adapters, verification, refund/reconciliation | ADR 0008 and provider contract suite |
+| Storage/media | S3-compatible private object store, signed access, optimization/rights metadata | Upload abuse, privacy and derivative tests |
+| Search | PostgreSQL indexed filters and normalized locale text; upgrade only on relevance/scale evidence | Bangla/English relevance test corpus |
+| Jobs | Transactional PostgreSQL outbox, leased worker, retry/dead-letter; scheduled jobs in worker | Crash/replay/idempotency tests |
+| Email/notifications | SMTP/transactional provider adapter plus persisted in-app delivery; future SMS | Sandbox delivery and no-secret-log tests |
+| Caching | Public CDN/app response cache with publish invalidation; private no-store | Stale-content and authorization cache tests |
+| Analytics | Consent-aware first-party events with aggregated admin reporting | Privacy review and deduplication tests |
+| Logging/observability | Structured redacted logs, error/uptime/queue/DB monitoring, separate audit | Alert and incident drill |
+| Testing | Vitest, isolated PostgreSQL integration, Playwright browser, axe accessibility, API/schema/security/performance checks | All builds/tests run only in GitHub Actions |
+| CI/CD/deployment | Public GitHub repo, protected PR, pinned least-privilege Actions, versioned OCI image, preview/staging and protected production promotion | Release artifact, smoke, rollback and secret gate |
+| Backup/recovery | Encrypted offsite DB/media/config backup, isolated restore drills; provisional RPO 24h/RTO 8h | Measured restore at release gate |
 
-The operationally safe fallback if the current plan cannot host the selected runtime/worker/database is **not** to weaken LMS/TMS/finance guarantees. Choose an upgraded or separate compatible application/data host while keeping `onskillit.com` as a configurable domain, subject to owner approval. Namecheap's [Node app](https://www.namecheap.com/support/knowledgebase/article.aspx/10047/2182/how-to-work-with-nodejs-app/), [software versions](https://www.namecheap.com/support/knowledgebase/article.aspx/129/22/what-version-of-the-software-is-used-on-your-servers/) and [cron policy](https://www.namecheap.com/support/knowledgebase/article.aspx/9453/29/how-to-run-scripts-via-cron-jobs/) are product documentation, not this account's capabilities.
+Provider/vendor choices for object storage, SMTP, monitoring and compatible host are operational procurement choices behind the specified interfaces. Select them against documented capability, cost and data handling during relevant phases; they do not reopen the architecture. Actual current-host compatibility and merchant access remain external facts.

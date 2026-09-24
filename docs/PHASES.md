@@ -1,12 +1,12 @@
 # Canonical phase architecture
 
-Status: **canonical baseline accepted by founding-partner instruction, 2026-09-24**. This is the sole phase register. Phase 0 is **IN PROGRESS**; PHASE-01 through PHASE-15 are **NOT STARTED**. No implementation is authorized until the Phase 0 gate passes. Phase numbers name milestones, not permission to skip dependencies. V1 runs through PHASE-14; PHASE-15 is controlled post-launch evolution. Page IDs and their single owning phase are authoritative in [PAGES.md](PAGES.md).
+Status: **canonical baseline accepted by founding-partner instruction, 2026-09-24**. This is the sole phase register. Phase 0 is **COMPLETE; DOCUMENTATION READY gate passed** under the founding partner’s final closure instruction; PHASE-01 through PHASE-15 are **NOT STARTED**. No implementation occurred during closure. Phase numbers name milestones, not permission to skip dependencies. V1 runs through PHASE-14; PHASE-15 is controlled post-launch evolution. Page IDs and their single owning phase are authoritative in [PAGES.md](PAGES.md).
 
 ## Master register
 
 | ID | Name | Objective | Main deliverables | Dependencies | Gate | State |
 |---|---|---|---|---|---|---|
-| PHASE-00 | Discovery and documentation | Approve a coherent product and architecture | Verified facts, UX, contracts, ADRs, traceability | None | DOCUMENTATION READY | IN PROGRESS |
+| PHASE-00 | Discovery and documentation | Approve a coherent product and architecture | Evidence-bounded facts, UX, contracts, ADRs, traceability | None | DOCUMENTATION READY | COMPLETE |
 | PHASE-01 | GitHub foundation | Establish portable runtime and evidence pipeline | Repo structure, CI, isolated preview, migrations | 00 | FOUNDATION VERIFIED | NOT STARTED |
 | PHASE-02 | Design and localization shell | Establish shared accessible bilingual and themed UI | Tokens, shells, language and theme infrastructure | 01 | EXPERIENCE FOUNDATION VERIFIED | NOT STARTED |
 | PHASE-03 | Identity, RBAC and audit | Secure all private operations | Accounts, sessions, scoped roles, audit | 01,02 | IDENTITY VERIFIED | NOT STARTED |
@@ -67,7 +67,7 @@ Every implementation phase inherits these requirements: GitHub-only builds and t
 - **Scope/inputs:** business discovery, site and portfolio audit, requirements, IA/sitemap/pages, UX/design/brand, technical/data/API/auth/RBAC/CMS/CRM/LMS/TMS/enrollment/payment/SEO/security, quality, CI/deployment/backup/observability, risks, ADRs and traceability. Input: owner prompt, verified SKB, existing evidence.
 - **Out of scope/pages/modules/data/API:** no application implementation, deployment, migration or live payment; no page IDs built, no schema/migrations/endpoints. All modules are specified only.
 - **Deliverables/docs:** approved specification, phase/page architecture, source-linked evidence, complete decisions/unknowns, acceptance matrix and readiness report.
-- **Verification/exit/gate:** cross-document and route/phase consistency, verified offerings and resolved critical blockers, hosting/legal/merchant evidence, approved key ADRs and UX review. **DOCUMENTATION READY** only after founding-partner sign-off; otherwise IN PROGRESS.
+- **Verification/exit/gate:** cross-document and route/phase consistency, evidence-bounded offerings, portable hosting and legal/payment configuration, accepted key ADRs and original textual UX. **DOCUMENTATION READY** passed under founding-partner final architectural delegation; external facts remain later release gates.
 
 ### PHASE-01 — GitHub foundation
 

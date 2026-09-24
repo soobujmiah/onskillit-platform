@@ -1,6 +1,6 @@
 # Execution roadmap
 
-[PHASES.md](PHASES.md) is the sole canonical phase register, dependency graph and gate definition. This page is a human-readable projection; changing it alone cannot change project scope. Phase 0 is in progress. No implementation phase is authorized.
+[PHASES.md](PHASES.md) is the sole canonical phase register, dependency graph and gate definition. This page is a human-readable projection; changing it alone cannot change project scope. Phase 0 gate is passed under READINESS.md; PHASE-01 remains NOT STARTED. This document does not authorize work during the closure task.
 
 ```mermaid
 flowchart LR
@@ -40,4 +40,4 @@ Milestone handoff: record owner role, requirement/page IDs, ADRs, changed source
 
 ## Immediate work
 
-Finish Phase 0 evidence and approvals in [READINESS.md](READINESS.md). The first authorized implementation slice after that gate is PHASE-01 repository/CI/runtime foundation, then PHASE-02 shared visual/localization shell and PHASE-03 identity/RBAC/audit. Do not begin a homepage or production deployment merely because its design seems clear.
+Use the accepted Phase 0 evidence and architecture in [READINESS.md](READINESS.md). The first authorized implementation slice after that gate is PHASE-01 repository/CI/runtime foundation, then PHASE-02 shared visual/localization shell and PHASE-03 identity/RBAC/audit. Do not begin a homepage or production deployment merely because its design seems clear.

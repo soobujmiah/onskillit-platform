@@ -1,6 +1,6 @@
 # SEO, content and current-site transition plan
 
-Status: proposed. Search visibility and current index state must be checked with Search Console and a complete URL export before launch.
+Status: **accepted architecture under ADR 0009; content and redirect release evidence remain pending**. Search visibility and current index state must be checked with Search Console and a complete URL export before launch.
 
 ## Content model and quality gates
 
@@ -34,4 +34,8 @@ References: [Google SEO starter guide](https://developers.google.com/search/docs
 | PAGE-BLOG/ARTICLE/FAQ | Article and Breadcrumb where facts match; FAQ markup only when eligible and useful | Article → canonical offer/resource |
 | PAGE-PRIVACY/TERMS/ACCESSIBILITY | Basic metadata; legal content owner-approved | Footer |
 
-Use stable English and Bangla URLs with self-canonical per language and reciprocal `hreflang` only when equivalent approved translations exist; the exact locale URL convention is an ADR decision. CMS controls title, description, Open Graph image, canonical override with review, robots directive, redirects, alt text and structured-data source fields. Pagination has distinct crawlable URLs only where content quality merits indexing; filter/search variants are noindex and canonicalized per approved policy. `robots.txt` is crawl guidance, not privacy control. Technical validation includes HTTP status, redirect chain, sitemap canonical equivalence, schema-vs-visible-claims, social previews, mobile CWV and broken links. The candidate legacy dispositions are in [LEGACY-URL-DISPOSITION.md](LEGACY-URL-DISPOSITION.md). No redirect is implemented during Phase 0.
+Use stable English and Bangla URLs with self-canonical per language and reciprocal `hreflang` only when equivalent approved translations exist; the canonical locale prefixes are `/en/` and `/bn/` under ADR 0009. CMS controls title, description, Open Graph image, canonical override with review, robots directive, redirects, alt text and structured-data source fields. Pagination has distinct crawlable URLs only where content quality merits indexing; filter/search variants are noindex and canonicalized per approved policy. `robots.txt` is crawl guidance, not privacy control. Technical validation includes HTTP status, redirect chain, sitemap canonical equivalence, schema-vs-visible-claims, social previews, mobile CWV and broken links. The candidate legacy dispositions are in [LEGACY-URL-DISPOSITION.md](LEGACY-URL-DISPOSITION.md). No redirect is implemented during Phase 0.
+
+## Accepted locale and publication contract — ADR 0009
+
+Public canonical routes use `/en/` and `/bn/` prefixes over the existing PAGES route templates; this does not create additional templates. Root selects a preferred locale without treating one language as the other's canonical. Each published translation has a self-canonical URL, language-specific metadata and reciprocal hreflang only when both versions exist. Dynamic slugs are unique per locale/type and point to the same record identity. Private, staff, preview, search/filter and unpublished routes are noindex and excluded from XML sitemaps. CMS publication refuses unsupported Organization, Service, Course, Article or Breadcrumb schema facts. Verified legacy redirects require explicit owner sign-off at cutover; unrelated content has no automatic homepage redirect.
