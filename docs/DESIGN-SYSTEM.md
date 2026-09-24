@@ -41,6 +41,8 @@ Verify each major route at 320, 360, 390, 768, 1024, 1440 and ≥1920 CSS px; to
 
 All authored UI, CMS, accessible text, emails/notifications and metadata have Bangla and English variants. Bangla authored copy contains no Latin letters; English authored copy contains no Bengali characters. Immutable addresses/URLs/identifiers are explicitly registered data exceptions and isolated from prose. CI checks both directions and locale parity; a content review checks natural language quality. Dark/light toggle appears across public, admin and portals, honors system preference until overridden, persists choice and avoids a first-paint flash. Test every component, illustration and media overlay in both themes and languages.
 
+See `UX-CONCEPT-REVIEW.md` for original page-pattern concepts, proposed semantic foundation and the uncompleted visual review gate.
+
 ## Design approval artifacts
 
 Before implementation, prepare a reference board with verified sources, brand tokens, type specimens, public homepage/service/course pages, learner lesson, staff dashboard/CMS editor, mobile navigation and all important states. Partners approve visual direction; accessibility/responsive/performance reviewers approve objective gates. Record outcomes and changed tokens in an ADR or design decision log.

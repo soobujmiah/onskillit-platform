@@ -1,6 +1,6 @@
 # Canonical phase architecture
 
-Status: **proposed for founding-partner approval**. This is the sole phase register. Phase 0 is **IN PROGRESS**; PHASE-01 through PHASE-15 are **NOT STARTED**. No implementation is authorized until the Phase 0 gate passes. Phase numbers name milestones, not permission to skip dependencies. V1 runs through PHASE-14; PHASE-15 is controlled post-launch evolution. Page IDs and their single owning phase are authoritative in [PAGES.md](PAGES.md).
+Status: **canonical baseline accepted by founding-partner instruction, 2026-09-24**. This is the sole phase register. Phase 0 is **IN PROGRESS**; PHASE-01 through PHASE-15 are **NOT STARTED**. No implementation is authorized until the Phase 0 gate passes. Phase numbers name milestones, not permission to skip dependencies. V1 runs through PHASE-14; PHASE-15 is controlled post-launch evolution. Page IDs and their single owning phase are authoritative in [PAGES.md](PAGES.md).
 
 ## Master register
 
@@ -15,7 +15,7 @@ Status: **proposed for founding-partner approval**. This is the sole phase regis
 | PHASE-06 | LMS and course catalog | Deliver real learning workflows | Courses, editions, lessons, assessments, progress | 03,04 | LEARNING VERIFIED | NOT STARTED |
 | PHASE-07 | TMS and training catalog | Manage scheduled delivery | Programs, batches, sessions, attendance, results | 06 | TRAINING VERIFIED | NOT STARTED |
 | PHASE-08 | Enrollment and finance | Connect learning/training to payment | Enrollment, capacity, invoices, provider adapters, refunds | 06,07,03 | COMMERCE VERIFIED | NOT STARTED |
-| PHASE-09 | CRM and client operations | Run lead to client service lifecycle | Leads, accounts, engagements, projects, activities | 03,04 | CLIENT OPERATIONS VERIFIED | NOT STARTED |
+| PHASE-09 | CRM and client operations | Run lead to client service lifecycle | Leads, accounts, engagements, projects, activities | 03,04,05 | CLIENT OPERATIONS VERIFIED | NOT STARTED |
 | PHASE-10 | Student and client portals | Expose scoped self-service | Learner, instructor and client task views | 06,07,08,09 | PORTALS VERIFIED | NOT STARTED |
 | PHASE-11 | Content and business operations | Complete publication and operational insight | Blog, portfolio, team, search, notices, analytics | 05,09,10 | OPERATIONS VERIFIED | NOT STARTED |
 | PHASE-12 | Cross-system hardening | Meet whole-product quality targets | Security, SEO, performance, access and recovery fixes | 08,11 | HARDENING VERIFIED | NOT STARTED |
@@ -67,7 +67,7 @@ Every implementation phase inherits these requirements: GitHub-only builds and t
 - **Scope/inputs:** business discovery, site and portfolio audit, requirements, IA/sitemap/pages, UX/design/brand, technical/data/API/auth/RBAC/CMS/CRM/LMS/TMS/enrollment/payment/SEO/security, quality, CI/deployment/backup/observability, risks, ADRs and traceability. Input: owner prompt, verified SKB, existing evidence.
 - **Out of scope/pages/modules/data/API:** no application implementation, deployment, migration or live payment; no page IDs built, no schema/migrations/endpoints. All modules are specified only.
 - **Deliverables/docs:** approved specification, phase/page architecture, source-linked evidence, complete decisions/unknowns, acceptance matrix and readiness report.
-- **Verification/exit/gate:** cross-document and route/phase consistency, verified offerings or explicit unresolved blockers, hosting/legal/merchant evidence, approved key ADRs and UX review. **DOCUMENTATION READY** only after founding-partner sign-off; otherwise IN PROGRESS.
+- **Verification/exit/gate:** cross-document and route/phase consistency, verified offerings and resolved critical blockers, hosting/legal/merchant evidence, approved key ADRs and UX review. **DOCUMENTATION READY** only after founding-partner sign-off; otherwise IN PROGRESS.
 
 ### PHASE-01 — GitHub foundation
 
@@ -94,28 +94,28 @@ Every implementation phase inherits these requirements: GitHub-only builds and t
 
 - **Responsibility/tools/approval:** CMS/backend/editor UX/security; GitHub CI; editorial workflow/rights owner review.
 - **Scope/inputs:** Phase 3. Typed reusable sections, draft/review/publish/archive, revision/rollback, navigation, media, metadata, localized content, preview, schedules only if approved. **Out:** unverified public content and arbitrary executable page blocks.
-- **Pages/modules/data/API:** ADMIN-CMS-PAGES, ADMIN-CMS-EDITOR, ADMIN-NAVIGATION, ADMIN-MEDIA, ADMIN-SEO, ADMIN-SITE-SETTINGS; Page, Section, Revision, MediaAsset, NavItem, Seo; `/api/v1/cms`, media, SEO.
+- **Pages/modules/data/API:** ADMIN-CMS-PAGES, ADMIN-CMS-EDITOR, ADMIN-NAVIGATION, ADMIN-MEDIA, ADMIN-SEO, ADMIN-SITE-SETTINGS; Page, Section, Revision, MediaAsset, NavItem, Seo; `/api/v1/cms`, media, SEO. Typed collection views may use the same ADMIN-CMS-PAGES/EDITOR route shell; Service authoring is enabled with its entity in PHASE-05, without a new page template.
 - **Tests/docs/exit/gate:** permissioned publish/rollback, private media, MIME, localized completeness, preview isolation; update CMS, SEO-CONTENT, DATA-MODEL, API-CONTRACT, TRACEABILITY. **PUBLISHING CORE VERIFIED**.
 
 ### PHASE-05 — Public business site
 
 - **Responsibility/tools/approval:** frontend/content/SEO/backend; GitHub CI and preview; owner approves verified business claims/legal text.
 - **Scope/inputs:** Phases 2,4. Public home, about, services and contact; privacy/terms/accessibility; SEO baseline, semantic navigation and inquiry capture. **Out:** demo offerings, premature course/portfolio pages or unverified legal entity claims.
-- **Pages/modules/data/API:** PAGE-HOME, PAGE-ABOUT, PAGE-SERVICES, PAGE-SERVICE-DETAIL, PAGE-CONTACT, PAGE-FAQ, PAGE-PRIVACY, PAGE-TERMS, PAGE-ACCESSIBILITY; Service, Inquiry, localized Page; public CMS/service/inquiry contracts.
+- **Pages/modules/data/API:** PAGE-HOME, PAGE-ABOUT, PAGE-SERVICES, PAGE-SERVICE-DETAIL, PAGE-CONTACT, PAGE-FAQ, PAGE-PRIVACY, PAGE-TERMS, PAGE-ACCESSIBILITY; Service, Inquiry, localized Page; public CMS/service/inquiry contracts. Inquiry is a minimal append-only intake record here and becomes a Lead through an explicit mapping in PHASE-09; no full CRM is required in PHASE-05.
 - **Tests/docs/exit/gate:** both locales/themes/viewports, content and structured-data review, inquiry abuse control, published-only sitemap; update SITEMAP, SEO-CONTENT, SPECIFICATION, TRACEABILITY. **PUBLIC CORE VERIFIED**.
 
 ### PHASE-06 — LMS and course catalog
 
 - **Responsibility/tools/approval:** learning product/backend/frontend/security; GitHub CI; owner approves real curriculum/certificate policies.
 - **Scope/inputs:** Phases 3,4. Course catalog, editions, modules/lessons/materials, basic assessment, learner progress and instructor assignment. **Out:** batch scheduling, payment and fictional courses.
-- **Pages/modules/data/API:** PAGE-COURSES, PAGE-COURSE-DETAIL, USER-LEARNING, USER-LESSON, USER-ASSESSMENTS, ADMIN-COURSES, ADMIN-COURSE-EDITOR, ADMIN-ASSESSMENTS, ADMIN-INSTRUCTORS; Course, Edition, Module, Lesson, Assessment, Submission, Progress; course/curriculum/assessment/progress contracts.
+- **Pages/modules/data/API:** PAGE-COURSES, PAGE-COURSE-DETAIL, USER-LEARNING, USER-LESSON, USER-ASSESSMENTS, ADMIN-COURSES, ADMIN-COURSE-EDITOR, ADMIN-ASSESSMENTS, ADMIN-INSTRUCTORS; Course, Edition, Module, Lesson, Assessment, Submission, Progress and a minimal staff-granted LearningAccess record; course/curriculum/assessment/progress/access contracts. PHASE-08 introduces customer-facing Enrollment requests, capacity and payment transitions and links successful enrollment to this entitlement; PHASE-06 does not claim checkout or admission.
 - **Tests/docs/exit/gate:** edition stability, authorized lesson/material access, grading scope, mobile learning; update LMS, DATA-MODEL, API-CONTRACT, TRACEABILITY. **LEARNING VERIFIED**.
 
 ### PHASE-07 — TMS and training catalog
 
 - **Responsibility/tools/approval:** training operations/backend/frontend; GitHub CI; trainer/schedule owner review.
 - **Scope/inputs:** Phase 6. Programs, batches, sessions, calendar, trainer/classroom assignment, attendance and results; shared student identity and learning edition. **Out:** settlement or paid enrollment.
-- **Pages/modules/data/API:** PAGE-PROGRAMS, PAGE-PROGRAM-DETAIL, PAGE-BATCH-DETAIL, USER-TRAINING, ADMIN-PROGRAMS, ADMIN-BATCHES, ADMIN-SESSIONS, ADMIN-ATTENDANCE; Program, Batch, Session, Assignment, Attendance, Result; program/batch/session/attendance contracts.
+- **Pages/modules/data/API:** PAGE-PROGRAMS, PAGE-PROGRAM-DETAIL, PAGE-BATCH-DETAIL, USER-TRAINING, ADMIN-PROGRAMS, ADMIN-BATCHES, ADMIN-SESSIONS, ADMIN-ATTENDANCE; Program, Batch, Session, Assignment, TrainingParticipation, Attendance, Result; program/batch/session/attendance contracts. PHASE-07 allows staff-granted participation for attendance before PHASE-08 customer enrollment links an admitted record to that participation.
 - **Tests/docs/exit/gate:** capacity metadata, timezone conflict, trainer scope, attendance correction history; update TMS, DOMAIN-WORKFLOWS, DATA-MODEL, API-CONTRACT, TRACEABILITY. **TRAINING VERIFIED**.
 
 ### PHASE-08 — Enrollment and finance
@@ -128,7 +128,7 @@ Every implementation phase inherits these requirements: GitHub-only builds and t
 ### PHASE-09 — CRM and client operations
 
 - **Responsibility/tools/approval:** sales/service product/backend/security; GitHub CI; owner approves client lifecycle and privacy.
-- **Scope/inputs:** Phases 3,4. Lead qualification, account/contact, service request, project/engagement, activity/follow-up and staff notes. **Out:** exposing internal notes or speculative project automation.
+- **Scope/inputs:** Phases 3,4,5. Lead qualification, account/contact, service request, project/engagement, activity/follow-up and staff notes. **Out:** exposing internal notes or speculative project automation.
 - **Pages/modules/data/API:** ADMIN-LEADS, ADMIN-CLIENTS, ADMIN-PROJECTS, ADMIN-CRM-ACTIVITIES, ADMIN-SERVICE-REQUESTS; Lead, Account, Contact, Project, Activity, ServiceRequest; CRM/client/project/activity contracts.
 - **Tests/docs/exit/gate:** conversion history, cross-account isolation, assignment scope and activity audit; update CRM, CLIENT-MANAGEMENT, DATA-MODEL, API-CONTRACT, TRACEABILITY. **CLIENT OPERATIONS VERIFIED**.
 

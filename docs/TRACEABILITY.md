@@ -8,7 +8,7 @@ Status vocabulary: `requested`, `specified`, `approved`, `implemented`, `CI-veri
 | R02 P0 | Multiple scoped admins | PHASE-03 | RBAC | ADMIN-USERS, ADMIN-ROLES, SYS-FORBIDDEN | Deny/default, delegated scope | Role, Permission, Assignment | Admin/role routes | Permission matrix | SPECIFICATION, ARCHITECTURE | specified |
 | R03 P0 | Page builder/review/revisions | PHASE-04 | CMS | ADMIN-CMS-PAGES, ADMIN-CMS-EDITOR, ADMIN-NAVIGATION, ADMIN-SITE-SETTINGS | Typed blocks/workflow | Page, Revision, Section | CMS routes | Publish/rollback | SPECIFICATION, DOMAIN-WORKFLOWS | specified |
 | R04 P0 | Private/public media | PHASE-04, PHASE-06 | Media | ADMIN-MEDIA, ADMIN-CMS-EDITOR, USER-LESSON | Rights/derivatives | MediaAsset | Upload/download | MIME/access | SPECIFICATION, SECURITY-ARCHITECTURE | specified |
-| R05 P0 | Verified services | PHASE-05, PHASE-11 | Catalog | PAGE-SERVICES, PAGE-SERVICE-DETAIL, PAGE-HOME, ADMIN-CONTENT | Canonical records | Service, Category | Catalog routes | Visibility/SEO | SPECIFICATION, SEO-CONTENT | specified |
+| R05 P0 | Verified services | PHASE-04, PHASE-05 | Catalog | PAGE-SERVICES, PAGE-SERVICE-DETAIL, PAGE-HOME, ADMIN-CMS-PAGES, ADMIN-CMS-EDITOR | Canonical records | Service, Category | Catalog routes | Visibility/SEO | SPECIFICATION, SEO-CONTENT | specified |
 | R06 P0 | LMS curriculum/progress | PHASE-06, PHASE-10 | LMS | PAGE-COURSES, PAGE-COURSE-DETAIL, USER-LEARNING, USER-LESSON, USER-ASSESSMENTS, USER-COURSES, USER-PROGRESS, USER-RESULTS, USER-CERTIFICATES, ADMIN-COURSES, ADMIN-COURSE-EDITOR, ADMIN-ASSESSMENTS, ADMIN-INSTRUCTORS | Frozen edition | CourseEdition, Lesson, Submission | LMS routes | Progress/grade scope | SPECIFICATION, DOMAIN-WORKFLOWS | specified |
 | R07 P0 | TMS batches/attendance | PHASE-07, PHASE-10 | TMS | PAGE-PROGRAMS, PAGE-PROGRAM-DETAIL, PAGE-BATCH-DETAIL, USER-TRAINING, USER-RESULTS, ADMIN-PROGRAMS, ADMIN-BATCHES, ADMIN-SESSIONS, ADMIN-ATTENDANCE | Shared learner identity | Program, Batch, Session, Attendance | TMS routes | Capacity/attendance | SPECIFICATION, DOMAIN-WORKFLOWS | specified |
 | R08 P0 | Enrollment lifecycle | PHASE-06, PHASE-07, PHASE-08, PHASE-10 | Enrollment | PAGE-COURSE-DETAIL, PAGE-BATCH-DETAIL, USER-ENROLLMENTS, USER-DASHBOARD, ADMIN-ENROLLMENTS | State machine/history | Enrollment, Event | Enroll routes | Race/transfer | SPECIFICATION, DOMAIN-WORKFLOWS | specified |
@@ -76,8 +76,8 @@ Every V1 route template appears below with at least one requirement. The global 
 | ADMIN-USERS | PHASE-03 | R02, R10; R16; R19; R20 |
 | ADMIN-ROLES | PHASE-03 | R02, R10; R16; R19; R20 |
 | ADMIN-AUDIT | PHASE-03 | R10, R15; R16; R19; R20 |
-| ADMIN-CMS-PAGES | PHASE-04 | R03, R13; R16; R19; R20 |
-| ADMIN-CMS-EDITOR | PHASE-04 | R03, R04, R13; R16; R19; R20 |
+| ADMIN-CMS-PAGES | PHASE-04 | R03, R05, R13; R16; R19; R20 |
+| ADMIN-CMS-EDITOR | PHASE-04 | R03, R04, R05, R13; R16; R19; R20 |
 | ADMIN-NAVIGATION | PHASE-04 | R03; R16; R19; R20 |
 | ADMIN-MEDIA | PHASE-04 | R04; R16; R19; R20 |
 | ADMIN-SEO | PHASE-04 | R13; R16; R19; R20 |
@@ -99,7 +99,7 @@ Every V1 route template appears below with at least one requirement. The global 
 | ADMIN-PROJECTS | PHASE-09 | R09; R16; R19; R20 |
 | ADMIN-CRM-ACTIVITIES | PHASE-09 | R09; R16; R19; R20 |
 | ADMIN-SERVICE-REQUESTS | PHASE-09 | R09; R16; R19; R20 |
-| ADMIN-CONTENT | PHASE-11 | R05, R13; R16; R19; R20 |
+| ADMIN-CONTENT | PHASE-11 | R13; R16; R19; R20 |
 | ADMIN-ANALYTICS | PHASE-11 | R14; R16; R19; R20 |
 | ADMIN-NOTIFICATIONS | PHASE-11 | R14; R16; R19; R20 |
 | SYS-NOT-FOUND | PHASE-01 | R15, R17; R16; R19; R20 |
@@ -119,3 +119,7 @@ These PHASE-15 templates are reservations, not approved V1 requirements. Their i
 | FUT-CLIENT-DOCUMENTS | Scoped document exchange | requirement pending |
 | FUT-CLIENT-MESSAGES | Retained client communications | requirement pending |
 | FUT-USER-SECURITY | Optional verified factors, R18 | conceptual only |
+
+## Phase 0 evidence additions
+
+R05 business-offer verification is tracked in `OFFERINGS.md` and remains blocked for actual catalog proof. R06/R08 now use the PHASE-06 LearningAccess → PHASE-08 Enrollment link in `DOMAIN-CONSISTENCY.md`; R09 uses the PHASE-05 Inquiry → PHASE-09 Lead conversion. R11 official provider/merchant status is in `PAYMENTS.md`; R13 SEO/legacy disposition is in `SEO-CONTENT.md` and `LEGACY-URL-DISPOSITION.md`; R15 and R17 hosting/operations evidence is in `HOSTING-CAPABILITY.md`. R16/R19/R20 original UX, bilingual/theme review is in `UX-CONCEPT-REVIEW.md`. No requirement or page ID has been reassigned; all row statuses remain conceptual until implementation evidence exists.
