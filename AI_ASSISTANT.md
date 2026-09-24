@@ -1,0 +1,9 @@
+# OnSkillIT agent working agreement
+
+Status: Phase 0 research/documentation. Do not write application code, deploy, migrate data, or alter `onskillit.com` until documentation and owner gates are complete. The public GitHub repository is the project source of truth for these drafts and future implementation; agent chat history is not.
+
+At session start: read this file, `README.md`, `docs/READINESS.md`, `docs/SPECIFICATION.md`, `docs/SITE-AUDIT.md`, `docs/ARCHITECTURE.md`, and `docs/TRACEABILITY.md`. Then discover canonical `soobujmiah/skb` at `ASSISTANT_CONTEXT.md` and `profile/assistant-guidance.md`, followed by task-relevant standards. Verify the SKB Git remote when using a local checkout. Compare dated claims with live repository and source evidence. Follow `standards/policy-resolution.md` for authorization.
+
+The founding partner requires GitHub for all builds and tests; no local builds or tests. Never treat a local command as authoritative verification. No secrets, private student/client records, production exports, paid assets, or unverified ownership/legal claims may enter this public repository. Do not import old website code/content in bulk. Read-only research is allowed; production changes, payments, final stack/auth/database/deployment decisions and launch need the named human gates.
+
+Every change must update relevant specification, architecture, ADR, traceability, phase/readiness and handoff state in the same PR. Record evidence URL/date and distinguish observed, confirmed, proposed and unknown. Keep source changes within the approved phase. Use least-privilege CI; never expose deployment secrets to untrusted pull requests. Require CI evidence tied to a commit before claiming verified status. Close each session with status/diff review, documentation sync, risks/open questions and exact next step. If changing model/agent, read current HEAD and these documents again; conversation memory is insufficient.

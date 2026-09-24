@@ -1,0 +1,23 @@
+# Existing website and portfolio research
+
+Observed 2026-09-24. The [current homepage](https://www.onskillit.com/) is a research source, never a code/content migration baseline. This is a public sample audit; a complete authenticated URL and CMS inventory still needs owner access. Search snippets can be stale and web-tool fetch errors are not forensic proof of server status.
+
+| Observation | Classification | Confidence / action |
+|---|---|---|
+| OnSkilliT branding, Gandaria/Dhaka address, phone and email in footer | Claimed business details | Verify with founding partners before publishing |
+| Digital Teacher’s Training, WordPress Website Development, Android App development course cards | Possible offerings | Verify actual syllabus, instructors, fee and enrollment |
+| UX, React, fitness, digital marketing and recipe course cards | Mixed or demo catalog | Quarantine pending owner verification |
+| 28+ homepage variants in navigation, including gym, kindergarten and university | Template remnants | High; redesign IA from actual business |
+| “Edubin”, “Lorem ipsum”, unsupported scale claims and generic testimonials | Template/demo content | High; do not migrate |
+| Category and “View All Courses” links to `devthrow.com` | Unrelated external links | High; investigate publishing configuration |
+| Main Home menu appears twice in extracted markup | Duplicated navigation/content | High; verify rendered UX and accessibility |
+| About, blog list, course grid, team, privacy routes returned 404 in web fetch | Broken in this check | About and privacy also returned HTTP 404 by direct HEAD request; inventory the rest |
+| [Indexed casino/betting article](https://onskillit.com/esports-betting-guide-for-malaysia-bonuses-payment-methods-mobile-app-security/) | Unrelated/suspicious indexed content | High for content; **cause unknown**. Do not claim a hack |
+
+The homepage does not establish the legal entity, actual services, enrollment functionality, LMS behavior, payment flow, or rights to testimonials and images. These remain **Unknown**. Content duplication includes repeated menu structure, near-interchangeable academy labels and repeated generic testimonials. The current site also contains poor SEO signals: demo text, off-domain links and questionable claims. Direct HTTP HEAD requests on 2026-09-24 confirmed 404 for `/about-us-02/`, `/privacy-policy-2/`, `/courses/digital-teacher-training/`, `/robots.txt`, `/sitemap_index.xml`, `/wp-sitemap.xml`, `/wp-json/` and `/feed/`, while `/` returned 200. The root response advertises a WordPress JSON link that returned 404 in this check. This pattern needs owner/server review; it does not establish its cause. The indexed gambling URL also returned 404 directly during this check, while a search engine still held its article text, so index cleanup and historical review are required.
+
+Before any redirect or content migration, obtain a read-only CMS export, URL inventory, Search Console indexed URLs, sitemap, analytics landing pages, and relevant publication/access logs. Record URL, status, canonical, title, H1, content hash, links, author/date, owner-approved classification and keep/rewrite/redirect/410 disposition. Preserve evidence of unrelated content and have the site owner review CMS accounts/revisions and security logs. Do not remove pages or alter production in this phase.
+
+## Portfolio brand reference
+
+Local `soobujmiah.github.io/DESIGN_SYSTEM.md` was inspected. It documents the owner portfolio's `#050507` canvas, `#e4e2df` text, `#22c55e` green accent, translucent 12px cards, Inter / Noto Sans Bengali / JetBrains Mono / Chakra Petch typography, restrained motion and reduced-motion behavior. The source describes page turns, reveal transitions, magnetic links, a moving map and animated identity mark. A live browser inspection of the portfolio could not be completed with the available web tool, so interaction findings are **source-documented**, not visually verified. The founding partner specifically directs OnSkillIT to take the portfolio **color grading** and create an **independent animation and interaction system**. Do not copy its page turn, map, identity animation, gestures or motion constants. Exact contrast, type scale, responsive layouts and light-surface tokens require design validation before lock.
