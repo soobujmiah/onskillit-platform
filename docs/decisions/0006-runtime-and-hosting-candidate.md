@@ -1,22 +1,24 @@
-# ADR 0006 — Portable runtime and hosting candidate
+# ADR 0006 — Portable runtime and hosting
 
-Status: **proposed, not approved**. Date: 2026-09-24.
+Status: **ACCEPTED**, 2026-09-25, under the founding partner's final Phase 0 architectural delegation.
 
 ## Context and problem
 
-OnSkillIT needs SSR public pages, transactions, CMS, LMS/TMS/CRM, background jobs and provider callbacks. The current site's IP is in a Namecheap-registered network and publicly responds through LiteSpeed/PHP, but the account plan, Node/DB/worker limits and deployment rights are unknown. Namecheap product docs describe possible Node/cPanel/PostgreSQL/cron support but do not prove account capability. See `HOSTING-CAPABILITY.md`.
+The 74-template V1 needs server-rendered bilingual public pages, transactional CMS/LMS/TMS/CRM, background work and provider callbacks. Public LiteSpeed/PHP headers and a Namecheap-registered IP do not establish the current account's Node, PostgreSQL or worker capabilities.
 
 ## Options
 
-1. Next.js/TypeScript modular monolith with supported relational database and separate job runner.
-2. Laravel/PHP modular monolith with relational database and queue, if the actual host/skills fit.
-3. Django/Python with separate frontend and worker.
-4. Split the app across specialized hosted services now.
+1. Next.js/TypeScript modular monolith with PostgreSQL and a separately deployable worker.
+2. Laravel/PHP with server-rendered UI and a queue.
+3. Django/Python with a separate UI and worker.
+4. Independent microservices from day one.
 
 ## Decision and rationale
 
-**Propose** a portable modular monolith with server-rendered public routes, explicit domain modules, relational transactions and provider adapters. Next.js/TypeScript remains a candidate, not a final choice; Laravel is a serious alternative if the verified Namecheap plan favors PHP and can satisfy queue/API/UI operations. Do not choose a framework from an HTTP header. Avoid premature microservices. The deployment package, database, media and queue must be replaceable without changing the domain model.
+Choose option 1: Next.js App Router with TypeScript on a supported Node LTS, packaged as a versioned OCI image. Keep UI, `/api/v1`, application services and domain modules in one repository and web service; run a distinct worker process from the same versioned artifact for outbox jobs. Use PostgreSQL on a supported major version with current minor patches, Drizzle for typed queries and reviewed SQL migrations, and explicit database constraints and transactions. Module boundaries follow CMS, identity, learning, training, enrollment/commerce, CRM and operations. Public rendering uses server rendering or cacheable generation according to content freshness; private routes are request-scoped and never shared-cached.
 
-## Trade-offs, consequences and gate
+This gives one language/toolchain, a predictable SEO surface, transactional cross-module workflows and self-hosting portability. Next.js officially supports Node/Docker deployments; its self-hosting guide recommends a reverse proxy. Drizzle documents SQL transactions. PostgreSQL publishes support windows. See [Next.js deployment](https://nextjs.org/docs/app/getting-started/deploying), [self-hosting](https://nextjs.org/docs/app/guides/self-hosting), [Drizzle transactions](https://orm.drizzle.team/docs/transactions) and [PostgreSQL support](https://www.postgresql.org/support/versioning/).
 
-One repository simplifies cross-module transactions and agent handoff; workload separation still needs a worker and isolated secrets. A shared-host cPanel app may impose process, cron and old-PostgreSQL constraints. **Owner approval required** after plan/capability report, cost/skill comparison and a GitHub-built staging proof in PHASE-01. No runtime is approved by this ADR yet.
+## Trade-offs and consequences
+
+Laravel may fit a PHP-only plan more easily, but the existing host is not a constraint on the new platform. Django would add a second UI stack. Microservices add distributed consistency and operations cost before scale warrants it. Next.js still requires a persistent Node process, supported PostgreSQL, worker execution and disciplined server-only module boundaries. **Current-host compatibility: pending account-specific verification.** If it cannot meet the runtime contract, deploy to a compatible separate/upgraded host and point `onskillit.com` to it only at the later owner-approved cutover. Do not downgrade data, security or queue guarantees to fit old shared hosting. Version selections are pinned and security-reviewed in PHASE-01 CI; this ADR is not a deployment.

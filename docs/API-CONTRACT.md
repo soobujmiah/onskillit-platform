@@ -1,6 +1,6 @@
 # API architecture and endpoint contract
 
-Status: **proposed interface design**, not implemented. Final routes and schemas follow approved workflows, database and authentication ADRs. API-first means each domain command/query has an explicit contract; server-rendered pages may call application services directly without making an HTTP loopback request.
+Status: **accepted V1 API architecture**, not implemented. Exact OpenAPI schemas are authored with each owning phase under ADRs 0006/0007/0009. API-first means each domain command/query has an explicit contract; server-rendered pages may call application services directly without making an HTTP loopback request.
 
 ## Global conventions
 
@@ -40,4 +40,10 @@ GitHub CI will validate schema compatibility, input errors, auth/permission nega
 
 ## Cross-phase API ownership
 
-PHASE-05 owns a rate-limited public inquiry command; PHASE-09 owns the explicit inquiry-to-lead conversion, rather than letting the form write directly into unbuilt CRM tables. PHASE-06 owns staff-granted learning-access commands/queries and lesson authorization; PHASE-07 owns staff-granted batch participation for attendance; PHASE-08 owns customer-facing enrollment/payment transitions and links admitted enrollment to learning access and/or training participation. Public details never expose private draft or price claims without approval. `/client/me/*` returns only account-scoped projections; staff notes are excluded. Search is a query on existing listing/work-queue routes, not a new page. These are contract families; exact paths, payload schemas and permission tables remain an approval item before code.
+PHASE-05 owns a rate-limited public inquiry command; PHASE-09 owns the explicit inquiry-to-lead conversion, rather than letting the form write directly into unbuilt CRM tables. PHASE-06 owns staff-granted learning-access commands/queries and lesson authorization; PHASE-07 owns staff-granted batch participation for attendance; PHASE-08 owns customer-facing enrollment/payment transitions and links admitted enrollment to learning access and/or training participation. Public details never expose private draft or price claims without approval. `/client/me/*` returns only account-scoped projections; staff notes are excluded. Search is a query on existing listing/work-queue routes, not a new page. These are contract families; exact paths, payload schemas and permission tables are implementation deliverables of each owning phase and must be approved in its PR before code merges.
+
+## Accepted contract completion rules
+
+Each owning phase adds a checked OpenAPI schema before merging its endpoint. The endpoint manifest records method/path, module, page consumers, permission scope, request/response schema, errors, idempotency and tests in TRACEABILITY. Use a single service command for both server-rendered UI and API, not an internal HTTP request. `OrganizationSetting` endpoints return public approved fields only; private legal/finance values require staff permission. Catalog endpoints cover Service, CourseEdition, Program and ProductPackage records without adding templates. Commerce includes attempt, provider event, refund and settlement/reconciliation commands/queries under finance scope. A provider callback endpoint is not browser-authenticated; it verifies provider signature/authentication, records the event and performs independent status query before any money state change. Client/account IDs in paths never override session scope.
+
+For a missing translation, a public detail route returns 404 in that locale and locale switch links to the corresponding catalog. `/en/` and `/bn/` are public URL prefixes; API locale is explicit via validated parameter or content locale. OpenAPI schema versioning is separate from CMS content revisions. All API checks and builds execute in GitHub only.

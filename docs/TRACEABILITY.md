@@ -1,6 +1,6 @@
 # Requirements traceability matrix
 
-Status vocabulary: `requested`, `specified`, `approved`, `implemented`, `CI-verified`, `released`. Every row remains **specified conceptually**, not approved or implemented. Test entries are required future **GitHub** CI evidence, not a result. `ALL-V1` expands to all 74 V1 page IDs listed in [PAGES.md](PAGES.md). Future IDs are excluded. This shorthand covers cross-cutting responsive/accessibility, bilingual purity and theme rules. The page coverage table below gives an explicit reverse lookup for each page. Physical table names, exact endpoints, source paths and test files await approved ADRs and implementation.
+Status vocabulary: `requested`, `specified`, `approved`, `implemented`, `CI-verified`, `released`. Every row remains **specified for implementation**, not implemented or CI-verified; architectural choices are accepted in ADRs 0006–0009. Test entries are required future **GitHub** CI evidence, not a result. `ALL-V1` expands to all 74 V1 page IDs listed in [PAGES.md](PAGES.md). Future IDs are excluded. This shorthand covers cross-cutting responsive/accessibility, bilingual purity and theme rules. The page coverage table below gives an explicit reverse lookup for each page. Physical table names, exact endpoint payloads, source paths and test files are delivered and reviewed in their owning implementation phases.
 
 | ID / priority | Requirement | Implementation phase(s) | Module | Page IDs | Design | Database | API | Required GitHub test | Documentation | Status |
 |---|---|---|---|---|---|---|---|---|---|---|

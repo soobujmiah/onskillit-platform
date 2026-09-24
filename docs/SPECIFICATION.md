@@ -1,6 +1,6 @@
 # OnSkillIT Digital Platform — Product & Technical Specification
 
-Status: **draft, 2026-09-24**. This document records the founding partner's requested product direction. Specific business offerings remain unverified. Read the [audit](SITE-AUDIT.md), [architecture](ARCHITECTURE.md), [requirements matrix](TRACEABILITY.md), and [readiness report](READINESS.md) together.
+Status: **Phase 0 product architecture accepted, 2026-09-25; factual catalog/legal inputs remain external**. This document records the founding partner's requested product direction. Specific business offerings remain unverified. Read the [audit](SITE-AUDIT.md), [architecture](ARCHITECTURE.md), [requirements matrix](TRACEABILITY.md), and [readiness report](READINESS.md) together.
 
 ## Executive summary, business understanding and capability map
 

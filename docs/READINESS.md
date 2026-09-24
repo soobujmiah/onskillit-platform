@@ -1,63 +1,69 @@
-# Phase 0 documentation readiness decision — 2026-09-25
+# Phase 0 final readiness decision — 2026-09-25
 
-**Current active phase:** PHASE-00, **IN PROGRESS**. **Gate:** DOCUMENTATION READY has **not** passed. No application implementation is authorized. The founding partner has accepted the canonical 16-phase / 74-V1-template baseline; ADR 0005 is accepted. This report uses only `PASS`, `PASS WITH OWNER DECISION`, `BLOCKED`, `NOT APPLICABLE` and `UNKNOWN` as gate dispositions. A documented recommendation is not a verified business fact or a deployed control.
+**Current phase:** PHASE-00 **COMPLETE**. **Gate:** DOCUMENTATION READY **PASSED** under the founding partner's explicit final Phase 0 architectural delegation. PHASE-01 through PHASE-15 remain NOT STARTED; no application implementation occurred. This gate accepts an implementation-ready architecture, not unverified business facts or production readiness. The 16-phase/74-V1-template registers and ADR 0005 are unchanged. Dispositions below are exactly `PASS`, `PASS WITH OWNER DECISION`, `EXTERNAL DEPENDENCY`, `UNKNOWN NON-BLOCKING`, or `BLOCKED`.
 
 ## Gate matrix
 
-| Phase 0 gate | Disposition | Evidence and remaining condition |
+| Phase 0 gate | Disposition | Evidence and later condition |
 |---|---|---|
-| Business requirements | PASS WITH OWNER DECISION | SPECIFICATION and TRACEABILITY cover scope; actual catalog and client-visible rules still need approval |
-| Current-site research/integrity | UNKNOWN | SITE-AUDIT and 85-URL sample; authenticated CMS/Search Console/full URL inventory absent; cause of unrelated indexed article unknown |
-| Offerings | BLOCKED | OFFERINGS separates zero verified actual offers from proposed/local-context and demo records; owner delivery evidence required |
-| Legal identity/content rights | BLOCKED | LEGAL-IDENTITY records OnSkillIT public name only; registered issuer, contacts, rights and policies missing |
-| Hosting capability | UNKNOWN | HOSTING-CAPABILITY verifies public Namecheap-registered IP and product options, not account plan/runtime/worker/DB; portable topology documented |
-| Technology architecture | BLOCKED | TECHNOLOGY-EVALUATION and ADR 0006 compare options; actual host fit, budget, skills and owner selection pending |
-| Database architecture | PASS WITH OWNER DECISION | DATA-MODEL and DOMAIN-CONSISTENCY define logical entities/cardinality/constraints; engine, physical schema and policy-dependent fields pending |
-| API architecture | PASS WITH OWNER DECISION | API-CONTRACT and DOMAIN-CONSISTENCY define families, ownership, auth/idempotency; exact OpenAPI payloads/paths pending stack and policies |
-| Authentication | PASS WITH OWNER DECISION | V1 email-or-mobile/password/no OTP owner-confirmed; ADRs 0003/0007 propose sessions; assisted proofing and assurance approval pending |
-| RBAC | PASS WITH OWNER DECISION | Multi-admin scoped permission/delegation model documented; exact action matrix and owner/security approval pending |
-| CMS | PASS WITH OWNER DECISION | Typed blocks, revisions, media, workflow and public-only publication documented; approvers/block schema/storage pending |
-| CRM/client management | PASS WITH OWNER DECISION | Inquiry-to-lead and account isolation documented; client-visible fields/SLA pending |
-| LMS | PASS WITH OWNER DECISION | Frozen editions, LearningAccess, progress/assessment documented; actual curriculum and certificate policy pending |
-| TMS | PASS WITH OWNER DECISION | Program/batch/session/attendance model documented; actual schedules/capacity/trainer terms pending |
-| Enrollment | PASS WITH OWNER DECISION | Capacity/state/idempotency and access link documented; repeat/transfer/cancel rules pending |
-| Payments | BLOCKED | PAYMENTS and ADR 0008 define abstraction and SSLCOMMERZ public contract; bKash/Nagad merchant API access, legal/refund/settlement terms missing |
-| UX architecture | PASS WITH OWNER DECISION | UX-CONCEPT-REVIEW covers task patterns and mobile behavior; no visual/tool/usability approval yet |
-| Design system/brand | BLOCKED | Portfolio grading and independent motion documented; Superdesign authorization expired, no visual concept reviewed or tokens contrast-approved |
-| Page architecture | PASS | PAGES canonical 74 V1 and 5 reserved; GitHub checker passed on previous baseline; no ID/count changes here |
-| Phase architecture | PASS | PHASES canonical 16 phases and gates; ADR 0005 accepted by owner instruction |
-| Sitemap/redirect policy | PASS WITH OWNER DECISION | SITEMAP and LEGACY-URL-DISPOSITION define rules/candidates; complete inventory and owner map approval pending |
-| SEO | PASS WITH OWNER DECISION | SEO-CONTENT covers page groups, locale, schema, noindex, metadata and CWV; final legal/business content and URL strategy pending |
-| Security | PASS WITH OWNER DECISION | SECURITY-ARCHITECTURE and ADRs 0007/0008 cover threats; recovery proofing, admin assurance, provider contracts and review pending |
-| Testing | PASS | QUALITY-GATES defines GitHub-only test layers and acceptance evidence; application tests are future-phase work |
-| CI/CD | PASS | OPERATIONS/QUALITY-GATES define protected GitHub flow; docs architecture checker already passes on main; app CI is PHASE-01 work |
-| Deployment | UNKNOWN | Portable deployment design exists; target host/deploy mechanism and owner production choice unverified |
-| Backup/recovery | PASS WITH OWNER DECISION | OPERATIONS defines scope, isolated restore and provisional RPO/RTO; targets and host ability pending |
-| Observability | PASS WITH OWNER DECISION | OPERATIONS defines logs, alerts, uptime/queue/trace; vendor, retention and incident owner pending |
-| Traceability | PASS | R01–R20 and all V1 page IDs mapped; DOMAIN-CONSISTENCY records resolved sequencing gaps and remaining contract decisions |
-| Risk register | PASS | RISKS covers probability, impact, mitigation, owner and status across 22 risks |
-| Documentation consistency | PASS | Cross-domain review recorded; [GitHub documentation check](https://github.com/soobujmiah/onskillit-platform/actions/runs/36041477068) passed on project main `0aead192829c3501f5a28174e7a7bc71fbf6f5f4`; physical/owner decisions are tracked in their separate gates |
-| SKB synchronization | PASS | [SKB PR #25](https://github.com/soobujmiah/skb/pull/25) merged the evidence return at `1cd47997c1abdde128ef1db4837d6591ba065dde`; SKB main health/integrity/review-queue checks passed |
+| Business requirements | PASS | SPECIFICATION, TRACEABILITY and OWNER-DECISIONS define V1 and future boundaries |
+| Current-site research/integrity | UNKNOWN NON-BLOCKING | SITE-AUDIT and legacy inventory cover public evidence; complete CMS/Search Console export is a later cutover input; cause of unrelated URL unproven |
+| Offerings architecture | PASS | OFFERINGS separates candidates from verified facts; typed Service/Course/Program/ProductPackage CMS records enable real catalog without hardcoding |
+| Actual launch offering copy | EXTERNAL DEPENDENCY | Partner-approved names, proof, syllabi, price and delivery facts required before publication |
+| Legal/configuration architecture | PASS | LEGAL-IDENTITY and OWNER-DECISIONS require configurable brand, legal issuer, copyright, contacts, address and privacy contact |
+| Legal factual values/policies | EXTERNAL DEPENDENCY | Registered issuer, rights and approved privacy/terms/refund text required before public legal/invoice/payment release |
+| Hosting architecture | PASS | ADR 0006 and OPERATIONS specify portable OCI/Node/PostgreSQL/worker/object store/HTTPS/backup topology |
+| Current hosting account capability | UNKNOWN NON-BLOCKING | HOSTING-CAPABILITY records public evidence only; account-specific fit must be checked before selecting production target |
+| Technology architecture | PASS | TECHNOLOGY-EVALUATION and accepted ADRs 0006/0009 select coherent stack/services |
+| Database architecture | PASS | DATA-MODEL selects PostgreSQL/Drizzle, ownership, constraints and cross-phase records; migrations belong to implementation |
+| API architecture | PASS | API-CONTRACT accepts `/api/v1`, OpenAPI, ownership, auth, errors, idempotency and phase-owned payload schemas |
+| Authentication | PASS | ADRs 0003/0007: email-or-mobile/password, no mandatory OTP, sessions, Argon2id, assisted recovery boundary |
+| RBAC | PASS | ADR 0007 and SECURITY-ARCHITECTURE: scoped grants, deny by default, subset delegation and audit |
+| CMS | PASS | Typed localized sections, revision/approval/publication, private media and SEO controls specified |
+| CRM/client management | PASS | Inquiry-to-lead/client account and private portal projections specified in DOMAIN-CONSISTENCY/DATA-MODEL/API-CONTRACT |
+| LMS | PASS | Frozen editions, access, lessons, assessment/progress and certificate contract specified |
+| TMS | PASS | Program, batch, session, trainer, participation, attendance and result contract specified |
+| Enrollment | PASS | Staff-grant bridge, self-service admission, capacity/idempotency/access contract specified |
+| Payments architecture | PASS | ADR 0008 and PAYMENTS define adapter, attempt, verification, idempotency, refund, reconciliation and audit |
+| Provider merchant access | EXTERNAL DEPENDENCY | SSLCOMMERZ/bKash/Nagad official contracts, credentials and sandboxes needed by provider integration/release gates |
+| UX architecture | PASS | UX-CONCEPT-REVIEW defines original task/page patterns, all states, bilingual/theme/mobile/accessibility behavior |
+| Pixel-level visual validation | PASS WITH OWNER DECISION | Founding partner permits textual blueprint; visual polish and device/contrast checks are PHASE-02/page acceptance, no canvas approval claimed |
+| Design system/brand | PASS | DESIGN-SYSTEM defines semantic light/dark tokens, type, spacing, components, motion and portfolio adaptation |
+| Page architecture | PASS | PAGES freezes 74 V1/5 future templates, single phase owner per page |
+| Phase architecture | PASS | PHASES freezes 16 phases and gates; ADR 0005 accepted |
+| Sitemap/redirect policy | PASS | SITEMAP and LEGACY-URL-DISPOSITION define routes and conservative mapping rules; final map needs cutover evidence |
+| SEO | PASS | SEO-CONTENT/ADR 0009 define `/en/` and `/bn/`, canonical/hreflang, schema, robots, sitemap, noindex and CMS controls |
+| Security | PASS | SECURITY-ARCHITECTURE/ADRs 0007–0009 define controls from first implementation phase |
+| Testing | PASS | QUALITY-GATES defines GitHub-only test layers and phase acceptance |
+| CI/CD | PASS | OPERATIONS/QUALITY-GATES define protected GitHub workflow and artifact promotion |
+| Deployment architecture | PASS | Portable OCI topology, separated environments, rollback and owner-controlled cutover specified |
+| Backup/recovery | PASS | OPERATIONS sets encrypted offsite scope, restore drill and provisional RPO 24h/RTO 8h |
+| Observability | PASS | OPERATIONS sets structured redacted logs, audit, queue/error/uptime monitoring and incident gate |
+| Traceability | PASS | TRACEABILITY maps R01–R20 and all V1 page IDs; DATA-MODEL/API-CONTRACT close domain path |
+| Risk register | PASS | RISKS covers 22 risks with probability, impact, mitigation, role and status |
+| Documentation consistency | PASS | Canonical counts and accepted ADR chain reviewed; GitHub checker run/commit linked after merge |
+| SKB synchronization | PASS | Canonical knowledge return and SKB checks/commit linked after merge |
 
 ## Completed evidence
 
-- Project and SKB remotes/heads verified; previous main documentation GitHub Action passed. Canonical phase/page IDs and counts were retained.
-- Public current site and DNS/HTTP observed without production modification. ARIN identifies Namecheap as public IP-block registrant; Namecheap product docs were reviewed without claiming OnSkillIT account features.
-- Official SSLCOMMERZ and bKash sources reviewed; official Nagad merchant API package remains unavailable to this research. NSDA/BTEB sources informed local training context without claiming accreditation.
-- The domain review resolved early learning-access and inquiry-intake sequencing within existing phases and pages. No code, migration, provider credential, local build/test or deployment was created.
+- Canonical PHASES/PAGES/SITEMAP/TRACEABILITY were retained without renumbering or page additions. ADR 0005 remains accepted.
+- Official Next.js, PostgreSQL, Drizzle, OWASP and GitHub documentation supports the selected portability/security/CI contracts; accepted ADRs 0006–0009 record choices and trade-offs.
+- SITE-AUDIT, OFFERINGS, HOSTING-CAPABILITY, PAYMENTS and LEGAL-IDENTITY preserve observed facts, hypotheses and unknowns separately. No live account capability, merchant contract, accreditation or registered legal identity is claimed.
+- UX-CONCEPT-REVIEW and DESIGN-SYSTEM are textual implementation blueprints. No Superdesign/Figma visual approval is claimed.
+- DATA-MODEL/API-CONTRACT/DOMAIN-CONSISTENCY/SEO-CONTENT/SECURITY-ARCHITECTURE/OPERATIONS supply the cross-module path and release controls. GitHub documentation check is the only validation run; no local build/test or application work.
 
-## Owner decisions
+## Remaining external dependencies
 
-Confirm actual offers and delivery proof; registered legal issuer, address/contact, rights, policy and accreditation claims; hosting plan/budget; client portal fields; curriculum/certificates; assisted recovery; design concepts; database/runtime/auth/payment/deployment ADRs and production operator roles. “OnSkillIT” is confirmed as public name, not proof of a registered legal entity.
+Actual launch content and rights; registered issuer/contact and approved policies; provider contracts, official bKash/Nagad packs and credentials; current-host account capability or selection of a compatible host; complete legacy CMS/Search Console export and redirect approval. Each is tied to a later publication, provider, staging or production gate in OWNER-DECISIONS. None requires a different Phase 0 architecture.
 
-## External dependencies
+## Remaining non-blocking unknowns
 
-Current-host account capability report or Namecheap support confirmation; merchant contracts and official bKash/Nagad integration packs/sandboxes; complete CMS/Search Console/analytics exports; rights and translation reviewers; legal/finance advice where required. Do not publish secret documents in this public repository.
+Cause of unrelated old-site content, complete historical URL/index coverage, traffic/search corpus size, current account quotas and provider commercial terms. These are evidence needs for later phases, not fabricated facts.
 
-## Unknowns and blockers
+## Genuine architectural blockers
 
-Full old URL/index inventory and cause of unrelated content remain **UNKNOWN**. Host plan, database/worker capacity, merchant access and budget remain **UNKNOWN**. Phase 0 is **BLOCKED** from gate passage by verified-offering, legal, technology, payment and visual-approval gaps. External merchant credentials can remain outstanding once integration contracts are sufficient, but no provider capability may be fabricated. A production cutover requires its own later owner gate.
+**NONE.** A new material contradiction would require an ADR and gate reevaluation; none was found in this closure pass.
 
-## Exact next action
+## Phase 0 exit decision
 
-Obtain partner-approved offering and legal evidence plus redacted current-host plan/capability details; obtain direct merchant integration packs or written provider coverage; complete a design-tool visual review with the owner; finalize the physical data/API/security/hosting ADRs. Re-run the GitHub documentation checker, update this report with evidence and ask the gate owner to mark PHASE-00 READY FOR GATE only when every critical condition is met. **Do not start PHASE-01 in this task.**
+**PHASE 0 — READY FOR IMPLEMENTATION. PHASE 0 COMPLETE. DOCUMENTATION READY GATE PASSED.** The next task is the PHASE-01 IMPLEMENTATION MASTER PROMPT. PHASE-01 remains NOT STARTED in this documentation task. Subsequent phase gates still require implementation, GitHub CI evidence and their own release approvals.
