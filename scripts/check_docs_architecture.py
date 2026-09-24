@@ -70,6 +70,29 @@ for source in ("docs/PHASES.md", "docs/PAGES.md", "docs/SITEMAP.md", "docs/ROADM
             continue
         if not ((ROOT / source).parent / target).exists():
             errors.append(f"{source}: broken document link {target}")
+
+# Phase 0 evidence coverage and permitted readiness dispositions.
+required_docs = (
+    "OFFERINGS.md", "HOSTING-CAPABILITY.md", "LEGAL-IDENTITY.md",
+    "LEGACY-URL-DISPOSITION.md", "UX-CONCEPT-REVIEW.md",
+    "DOMAIN-CONSISTENCY.md", "DATA-MODEL.md", "API-CONTRACT.md",
+    "PAYMENTS.md", "SECURITY-ARCHITECTURE.md", "SEO-CONTENT.md",
+)
+for name in required_docs:
+    if not (ROOT / "docs" / name).is_file():
+        errors.append(f"missing Phase 0 document: {name}")
+readiness = read("docs/READINESS.md")
+section = readiness.split("## Gate matrix", 1)[-1].split("## Completed evidence", 1)[0]
+allowed = {"PASS", "PASS WITH OWNER DECISION", "BLOCKED", "NOT APPLICABLE", "UNKNOWN"}
+gate_rows = [line for line in section.splitlines() if line.startswith("| ")][2:]
+if len(gate_rows) < 25:
+    errors.append("Phase 0 gate matrix has too few rows")
+for line in gate_rows:
+    fields = [part.strip() for part in line.strip("|").split("|")]
+    if len(fields) != 3 or fields[1] not in allowed:
+        errors.append(f"invalid Phase 0 gate row/status: {line[:100]}")
+if "accepted by founding partner" not in read("docs/decisions/0005-phase-and-page-registers.md"):
+    errors.append("ADR 0005 acceptance state missing")
 if errors:
     print("Documentation architecture check FAILED")
     for error in errors:

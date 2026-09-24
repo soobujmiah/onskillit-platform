@@ -19,3 +19,19 @@ Performance and accessibility support search and usability: semantic headings, u
 Subject owner verifies services/courses; editor prepares copy; reviewer approves claims and language; SEO editor checks metadata and linking; publisher makes the approved revision live; security/admin monitors unusual publication. The same person may hold multiple roles only when policy permits. Testimonials, logos, team photos, certificates, metrics and client cases require proof/consent and can be withdrawn. Footer contact/legal attribution requires partner verification. Use natural Bangla, pure English on the English locale, and audited identifier exceptions as described in `SPECIFICATION.md`.
 
 References: [Google SEO starter guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide), [structured-data policies](https://developers.google.com/search/docs/appearance/structured-data/sd-policies), [robots guidance](https://developers.google.com/search/docs/crawling-indexing/robots/intro).
+
+## Canonical page-to-SEO policy review
+
+[PAGES.md](PAGES.md) owns routes; [SITEMAP.md](SITEMAP.md) owns the public projection. `PAGE-*` routes are indexable only with approved, published, locale-complete content and a canonical URL. Six dynamic public templates derive metadata and structured data from their single source record. `AUTH-*`, `USER-*`, `CLIENT-*`, `ADMIN-*`, `SYS-*`, internal search/filter query variants and previews are noindex and omitted from XML sitemaps. FUT-* routes are absent until a separate release gate. Empty/unverified offer pages must not enter sitemap merely because templates exist.
+
+| Page group | Structured data if true and visible | Internal links |
+|---|---|---|
+| PAGE-HOME/ABOUT/CONTACT | Organization only after legal identity/contact approval; avoid invented LocalBusiness facts | Verified service/course/program paths |
+| PAGE-SERVICES and SERVICE-DETAIL | Service only for approved actual scope/provider | Service category → detail → contact |
+| PAGE-COURSES and COURSE-DETAIL | Course only for approved curriculum, instructor and availability | Catalog → detail → program/batch/enrollment when real |
+| PAGE-PROGRAMS/PROGRAM-DETAIL/BATCH-DETAIL | Appropriate Course/Event facts only where schema fits actual offering and schedule | Program → batch → enrollment |
+| PAGE-PORTFOLIO/PROJECT-DETAIL/TEAM | No unsupported client/person claims | Case → relevant service; team → approved case/course |
+| PAGE-BLOG/ARTICLE/FAQ | Article and Breadcrumb where facts match; FAQ markup only when eligible and useful | Article → canonical offer/resource |
+| PAGE-PRIVACY/TERMS/ACCESSIBILITY | Basic metadata; legal content owner-approved | Footer |
+
+Use stable English and Bangla URLs with self-canonical per language and reciprocal `hreflang` only when equivalent approved translations exist; the exact locale URL convention is an ADR decision. CMS controls title, description, Open Graph image, canonical override with review, robots directive, redirects, alt text and structured-data source fields. Pagination has distinct crawlable URLs only where content quality merits indexing; filter/search variants are noindex and canonicalized per approved policy. `robots.txt` is crawl guidance, not privacy control. Technical validation includes HTTP status, redirect chain, sitemap canonical equivalence, schema-vs-visible-claims, social previews, mobile CWV and broken links. The candidate legacy dispositions are in [LEGACY-URL-DISPOSITION.md](LEGACY-URL-DISPOSITION.md). No redirect is implemented during Phase 0.

@@ -1,20 +1,30 @@
-# Risk register and discovery questions
+# Phase 0 risk register
 
-Status: open. Owners are roles to assign, not named people. Review at each Phase 0 decision and each release gate.
+Reviewed 2026-09-24. Probability is a planning estimate or **UNKNOWN** where evidence is missing; impact is potential project impact, not a claim that an event occurred. Owners are roles to assign, not named people. Status values: OPEN, MITIGATING, EVIDENCE PENDING. Review at every ADR and release gate.
 
-| ID | Risk | Likelihood / impact | Mitigation and evidence gate | Owner role |
-|---|---|---|---|---|
-| K01 | Old site has pervasive broken routes and indexed unrelated content | Observed / high | Complete CMS/Search Console inventory and private incident review; approve redirect/410 plan | Domain owner/security |
-| K02 | Demo content is mistaken for real business offerings | High / high | Partner-approved catalog and rights register before publication | Business owner/editor |
-| K03 | Current hosting cannot run selected framework/DB/worker | Unknown / high | Read-only capability report and realistic staging deployment before ADR | Technical owner |
-| K04 | No verified legal entity/merchant contract for live payments | Unknown / critical | Verify registered entity, provider terms, tax/refund policy and sandbox/live contract | Founding partners/finance |
-| K05 | Email-or-mobile accounts without OTP allow contact squatting/recovery abuse | High / high | Restricted recovery, proofing, audit, rate limits, future verification plan | Security owner |
-| K06 | Three payment methods multiply integration/reconciliation complexity | Medium / high | Shared ledger, provider adapters, sandbox cases, merchant access check | Finance/technical |
-| K07 | Full bilingual content and two themes delay content/design readiness | High / medium | Locale parity, native-language editors, both-theme component matrix | Content/design |
-| K08 | Broad V1 scope causes incomplete LMS/TMS/CRM quality | High / high | Vertical slices with P0/P1 traceability and release acceptance | Product owner |
-| K09 | Private client/student media leaks through public repo/cache | Medium / critical | Private storage, scope tests, CI secret controls, public-repo review | Security/operations |
-| K10 | Backup exists but restore fails during incident | Medium / high | Scheduled staging restore drill and measured RPO/RTO | Operations |
-| K11 | Visual ambition harms usability/performance | Medium / high | Real-content prototype, WCAG/CWV/task review and reduced-motion mode | Design/product |
-| K12 | Public repository exposes third-party assets or unsupported claims | Medium / high | Rights register, source review, no-license default, PR content checks | Maintainers |
+| ID | Risk | Probability | Impact | Mitigation / evidence gate | Owner role | Status |
+|---|---|---|---|---|---|---|
+| K01 | Old site broken routes and unrelated indexed content | Observed issue; cause UNKNOWN | High | CMS/Search Console/log review, preserve evidence, approved redirect/410 map; no compromise claim | Domain owner/security | EVIDENCE PENDING |
+| K02 | Demo content mistaken for real offering | High | High | Approved catalog, delivery proof and CMS publication checklist | Business owner/editor | OPEN |
+| K03 | Current hosting cannot run selected app/database/worker reliably | UNKNOWN | Critical | Account-plan report, Namecheap support confirmation and GitHub-built staging proof | Technical owner | EVIDENCE PENDING |
+| K04 | Legal issuer/merchant eligibility insufficient for live payment | UNKNOWN | Critical | Registered entity, provider contracts, tax/refund/legal review | Founding partners/finance | EVIDENCE PENDING |
+| K05 | Unverified email/mobile or assisted recovery abused | High | High | Rate limits, assurance states, trained restricted support, proofing and second approval | Security owner | OPEN |
+| K06 | Multiple payment methods diverge or fail reconciliation | Medium | High | Provider adapters, normalized ledger, idempotent callbacks and daily reconciliation | Finance/technical | OPEN |
+| K07 | Bilingual/theme content drifts or script purity fails | High | High | Locale parity, native review, both-theme CI and editorial gate | Content/design | OPEN |
+| K08 | Broad V1 CMS scope produces unsafe publishing | Medium | High | Typed blocks, rights/source approval, revision/rollback and anomaly monitoring | CMS owner | OPEN |
+| K09 | LMS curriculum/progress/assessment inconsistent | Medium | High | Frozen editions, LearningAccess, grade events and domain tests | Learning owner | OPEN |
+| K10 | TMS capacity, timetable or attendance conflict | Medium | High | Transactional seats, schedule constraints, correction history | Training owner | OPEN |
+| K11 | CRM/client scope leaks staff notes or another account | Medium | Critical | Account-scoped projection and negative authorization tests | CRM/security | OPEN |
+| K12 | Performance falls below mobile targets | Medium | High | SSR/cache/media strategy, realistic low-end device and CWV staging evidence | Frontend/operations | OPEN |
+| K13 | SEO duplicates or indexes drafts/unrelated pages | High | High | Canonical records, sitemap/noindex gate, redirects and Search Console review | SEO/editorial | OPEN |
+| K14 | Old implementation/data migration contaminates new platform | Medium | High | No bulk migration; owner-approved selective content/URL plan | Product/SEO | OPEN |
+| K15 | Private student/client media or secrets exposed via public repo/cache | Medium | Critical | Private storage, protected CI, secret scan, scope/cache tests | Security/operations | OPEN |
+| K16 | Backup exists but restore or rollback fails | Medium | Critical | Offsite encrypted backup, dated isolated restore and rollback drill | Operations | OPEN |
+| K17 | Agent handoff changes phase/page scope or drifts docs | Medium | High | PHASES/PAGES canonical, ADR change control, GitHub docs checker and PR review | Maintainers | MITIGATING |
+| K18 | Deployment/cutover fails or current host cannot receive artifact | UNKNOWN | Critical | Plan/deploy proof, staging, protected environment and owner cutover gate | Release owner | EVIDENCE PENDING |
+| K19 | Third-party provider or dependency changes terms/API | Medium | High | Versioned adapter, official-doc monitoring, contract tests and exit path | Technical/finance | OPEN |
+| K20 | Rights/accreditation or certificate claims are unsupported | UNKNOWN | High | License/consent register, NSDA/BTEB claim review and partner/legal sign-off | Business/legal | EVIDENCE PENDING |
+| K21 | Visual ambition reduces usability/accessibility | Medium | High | Original concept review, WCAG/mobile task checks, reduced motion | Design/product | OPEN |
+| K22 | Observability/incident ownership inadequate at launch | Medium | High | Redacted logs, alert routing, on-call/incident runbook and staging exercise | Operations | OPEN |
 
-Open questions requiring owner evidence: exact registered entity name and jurisdiction; actual services/courses, instructors, prices, certificates and course delivery; content/image/testimonial rights; current host details; merchant access and provider fees; terms/refunds/taxes; client portal V1 tasks; primary locale URL scheme and editorial staffing; privacy/retention rules; traffic/support budget; current CMS and Search Console exports. These are gates, not reasons to invent facts.
+Open owner questions and evidence are tracked in [READINESS.md](READINESS.md), [OFFERINGS.md](OFFERINGS.md), [LEGAL-IDENTITY.md](LEGAL-IDENTITY.md) and [HOSTING-CAPABILITY.md](HOSTING-CAPABILITY.md). No risk is closed merely because a control has been designed.
