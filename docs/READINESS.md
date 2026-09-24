@@ -1,4 +1,4 @@
-# Phase 0 documentation readiness decision — 2026-09-24
+# Phase 0 documentation readiness decision — 2026-09-25
 
 **Current active phase:** PHASE-00, **IN PROGRESS**. **Gate:** DOCUMENTATION READY has **not** passed. No application implementation is authorized. The founding partner has accepted the canonical 16-phase / 74-V1-template baseline; ADR 0005 is accepted. This report uses only `PASS`, `PASS WITH OWNER DECISION`, `BLOCKED`, `NOT APPLICABLE` and `UNKNOWN` as gate dispositions. A documented recommendation is not a verified business fact or a deployed control.
 
@@ -36,8 +36,8 @@
 | Observability | PASS WITH OWNER DECISION | OPERATIONS defines logs, alerts, uptime/queue/trace; vendor, retention and incident owner pending |
 | Traceability | PASS | R01–R20 and all V1 page IDs mapped; DOMAIN-CONSISTENCY records resolved sequencing gaps and remaining contract decisions |
 | Risk register | PASS | RISKS covers probability, impact, mitigation, owner and status across 22 risks |
-| Documentation consistency | PASS WITH OWNER DECISION | Cross-domain review recorded; GitHub check must pass again after this change, exact physical contracts/owner policies remain pending |
-| SKB synchronization | PASS WITH OWNER DECISION | Prior phase/page milestone is verified in SKB; return of this Phase 0 evidence review follows project merge under knowledge-return protocol |
+| Documentation consistency | PASS | Cross-domain review recorded; [GitHub documentation check](https://github.com/soobujmiah/onskillit-platform/actions/runs/36041477068) passed on project main `0aead192829c3501f5a28174e7a7bc71fbf6f5f4`; physical/owner decisions are tracked in their separate gates |
+| SKB synchronization | PASS | [SKB PR #25](https://github.com/soobujmiah/skb/pull/25) merged the evidence return at `1cd47997c1abdde128ef1db4837d6591ba065dde`; SKB main health/integrity/review-queue checks passed |
 
 ## Completed evidence
 
