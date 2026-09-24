@@ -107,3 +107,15 @@ Every V1 route template appears below with at least one requirement. The global 
 | SYS-FORBIDDEN | PHASE-03 | R02, R15; R16; R19; R20 |
 
 When implementation starts, add exact source path, migration, endpoint, UI route, test file, PR and GitHub CI run to each relevant row. A row reaches `CI-verified` only with a passing run tied to its commit; `released` requires target-environment evidence and owner gate. New requirements and pages must enter this matrix before code. Requirement → phase → module → page → database → API → test → documentation is the review chain; the order here is traceability, not a substitute for approved data/API design.
+
+## Reserved template traceability
+
+These PHASE-15 templates are reservations, not approved V1 requirements. Their implementation needs a new requirement ID, approved scope and change-specific gate before code.
+
+| Page ID | Proposed future capability | Current trace status |
+|---|---|---|
+| FUT-CAREERS | Recruitment workflow | requirement pending |
+| FUT-INSTRUCTOR-DETAIL | Consented public trainer profile | requirement pending |
+| FUT-CLIENT-DOCUMENTS | Scoped document exchange | requirement pending |
+| FUT-CLIENT-MESSAGES | Retained client communications | requirement pending |
+| FUT-USER-SECURITY | Optional verified factors, R18 | conceptual only |
