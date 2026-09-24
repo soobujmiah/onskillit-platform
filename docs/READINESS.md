@@ -2,7 +2,7 @@
 
 ## Documented and researched
 
-Drafts cover product vision, personas, capability hypothesis, V1/future scope, sitemap, CMS/RBAC/identity, CRM, LMS/TMS/enrollment, payment abstraction, portals, content/SEO, design system and independent motion, domain workflows, conceptual data/API/security architecture, detailed quality gates, deployment, backups, observability, ADR queue, phases and requirements matrix. The public site audit records concrete template remnants, duplicate navigation, a dated 85-URL link inventory (84 returned HTTP 404 by HEAD; three sampled GET routes also 404) and an unrelated indexed article. Portfolio source design documentation informed color grading. Official framework and GitHub documentation informed the technology candidates. No application implementation, local build, local test, deployment or migration occurred.
+Drafts cover product vision, personas, capability hypothesis, V1/future scope, sitemap, CMS/RBAC/identity, CRM, LMS/TMS/enrollment, payment abstraction, portals, content/SEO, design system and independent motion, domain workflows, conceptual data/API/security architecture, detailed data/API contracts, quality gates, deployment, backups, observability, ADR queue, phased roadmap and requirements matrix. The public site audit records concrete template remnants, duplicate navigation, a dated 85-URL link inventory (84 returned HTTP 404 by HEAD; three sampled GET routes also 404) and an unrelated indexed article. Portfolio source design documentation informed color grading. Official framework and GitHub documentation informed the technology candidates. No application implementation, local build, local test, deployment or migration occurred.
 
 ## Decision state
 
