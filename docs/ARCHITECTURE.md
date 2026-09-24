@@ -38,7 +38,7 @@ Threats: account takeover, credential stuffing, privilege escalation, cross-clie
 | Django + Python + server-rendered UI | Mature admin and data modeling, transactional DB support. [Django DB docs](https://docs.djangoproject.com/en/5.2/topics/db/) | Custom polished multi-portal UX still substantial; Python deployment operations need validation | Alternative |
 | PostgreSQL | Relational constraints, transactions and text-search base. [PostgreSQL search](https://www.postgresql.org/docs/current/textsearch-intro.html) | Actual host support/cost and Bangla ranking quality need validation | Leading DB candidate, **proposed** |
 
-Recommended **candidate**, subject to approvals: Next.js/TypeScript modular monolith, PostgreSQL, standards-compatible object storage, background worker, GitHub Actions, container-capable hosting. Do not select ORM, auth package, CMS library, payment provider, mail/SMS service, analytics vendor or hosting vendor until requirements and constraints are confirmed. Evaluate licensing, maintenance, security history, deployment cost and exit path before dependency adoption. A simple custom typed CMS over project domain records may fit better than adopting a generic headless CMS, but must be prototyped against editor workflow and permission requirements. No microservices, Redis, dedicated search or CDN dependency by default; add only with measured need.
+Recommended **candidate**, subject to approvals: Next.js/TypeScript modular monolith, PostgreSQL, standards-compatible object storage, background worker and GitHub Actions. **Confirmed deployment intent:** use the current domain's hosting when the new platform is ready. Its capabilities have not been verified; the live site's LiteSpeed/PHP response is evidence of current behavior, not proof that Node or PostgreSQL processes are available. Do not lock Next.js/PostgreSQL until the hosting capability/budget check; if the existing host cannot run the selected stack, the partner must approve either a compatible stack or a separate application host while retaining the domain. Do not select ORM, auth package, CMS library, payment provider, mail/SMS service or analytics vendor until requirements and constraints are confirmed. Evaluate licensing, maintenance, security history, deployment cost and exit path before dependency adoption. A simple custom typed CMS over project domain records may fit better than adopting a generic headless CMS, but must be prototyped against editor workflow and permission requirements. No microservices, Redis, dedicated search or CDN dependency by default; add only with measured need.
 
 ## Design and deployment boundaries
 
@@ -50,13 +50,13 @@ Backup design: encrypted database snapshot plus point-in-time recovery where sup
 
 | ADR | Context/options | Provisional direction | Approval gate |
 |---|---|---|---|
-| 001 application framework | Next/Laravel/Django | Next/TypeScript candidate | Final stack |
-| 002 database | PostgreSQL/MySQL-compatible | PostgreSQL candidate | Database/hosting |
-| 003 identity | custom vs managed service; session/MFA | first-party account model with hardened library | Auth/security |
-| 004 CMS | custom typed CMS vs headless | evaluate with editor prototype | CMS architecture |
-| 005 API | internal server calls + versioned JSON | versioned JSON for external/portal contracts | API architecture |
-| 006 media/search | object storage and DB search vs services | portable adapters; corpus test | Storage/search |
-| 007 payment | manual records + provider adapter | provider-neutral ledger | Legal/provider/payment |
-| 008 hosting/deployment | managed Node/container/PHP/Python | portable container-capable target | Production architecture |
+| 0101 application framework | Next/Laravel/Django | Next/TypeScript candidate | Final stack |
+| 0102 database | PostgreSQL/MySQL-compatible | PostgreSQL candidate | Database/hosting |
+| 0103 identity implementation | custom vs managed service; session/MFA | first-party account model with hardened library | Auth/security |
+| 0104 CMS | custom typed CMS vs headless | evaluate with editor prototype | CMS architecture |
+| 0105 API | internal server calls + versioned JSON | versioned JSON for external/portal contracts | API architecture |
+| 0106 media/search | object storage and DB search vs services | portable adapters; corpus test | Storage/search |
+| 0107 payment | manual records + provider adapter | provider-neutral ledger | Legal/provider/payment |
+| 0108 hosting/deployment | managed Node/container/PHP/Python | portable container-capable target | Production architecture |
 
-Each accepted ADR will contain context, problem, options, decision, rationale, trade-offs, consequences, status, evidence and approval date. No ADR above is accepted yet.
+Each accepted ADR will contain context, problem, options, decision, rationale, trade-offs, consequences, status, evidence and approval date. No queued ADR above is accepted yet. Accepted project-direction ADRs 0001–0004 live under `docs/decisions/`.
