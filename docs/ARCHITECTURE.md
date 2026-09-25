@@ -1,5 +1,7 @@
 # Accepted platform architecture
 
+Implementation note (PHASE-01 in progress): `src/app/` contains a minimal Next.js shell and system boundaries; `next.config.ts` selects standalone output. This foundation slice awaits GitHub CI and does not establish the full deployable topology. See [PHASE-01-WORKLOG](PHASE-01-WORKLOG.md).
+
 Status: **accepted Phase 0 blueprint, 2026-09-25**. ADRs [0006](decisions/0006-runtime-and-hosting-candidate.md), [0007](decisions/0007-browser-auth-and-rbac.md), [0008](decisions/0008-payment-adapter-contract.md) and [0009](decisions/0009-platform-services-and-operations.md) own the major decisions. This is documentation, not deployed software.
 
 ## System shape

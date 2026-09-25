@@ -1,5 +1,7 @@
 # API architecture and endpoint contract
 
+PHASE-01 implementation note: `GET /api/v1/health` is an unauthenticated process liveness endpoint returning `{"status":"ok"}` with `Cache-Control: no-store`. It does not check database, worker or dependency readiness. Source: `src/app/api/v1/health/route.ts`; GitHub smoke evidence is pending. See [PHASE-01-WORKLOG](PHASE-01-WORKLOG.md).
+
 Status: **accepted V1 API architecture**, not implemented. Exact OpenAPI schemas are authored with each owning phase under ADRs 0006/0007/0009. API-first means each domain command/query has an explicit contract; server-rendered pages may call application services directly without making an HTTP loopback request.
 
 ## Global conventions
