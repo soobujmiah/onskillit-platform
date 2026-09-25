@@ -6,7 +6,7 @@ Acceptance for this slice: pinned Node/Next/React dependencies and lockfile; a b
 
 Audit on 2026-09-25: local `main` was clean and matched `origin/main` at `b3a9170`; GitHub default branch was `main` and public. Documentation architecture workflow `36045450494` passed for that commit. GitHub API returned 404 for branch protection on `main`. The repository had 47 tracked files, all documentation or documentation tooling, with no application package or source. This work therefore begins PHASE-01 rather than resuming an existing app.
 
-The full PHASE-01 gate also requires isolated preview/deploy smoke, migration up/down on synthetic PostgreSQL, a least-privilege secret review, and updates to OPERATIONS, ARCHITECTURE, DATA-MODEL, API-CONTRACT and TRACEABILITY. Those are not satisfied by this slice. Actual CI results and source commit must be recorded here after GitHub runs; until then this is authored work, not CI-verified implementation.
+The full PHASE-01 gate also requires isolated preview/deploy smoke, migration up/down on synthetic PostgreSQL, a least-privilege secret review, and updates to OPERATIONS, ARCHITECTURE, DATA-MODEL, API-CONTRACT and TRACEABILITY. The document updates and web-runtime CI are recorded below; the remaining gate items are not satisfied by this slice.
 
 GitHub PR #7 first run: documentation check `36122850883` passed; foundation run `36122850968` failed at lint because the current Next ESLint dependency does not support TypeScript 7. The source now pins TypeScript 6.0.3 and its lockfile for a rerun. No local build or test was used.
 
