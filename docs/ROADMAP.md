@@ -1,6 +1,6 @@
 # Execution roadmap
 
-[PHASES.md](PHASES.md) is the sole canonical phase register, dependency graph and gate definition. This page is a human-readable projection; changing it alone cannot change project scope. Phase 0 gate is passed under READINESS.md; PHASE-01 remains NOT STARTED. This document does not authorize work during the closure task.
+[PHASES.md](PHASES.md) is the sole canonical phase register, dependency graph and gate definition. This page is a human-readable projection; changing it alone cannot change project scope. Phase 0 gate is passed under READINESS.md; PHASE-01 is in progress with its gate open. See [PHASE-01-WORKLOG](PHASE-01-WORKLOG.md).
 
 ```mermaid
 flowchart LR

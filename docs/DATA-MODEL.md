@@ -1,5 +1,7 @@
 # Conceptual database architecture
 
+PHASE-01 implementation note: no physical schema or migration exists in the first web-runtime slice. Synthetic PostgreSQL migration up/down remains required before the FOUNDATION VERIFIED gate can pass. See [PHASE-01-WORKLOG](PHASE-01-WORKLOG.md).
+
 Status: **accepted logical model and physical design rules** under ADRs 0006/0009. PostgreSQL and Drizzle are selected; exact migration files are PHASE-01 and later implementation artifacts. No production data has been inspected or migrated.
 
 ## Core principles

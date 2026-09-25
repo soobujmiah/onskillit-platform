@@ -1,5 +1,7 @@
 # Requirements traceability matrix
 
+PHASE-01 work in progress: R15/R17, SYS-NOT-FOUND and SYS-ERROR map to `src/app/not-found.tsx`, `src/app/error.tsx`, `src/app/api/v1/health/route.ts`, `package.json` and `.github/workflows/foundation.yml`. GitHub CI run and commit evidence are pending; no row is CI-verified or released. See [PHASE-01-WORKLOG](PHASE-01-WORKLOG.md).
+
 Status vocabulary: `requested`, `specified`, `approved`, `implemented`, `CI-verified`, `released`. Every row remains **specified for implementation**, not implemented or CI-verified; architectural choices are accepted in ADRs 0006–0009. Test entries are required future **GitHub** CI evidence, not a result. `ALL-V1` expands to all 74 V1 page IDs listed in [PAGES.md](PAGES.md). Future IDs are excluded. This shorthand covers cross-cutting responsive/accessibility, bilingual purity and theme rules. The page coverage table below gives an explicit reverse lookup for each page. Physical table names, exact endpoint payloads, source paths and test files are delivered and reviewed in their owning implementation phases.
 
 | ID / priority | Requirement | Implementation phase(s) | Module | Page IDs | Design | Database | API | Required GitHub test | Documentation | Status |

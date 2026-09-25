@@ -1,6 +1,6 @@
 # OnSkillIT agent working agreement
 
-Status: Phase 0 gate passed under the founding partner’s 2026-09-25 architectural delegation; PHASE-01 remains NOT STARTED during the closure task. No application code, deployment, migration or change to `onskillit.com` occurred. The public GitHub repository is the project source of truth for these drafts and future implementation; agent chat history is not.
+Status: Phase 0 gate passed under the founding partner’s 2026-09-25 architectural delegation; PHASE-01 foundation is IN PROGRESS with its gate open. No deployment, migration or change to `onskillit.com` occurred. The public GitHub repository is the project source of truth; agent chat history is not.
 
 At session start: read this file, `README.md`, `docs/PHASES.md`, `docs/PAGES.md`, `docs/TRACEABILITY.md`, `docs/READINESS.md`, `docs/README.md`, and only the task-relevant linked documents. Then discover canonical `soobujmiah/skb` at `ASSISTANT_CONTEXT.md` and `profile/assistant-guidance.md`, followed by task-relevant standards. Verify the SKB Git remote when using a local checkout. Compare dated claims with live repository and source evidence. Follow `standards/policy-resolution.md` for authorization.
 
