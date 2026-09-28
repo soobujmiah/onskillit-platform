@@ -1,13 +1,13 @@
 schema_version: 1
 project_id: onskillit-platform
 repository: soobujmiah/onskillit-platform
-generated_at: '2026-09-28T20:10:50Z'
+generated_at: '2026-09-28T20:13:25Z'
 generated_by: tools/repo_knowledge collect
-version: 100d8e7
+version: abfde44
 head:
-  commit: 100d8e7656f43a1f060cafcaee4f27edde093029
+  commit: abfde44f57d8c3351a207d0e8a319f0f5b64e17f
   branch: main
-  committed_at: '2026-09-28T20:10:16Z'
+  committed_at: '2026-09-28T20:13:00Z'
 phases:
   source: not_configured
   completed: []
@@ -15,10 +15,10 @@ phases:
   next: null
 build:
   status: passed
-  run_id: '36477303986'
-  commit: 100d8e7656f43a1f060cafcaee4f27edde093029
+  run_id: '36477622538'
+  commit: abfde44f57d8c3351a207d0e8a319f0f5b64e17f
   run_attempt: '1'
-  at: '2026-09-28T20:10:50Z'
+  at: '2026-09-28T20:13:25Z'
   timestamp_source: observed
 test:
   status: unknown
@@ -26,11 +26,11 @@ test:
   at: null
   summary: null
 last_successful_build:
-  commit: 100d8e7656f43a1f060cafcaee4f27edde093029
-  at: '2026-09-28T20:10:50Z'
-  run_id: '36477303986'
+  commit: abfde44f57d8c3351a207d0e8a319f0f5b64e17f
+  at: '2026-09-28T20:13:25Z'
+  run_id: '36477622538'
 last_failed_build: null
 sync:
   status: ok
-  last_synced_at: '2026-09-28T20:10:50Z'
+  last_synced_at: '2026-09-28T20:13:25Z'
   source: ci
