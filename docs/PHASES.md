@@ -7,7 +7,7 @@ Status: **canonical baseline accepted by founding-partner instruction, 2026-09-2
 | ID | Name | Objective | Main deliverables | Dependencies | Gate | State |
 |---|---|---|---|---|---|---|
 | PHASE-00 | Discovery and documentation | Approve a coherent product and architecture | Evidence-bounded facts, UX, contracts, ADRs, traceability | None | DOCUMENTATION READY | COMPLETE |
-| PHASE-01 | GitHub foundation | Establish portable runtime and evidence pipeline | Repo structure, CI, isolated preview, migrations | 00 | FOUNDATION VERIFIED | IN PROGRESS |
+| PHASE-01 | GitHub foundation | Establish portable runtime and evidence pipeline | Repo structure, CI, isolated preview, migrations | 00 | FOUNDATION VERIFIED | READY FOR GATE |
 | PHASE-02 | Design and localization shell | Establish shared accessible bilingual and themed UI | Tokens, shells, language and theme infrastructure | 01 | EXPERIENCE FOUNDATION VERIFIED | NOT STARTED |
 | PHASE-03 | Identity, RBAC and audit | Secure all private operations | Accounts, sessions, scoped roles, audit | 01,02 | IDENTITY VERIFIED | NOT STARTED |
 | PHASE-04 | CMS and publishing core | Enable controlled content operations | Typed pages, revisions, media, navigation, SEO fields | 03 | PUBLISHING CORE VERIFIED | NOT STARTED |
