@@ -4,6 +4,7 @@ import { isLocale, type Locale } from "@/i18n/locales";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { SkipLink } from "@/components/shell/SkipLink";
 import { SiteHeader } from "@/components/shell/SiteHeader";
+import { HtmlLangSync } from "@/components/shell/HtmlLangSync";
 
 export default async function LocaleLayout({
   children,
@@ -23,6 +24,7 @@ export default async function LocaleLayout({
 
   return (
     <>
+      <HtmlLangSync locale={locale} />
       <SkipLink label={dictionary.skipLink} />
       <SiteHeader locale={locale} dictionary={dictionary} initialTheme={initialTheme} />
       <main id="content" style={{ padding: "var(--space-xl) var(--space-lg)" }}>
