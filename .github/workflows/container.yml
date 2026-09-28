@@ -23,7 +23,7 @@ jobs:
           done
           cat /tmp/container-health.json
           grep -q '"status":"ok"' /tmp/container-health.json
-          curl --fail --silent http://localhost:3000/ | grep -q 'OnSkillIT platform foundation'
+          curl --fail --silent --location http://localhost:3000/ | grep -q 'OnSkillIT platform foundation'
       - name: Stop web container
         if: always()
         run: docker logs onskillit-web || true; docker rm -f onskillit-web || true

@@ -24,4 +24,7 @@ __pycache__/
 *.dump
 *.sql
 !src/db/migrations/**/*.sql
+*.tsbuildinfo
+playwright-report/
+test-results/
 .DS_Store

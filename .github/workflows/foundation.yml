@@ -26,5 +26,5 @@ jobs:
             sleep 1
           done
           grep -q '"status":"ok"' /tmp/onskillit-health.json
-          curl --fail --silent http://localhost:3000/ > /tmp/onskillit-home.html
+          curl --fail --silent --location http://localhost:3000/ > /tmp/onskillit-home.html
           grep -q 'OnSkillIT platform foundation' /tmp/onskillit-home.html

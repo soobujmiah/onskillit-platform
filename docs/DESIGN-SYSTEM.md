@@ -1,6 +1,8 @@
 # OnSkillIT visual and interaction design system
 
-Status: **architecture approved 2026-09-25; pixel-level visual validation during implementation**. No UI has been implemented or visually tested. The founding partner requires portfolio-derived **color grading**, independent motion/interaction, full responsiveness, complete Bangla/English purity, dark/light theme and exceptional polish.
+PHASE-02 implementation note: the founding partner reviewed a static reference board built from this document's own "Implementation token baseline" table (nothing new invented) and approved the direction before code. `src/styles/tokens.css` now implements that table verbatim as CSS custom properties (light `:root`, dark `[data-theme="dark"]`); `src/components/shell/` implements the skip link, theme toggle and language switcher only — the full component contract table below is still unimplemented, built by whichever page first needs each component. See [PHASE-02-WORKLOG](PHASE-02-WORKLOG.md).
+
+Status: **architecture approved 2026-09-25; pixel-level visual validation during implementation**. Token baseline direction approved by the founding partner during PHASE-02; full pixel-level visual validation (contrast measurement on real backgrounds, device review) remains a page-by-page acceptance condition as pages are built, not proven by this note. The founding partner requires portfolio-derived **color grading**, independent motion/interaction, full responsiveness, complete Bangla/English purity, dark/light theme and exceptional polish.
 
 ## Brand relationship
 
