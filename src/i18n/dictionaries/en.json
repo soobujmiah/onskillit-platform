@@ -1,0 +1,16 @@
+{
+  "skipLink": "Skip to content",
+  "theme": {
+    "light": "Light",
+    "dark": "Dark",
+    "toggleLabel": "Toggle theme"
+  },
+  "language": {
+    "switchTo": "বাংলা",
+    "switchToLabel": "Switch to Bangla"
+  },
+  "placeholder": {
+    "heading": "OnSkillIT platform foundation",
+    "body": "The public experience is under development."
+  }
+}

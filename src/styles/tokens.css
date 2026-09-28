@@ -1,0 +1,107 @@
+/*
+ * PHASE-02 semantic design tokens. Values copied verbatim from
+ * docs/DESIGN-SYSTEM.md's "Implementation token baseline" table —
+ * do not hand-edit a hex here without updating that table too.
+ * These are starting values; contrast is re-verified against real
+ * backgrounds as pages are built, not proven by this file alone.
+ */
+
+:root {
+  --surface-canvas: #f7f8f5;
+  --surface-raised: #ffffff;
+  --surface-overlay: #ffffff;
+  --text-primary: #17231d;
+  --text-secondary: #46544b;
+  --border-default: #c9d5cb;
+  --action-primary-bg: #176b3a;
+  --action-primary-bg-hover: #125c31;
+  --action-primary-text: #ffffff;
+  --focus-ring: #1e75cf;
+  --status-success: #1d6e3b;
+  --status-warning: #855500;
+  --status-error: #ad3030;
+  --status-info: #165f9b;
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-section: 64px;
+
+  --radius-field: 8px;
+  --radius-card: 12px;
+  --radius-overlay: 16px;
+  --radius-pill: 9999px;
+
+  --motion-micro: 150ms;
+  --motion-panel: 210ms;
+  --motion-entrance: 280ms;
+  --motion-easing: ease-out;
+}
+
+[data-theme="dark"] {
+  --surface-canvas: #090d0c;
+  --surface-raised: #151d1a;
+  --surface-overlay: #1c2621;
+  --text-primary: #f2f5f0;
+  --text-secondary: #c3d0c6;
+  --border-default: #425248;
+  --action-primary-bg: #51d486;
+  --action-primary-bg-hover: #3fc475;
+  --action-primary-text: #082113;
+  --focus-ring: #9bc9ff;
+  --status-success: #62db8c;
+  --status-warning: #ffd27a;
+  --status-error: #ff8a8a;
+  --status-info: #8ac9ff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  z-index: 100;
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface-raised);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-field);
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  left: var(--space-md);
+  top: var(--space-md);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

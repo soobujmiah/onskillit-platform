@@ -1,6 +1,6 @@
 # Canonical phase architecture
 
-Status: **canonical baseline accepted by founding-partner instruction, 2026-09-24**. This is the sole phase register. Phase 0 is **COMPLETE; DOCUMENTATION READY gate passed** under the founding partner's final closure instruction. PHASE-01 is **COMPLETE; FOUNDATION VERIFIED gate passed** under the founding partner's explicit instruction after full GitHub CI evidence review (see [HANDOFF](HANDOFF.md), [PHASE-01-WORKLOG](PHASE-01-WORKLOG.md)); PHASE-02 through PHASE-15 are **NOT STARTED**. Phase numbers name milestones, not permission to skip dependencies. V1 runs through PHASE-14; PHASE-15 is controlled post-launch evolution. Page IDs and their single owning phase are authoritative in [PAGES.md](PAGES.md).
+Status: **canonical baseline accepted by founding-partner instruction, 2026-09-24**. This is the sole phase register. Phase 0 is **COMPLETE; DOCUMENTATION READY gate passed** under the founding partner's final closure instruction. PHASE-01 is **COMPLETE; FOUNDATION VERIFIED gate passed** under the founding partner's explicit instruction after full GitHub CI evidence review (see [HANDOFF](HANDOFF.md), [PHASE-01-WORKLOG](PHASE-01-WORKLOG.md)). PHASE-02 is **COMPLETE; EXPERIENCE FOUNDATION VERIFIED gate passed** the same way, after the founding partner approved the original design direction on a token-baseline reference board and reviewed full GitHub CI evidence (see [PHASE-02-WORKLOG](PHASE-02-WORKLOG.md)); PHASE-03 through PHASE-15 are **NOT STARTED**. Phase numbers name milestones, not permission to skip dependencies. V1 runs through PHASE-14; PHASE-15 is controlled post-launch evolution. Page IDs and their single owning phase are authoritative in [PAGES.md](PAGES.md).
 
 ## Master register
 
@@ -8,7 +8,7 @@ Status: **canonical baseline accepted by founding-partner instruction, 2026-09-2
 |---|---|---|---|---|---|---|
 | PHASE-00 | Discovery and documentation | Approve a coherent product and architecture | Evidence-bounded facts, UX, contracts, ADRs, traceability | None | DOCUMENTATION READY | COMPLETE |
 | PHASE-01 | GitHub foundation | Establish portable runtime and evidence pipeline | Repo structure, CI, isolated preview, migrations | 00 | FOUNDATION VERIFIED | COMPLETE |
-| PHASE-02 | Design and localization shell | Establish shared accessible bilingual and themed UI | Tokens, shells, language and theme infrastructure | 01 | EXPERIENCE FOUNDATION VERIFIED | NOT STARTED |
+| PHASE-02 | Design and localization shell | Establish shared accessible bilingual and themed UI | Tokens, shells, language and theme infrastructure | 01 | EXPERIENCE FOUNDATION VERIFIED | COMPLETE |
 | PHASE-03 | Identity, RBAC and audit | Secure all private operations | Accounts, sessions, scoped roles, audit | 01,02 | IDENTITY VERIFIED | NOT STARTED |
 | PHASE-04 | CMS and publishing core | Enable controlled content operations | Typed pages, revisions, media, navigation, SEO fields | 03 | PUBLISHING CORE VERIFIED | NOT STARTED |
 | PHASE-05 | Public business site | Publish verified business and service content | Public core, services, inquiries, legal and SEO baseline | 02,04 | PUBLIC CORE VERIFIED | NOT STARTED |
