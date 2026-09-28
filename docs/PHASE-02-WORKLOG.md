@@ -40,4 +40,4 @@ New `.github/workflows/shell.yml`: locale purity check, then a real Playwright +
 
 ## Status
 
-[Filled in once pushed and CI evidence exists — not asserted in advance.]
+[draft PR #11](https://github.com/soobujmiah/onskillit-platform/pull/11), unmerged. All seven checks (`Documentation architecture`, `Foundation`, `Database`, `Container`, `Shell`, `Repo Knowledge Sync`, `Repository State Contract`) SUCCESS on final commit `094b09a` — see [HANDOFF](HANDOFF.md) for run links. `Shell` failed once on the first push (`344dabb`): the language-switcher test caught a real bug where `<html lang>` didn't follow a client-side navigation between locales (root layout doesn't re-render across sibling-route navigation), fixed with `HtmlLangSync` (a `useEffect` syncing `document.documentElement.lang` from the `[locale]` segment's own param). This verifies the PHASE-02 shell slice on an unmerged branch; it is not `released` and the gate is not yet marked passed — that is the founding partner's decision, presented with this evidence, not self-declared.
