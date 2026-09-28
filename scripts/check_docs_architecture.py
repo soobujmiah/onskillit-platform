@@ -40,7 +40,7 @@ for row in page_rows:
         errors.append(f"{id_}: future phase mismatch")
     if group != "Future" and phase in ("PHASE-00", "PHASE-15"):
         errors.append(f"{id_}: invalid V1 phase")
-    if state != "NOT STARTED":
+    if state not in ("NOT STARTED", "IN PROGRESS", "CI-VERIFIED", "RELEASED"):
         errors.append(f"{id_}: unexpected page state {state}")
     if id_ not in trace:
         errors.append(f"{id_}: missing traceability")

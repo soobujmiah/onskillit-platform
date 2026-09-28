@@ -1,5 +1,7 @@
 # Conceptual database architecture
 
+PHASE-01 implementation note: `src/db/schema.ts` and the reviewed SQL pair in `src/db/migrations/0001_foundation_probe/` add exactly one table, `foundation_probe`. It is infrastructure-only — it exists to prove the migration up/down pipeline and back the health endpoint's database check, and carries no business meaning. It is **not** the Identity/CMS/etc. physical schema; those tables remain owned by their respective phases (PHASE-03 Identity, PHASE-04 CMS, and so on) and are not created here. The `Database` GitHub workflow applies `up.sql`, verifies the table, applies `down.sql`, verifies removal, then reapplies `up.sql`. See [PHASE-01-WORKLOG](PHASE-01-WORKLOG.md).
+
 Status: **accepted logical model and physical design rules** under ADRs 0006/0009. PostgreSQL and Drizzle are selected; exact migration files are PHASE-01 and later implementation artifacts. No production data has been inspected or migrated.
 
 ## Core principles

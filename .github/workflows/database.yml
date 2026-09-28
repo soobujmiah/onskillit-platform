@@ -1,0 +1,75 @@
+name: Database
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: onskillit
+          POSTGRES_PASSWORD: onskillit
+          POSTGRES_DB: onskillit
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://onskillit:onskillit@localhost:5432/onskillit
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Apply migration up (0001_foundation_probe)
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0001_foundation_probe/up.sql
+      - name: Assert table exists after up
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "select 1 from foundation_probe limit 0;"
+      - name: Apply migration down (0001_foundation_probe)
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0001_foundation_probe/down.sql
+      - name: Assert table is gone after down
+        run: |
+          set +e
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c "select 1 from foundation_probe limit 0;" 2>/tmp/down-check.log
+          result=$?
+          set -e
+          cat /tmp/down-check.log
+          if [ "$result" -eq 0 ]; then
+            echo "foundation_probe still queryable after down migration" >&2
+            exit 1
+          fi
+          grep -q "does not exist" /tmp/down-check.log
+      - name: Reapply migration up (leave database in forward state)
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0001_foundation_probe/up.sql
+      - run: npm run typecheck
+      - name: Build and start web process against synthetic database
+        run: |
+          npm run build
+          npm start > /tmp/onskillit-next.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3000/api/v1/health > /tmp/onskillit-health.json; then break; fi
+            sleep 1
+          done
+          cat /tmp/onskillit-health.json
+      - name: Health endpoint reports database readiness
+        run: grep -q '"database":"ok"' /tmp/onskillit-health.json
+      - name: Worker starts, reports ready and shuts down cleanly on SIGTERM
+        run: |
+          set +e
+          timeout --preserve-status -s TERM 5s ./node_modules/.bin/tsx src/worker/index.ts > /tmp/worker.log 2>&1
+          status=$?
+          set -e
+          cat /tmp/worker.log
+          grep -q '"worker ready"' /tmp/worker.log
+          grep -q '"worker shutting down"' /tmp/worker.log
+          test "$status" -eq 0

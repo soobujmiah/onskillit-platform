@@ -23,4 +23,5 @@ __pycache__/
 *.bak
 *.dump
 *.sql
+!src/db/migrations/**/*.sql
 .DS_Store

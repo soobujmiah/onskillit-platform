@@ -1,5 +1,7 @@
 # API architecture and endpoint contract
 
+PHASE-01 implementation note: `GET /api/v1/health` is an unauthenticated liveness endpoint returning `{"status":"ok"}` with `Cache-Control: no-store`. When `DATABASE_URL` is configured it also attempts `select 1` and reports the result as `checks.database` (`"ok"` with HTTP 200, or `"unreachable"` with HTTP 503); when `DATABASE_URL` is absent — the case for the `web` CI job and any environment without a database — it returns the liveness-only body unchanged, so existing consumers are unaffected. It still does not check worker readiness; there is no cross-process readiness signal yet. Source: `src/app/api/v1/health/route.ts`, `src/db/client.ts`; GitHub smoke evidence recorded in [PHASE-01-WORKLOG](PHASE-01-WORKLOG.md).
+
 Status: **accepted V1 API architecture**, not implemented. Exact OpenAPI schemas are authored with each owning phase under ADRs 0006/0007/0009. API-first means each domain command/query has an explicit contract; server-rendered pages may call application services directly without making an HTTP loopback request.
 
 ## Global conventions

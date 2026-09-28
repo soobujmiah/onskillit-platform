@@ -79,8 +79,8 @@ A page is a route-level responsibility with its own loading, access, error and n
 | ADMIN-CONTENT | Articles, cases and team | /staff/content/collections | Admin | Manage canonical records | staff | Publishing | staff | collections.manage | noindex | listing | ADMIN-CONTENT | P1 | PHASE-11 | NOT STARTED | Article, Case, TeamMember |
 | ADMIN-ANALYTICS | Analytics | /staff/analytics | Admin | Review consented metrics | staff | Analytics | staff | analytics.read | noindex | static | ADMIN-ANALYTICS | P1 | PHASE-11 | NOT STARTED | Metric |
 | ADMIN-NOTIFICATIONS | Notifications | /staff/notifications | Admin | Manage notices | staff | Notifications | staff | notifications.manage | noindex | listing | ADMIN-NOTIFICATIONS | P1 | PHASE-11 | NOT STARTED | Notification |
-| SYS-NOT-FOUND | Not found | /{unmatched} | System | Explain missing route | system | Platform | none | public | noindex | dynamic | SYS-NOT-FOUND | P0 | PHASE-01 | NOT STARTED | Router |
-| SYS-ERROR | Error | /{error-boundary} | System | Recover from error | system | Platform | any | public | noindex | dynamic | SYS-ERROR | P0 | PHASE-01 | NOT STARTED | Error boundary |
+| SYS-NOT-FOUND | Not found | /{unmatched} | System | Explain missing route | system | Platform | none | public | noindex | dynamic | SYS-NOT-FOUND | P0 | PHASE-01 | IN PROGRESS | Router |
+| SYS-ERROR | Error | /{error-boundary} | System | Recover from error | system | Platform | any | public | noindex | dynamic | SYS-ERROR | P0 | PHASE-01 | IN PROGRESS | Error boundary |
 | SYS-FORBIDDEN | Access denied | /forbidden | System | Explain denied access | system | Identity | any | public | noindex | static | SYS-FORBIDDEN | P0 | PHASE-03 | NOT STARTED | RBAC |
 | FUT-CAREERS | Careers | /careers | Future | Recruit with real process | root | Publishing | none | public | conditional | static | FUT-CAREERS | P2 | PHASE-15 | NOT STARTED | Hiring policy |
 | FUT-INSTRUCTOR-DETAIL | Instructor profile | /instructors/{slug} | Future | Show consented trainer | PAGE-TEAM | Publishing | none | public | conditional | dynamic | FUT-INSTRUCTOR-DETAIL | P2 | PHASE-15 | NOT STARTED | Consent, Instructor |
