@@ -1,0 +1,39 @@
+name: Container
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  deploy-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Build OCI image
+        run: docker build -t onskillit-platform:ci .
+      - name: Isolated network for the smoke containers
+        run: docker network create onskillit-ci
+      - name: Run web process and smoke test it
+        run: |
+          docker run -d --name onskillit-web --network onskillit-ci -p 3000:3000 onskillit-platform:ci
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3000/api/v1/health > /tmp/container-health.json; then break; fi
+            sleep 1
+          done
+          cat /tmp/container-health.json
+          grep -q '"status":"ok"' /tmp/container-health.json
+          curl --fail --silent http://localhost:3000/ | grep -q 'OnSkillIT platform foundation'
+      - name: Stop web container
+        if: always()
+        run: docker logs onskillit-web || true; docker rm -f onskillit-web || true
+      - name: Run worker process and check it becomes ready
+        run: |
+          docker run -d --name onskillit-worker --network onskillit-ci -e PROCESS_ROLE=worker onskillit-platform:ci
+          sleep 3
+          docker logs onskillit-worker > /tmp/worker-container.log 2>&1
+          cat /tmp/worker-container.log
+          grep -q '"worker ready"' /tmp/worker-container.log
+      - name: Stop worker container
+        if: always()
+        run: docker stop onskillit-worker || true; docker rm -f onskillit-worker || true
