@@ -66,7 +66,7 @@ jobs:
       - name: Worker starts, reports ready and shuts down cleanly on SIGTERM
         run: |
           set +e
-          timeout -s TERM 5s ./node_modules/.bin/tsx src/worker/index.ts > /tmp/worker.log 2>&1
+          timeout --preserve-status -s TERM 5s ./node_modules/.bin/tsx src/worker/index.ts > /tmp/worker.log 2>&1
           status=$?
           set -e
           cat /tmp/worker.log
