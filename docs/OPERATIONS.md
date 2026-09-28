@@ -20,8 +20,26 @@ Observability: structured application logs with request/trace ID and release SHA
 
 Required: supported Node LTS web process; same-version separate worker with persistent execution and scheduler; supported patched PostgreSQL; private S3-compatible object storage; HTTPS reverse proxy with request limits; environment-managed secrets; outbound transactional email; health/readiness probes; offsite encrypted database/media backup; restore-capable staging; structured logging, error/queue/uptime monitoring. DNS and public base URL are configuration. `DATABASE_URL`, session/encryption keys, object-storage credentials, email credentials and provider secrets are protected environment values; exact names are implementation details. Static CDN is optional and must respect publish invalidation/private no-store. A PostgreSQL outbox provides durable work without assuming Redis. OCI images built in GitHub make runtime portable; production promotion uses GitHub protected environments with required review and rollback. Current-host compatibility remains pending account-specific verification and is not the Phase 0 architecture gate.
 
+## Deterministic repository state (2026-09-25, infrastructure — no Page ID)
+
+**Observed:** this repository has `.repo/` — a machine-generated, non-LLM record of the exact
+head commit, build status, and event history, produced by `tools/repo_knowledge/` (vendored
+from canonical `soobujmiah/skb`, see `tools/repo_knowledge/README.md`) and kept current by
+`.github/workflows/repo-knowledge-sync.yml` on every push to `main`. Canonical policy:
+`soobujmiah/skb` → `governance/DETERMINISTIC_STATE_SYNC_POLICY.md`.
+
+At this Phase 0 stage, `main` carries no application code — `build.status` in `.repo/project.yaml`
+reflects `scripts/check_docs_architecture.py` (the same register check `docs-architecture.yml`
+already runs), and `test.status` is deliberately left `unknown` rather than padded with a
+duplicate of the same check, since no test suite exists yet on `main`. This does not change any
+phase/page gate: it is infrastructure with no Page ID per `AI_ASSISTANT.md`, and does not touch
+the unmerged `phase-01/foundation-audit-scaffold` branch. When PHASE-01's application code and
+test suite merge into `main`, this workflow should be extended to reflect them — not done here
+(this branch now carries that application code and test/CI suite; see PHASE-01-WORKLOG for what
+was added and note below for what still needs doing to this sync tooling once merged).
+
 ## PHASE-01 least-privilege secret review — 2026-09-29
 
-All four workflows (`docs-architecture.yml`, `foundation.yml`, `database.yml`, `container.yml`) declare `permissions: contents: read` and nothing broader. None references a GitHub Actions secret: `database.yml`'s PostgreSQL service container uses a fixed synthetic username/password that exists only for the life of the job and touches no real data; `container.yml`'s containers run with no credentials at all. There is currently no `DATABASE_URL`, object-storage, email or payment-provider secret stored in this repository's Actions configuration, so there is nothing yet to over-scope. This review's finding is that the current zero-secret state already satisfies least privilege by having no privilege to misuse.
+All four PHASE-01 CI workflows (`docs-architecture.yml`, `foundation.yml`, `database.yml`, `container.yml`) declare `permissions: contents: read` and nothing broader. None references a GitHub Actions secret: `database.yml`'s PostgreSQL service container uses a fixed synthetic username/password that exists only for the life of the job and touches no real data; `container.yml`'s containers run with no credentials at all. There is currently no `DATABASE_URL`, object-storage, email or payment-provider secret stored in this repository's Actions configuration, so there is nothing yet to over-scope. This review's finding is that the current zero-secret state already satisfies least privilege by having no privilege to misuse.
 
 Forward-looking rule for whoever adds the first real secret (a preview/staging `DATABASE_URL`, an object-storage key, and so on): it must be scoped to a specific GitHub Environment with required reviewers, never a repository- or organization-wide secret, and never referenced by a workflow that also runs on unreviewed forked-repository pull requests. This is a rule for that later change, not a claim that such a secret exists today.
