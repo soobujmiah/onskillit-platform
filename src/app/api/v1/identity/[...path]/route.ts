@@ -15,7 +15,7 @@ const GENERIC_RECOVERY = { status: "accepted" };
 type Body = Record<string, unknown>;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-function json(body: object, status = 200, requestId = randomUUID()) {
+function json(body: object, status = 200, requestId: string = randomUUID()) {
   return NextResponse.json(body, { status, headers: { "Cache-Control": "no-store", "X-Request-Id": requestId } });
 }
 function responseError(request: NextRequest, code: string, status: number, requestId: string) {

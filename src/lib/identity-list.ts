@@ -36,7 +36,7 @@ export async function listUsers(db: Db, actorId: string, cursor?: Cursor) {
       WHERE a.user_id=${actorId} AND a.revoked_at IS NULL AND rp.permission_id='users.read'
         AND ((a.scope_type='global' AND a.scope_id='*') OR (a.scope_type='resource' AND a.scope_id=u.id::text)))
     ${after} ORDER BY u.created_at DESC,u.id DESC LIMIT 51`;
-  return { items: rows.slice(0, 50), nextCursor: rows.length > 50 ? encodeCursor(rows[49]) : null };
+  return { items: rows.slice(0, 50), nextCursor: rows.length > 50 ? encodeCursor(rows[49] as unknown as { id: string; cursor_at: string }) : null };
 }
 
 export async function listAudit(db: Db, cursor?: Cursor) {
@@ -44,5 +44,5 @@ export async function listAudit(db: Db, cursor?: Cursor) {
   const rows = await db`SELECT id,actor_user_id,operator_identity,target_user_id,action,outcome,reason,request_id,created_at,
     to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS cursor_at
     FROM identity_audit ${after} ORDER BY created_at DESC,id DESC LIMIT 51`;
-  return { items: rows.slice(0, 50), nextCursor: rows.length > 50 ? encodeCursor(rows[49]) : null };
+  return { items: rows.slice(0, 50), nextCursor: rows.length > 50 ? encodeCursor(rows[49] as unknown as { id: string; cursor_at: string }) : null };
 }

@@ -15,6 +15,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
     robots: { index: false, follow: false } };
 }
 const permissions = { users: "users.read", roles: "roles.read", audit: "audit.read" } as const;
+type StaffRow = {
+  id: string; normalized: string | null; status: string; can_manage: boolean;
+  action: string; outcome: string; operator_identity: string | null;
+  actor_user_id: string | null; target_user_id: string | null;
+  created_at: Date; reason: string | null;
+};
 
 export default async function StaffPage({ params, searchParams }: {
   params: Promise<{ locale: string; section: string }>;
@@ -38,7 +44,7 @@ export default async function StaffPage({ params, searchParams }: {
     const title = section === "users" ? t.users : section === "roles" ? t.roles : t.audit;
     const page = section === "users" ? await listUsers(db, session.userId, cursor)
       : section === "audit" ? await listAudit(db, cursor) : null;
-    const rows = page?.items ?? await db`SELECT id,label FROM identity_role ORDER BY id`;
+    const rows = (page?.items ?? await db`SELECT id,label FROM identity_role ORDER BY id`) as unknown as StaffRow[];
     const pending = canManageRoles ? await db`SELECT id,requested_by,target_user_id,role_id,reason
       FROM identity_grant_request WHERE status='pending' ORDER BY requested_at DESC LIMIT 50` : [];
     return <section className="identity-panel"><h1>{title}</h1>
