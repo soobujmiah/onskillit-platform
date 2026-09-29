@@ -33,7 +33,7 @@
     "actor": "Actor", "target": "Target", "at": "Time", "outcome": "Outcome",
     "targetId": "Target user ID", "roleId": "Role", "grant": "Grant role", "reason": "Reason",
     "scope": "Scope", "scopeId": "Resource ID", "globalScope": "Global", "resourceScope": "One user",
-    "saved": "Change saved.", "supportRole": "Support", "memberRole": "Member",
+    "saved": "Change saved.", "nextPage": "Next page", "supportRole": "Support", "memberRole": "Member",
     "ownerRole": "Owner", "securityRole": "Security administrator", "pendingGrants": "Pending privileged grants",
     "approveGrant": "Approve grant", "requestGrant": "Request independent approval",
     "activeStatus": "Active", "suspendedStatus": "Suspended", "inactiveStatus": "Inactive", "pendingStatus": "Deletion pending"

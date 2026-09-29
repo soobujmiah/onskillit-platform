@@ -44,6 +44,8 @@ test.describe("Phase 3 public account pages", () => {
   });
 
   test("staff shell shows scoped queues to the synthetic owner", async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 800 });
+    await page.context().addCookies([{ name: "theme", value: "dark", url: "http://localhost:3000" }]);
     await page.goto("/en/account/sign-in");
     await page.getByLabel("Email or international mobile number").fill("owner@example.test");
     await page.getByLabel("Password", { exact: true }).fill("A secure sample password 123");
@@ -53,5 +55,12 @@ test.describe("Phase 3 public account pages", () => {
     await expect(page).toHaveURL(/\/en\/staff\/users$/);
     await expect(page.getByRole("heading", { name: "Users" })).toBeVisible();
     await expect(page.getByRole("link", { name: "Audit log" })).toBeVisible();
+    await page.goto("/bn/staff/users");
+    await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+    await expect(page.getByRole("heading", { name: "ব্যবহারকারী" })).toBeVisible();
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+    expect(overflow).toBeLessThanOrEqual(0);
+    const results = await new AxeBuilder({ page }).analyze();
+    expect(results.violations).toEqual([]);
   });
 });

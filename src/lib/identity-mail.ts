@@ -6,7 +6,10 @@ export async function sendIdentityLink(to: string, path: string, subject: string
   const from = process.env.SMTP_FROM;
   const base = process.env.PUBLIC_BASE_URL;
   if (!host || !from || !base) return false;
-  const url = new URL(path, base).toString();
+  const publicUrl = new URL(base);
+  const loopback = ["localhost", "127.0.0.1", "[::1]"].includes(publicUrl.hostname);
+  if (publicUrl.protocol !== "https:" && !(loopback && publicUrl.protocol === "http:")) return false;
+  const url = new URL(path, publicUrl).toString();
   const transport = nodemailer.createTransport({
     host,
     port: Number(process.env.SMTP_PORT ?? 587),

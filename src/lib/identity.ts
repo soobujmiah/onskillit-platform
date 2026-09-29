@@ -92,7 +92,12 @@ export function sameOrigin(request: NextRequest): boolean {
   const origin = request.headers.get("origin");
   const configured = process.env.PUBLIC_BASE_URL;
   if (!origin || !configured) return false;
-  try { return new URL(origin).origin === new URL(configured).origin; } catch { return false; }
+  try {
+    const publicUrl = new URL(configured);
+    const loopback = ["localhost", "127.0.0.1", "[::1]"].includes(publicUrl.hostname);
+    if (publicUrl.protocol !== "https:" && !(loopback && publicUrl.protocol === "http:")) return false;
+    return new URL(origin).origin === publicUrl.origin;
+  } catch { return false; }
 }
 
 export async function hasPermission(db: Db, userId: string, permission: string, scopeType = "global", scopeId = "*"): Promise<boolean> {

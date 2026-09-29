@@ -8,16 +8,21 @@ import {
 import { sendIdentityLink } from "@/lib/identity-mail";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { isLocale } from "@/i18n/locales";
+import { decodeCursor, listAudit, listUsers } from "@/lib/identity-list";
 
 export const runtime = "nodejs";
 const GENERIC_RECOVERY = { status: "accepted" };
 type Body = Record<string, unknown>;
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-function json(body: object, status = 200) {
-  return NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
+function json(body: object, status = 200, requestId = randomUUID()) {
+  return NextResponse.json(body, { status, headers: { "Cache-Control": "no-store", "X-Request-Id": requestId } });
 }
-function error(code: string, status: number) { return json({ code }, status); }
+function responseError(request: NextRequest, code: string, status: number, requestId: string) {
+  const rawLocale = request.cookies.get("NEXT_LOCALE")?.value ?? "en";
+  const locale = isLocale(rawLocale) ? rawLocale : "en";
+  return json({ code, message: getDictionary(locale).identity.invalid, request_id: requestId }, status, requestId);
+}
 async function bodyOf(request: NextRequest): Promise<Body | null> {
   if (!request.headers.get("content-type")?.toLowerCase().startsWith("application/json")) return null;
   const reader = request.body?.getReader();
@@ -54,6 +59,8 @@ function clearCookies(response: NextResponse) {
 }
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const requestId = randomUUID();
+  const error = (code: string, status: number) => responseError(request, code, status, requestId);
   const path = pathOf(await params);
   if (path === "mobile-recovery") return error("RECOVERY_DISABLED", 404);
   const db = database();
@@ -61,41 +68,41 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const session = await readSession(db, request);
     if (!session) return error("UNAUTHENTICATED", 401);
     if (path === "session") {
-      return json({ user_id: session.userId, staff: session.staff });
+      return json({ user_id: session.userId, staff: session.staff }, 200, requestId);
     }
     if (path === "profile") {
       const rows = await db`SELECT u.id,u.status,c.kind,c.normalized,c.verified_at FROM identity_user u
         JOIN identity_contact c ON c.user_id=u.id WHERE u.id=${session.userId} ORDER BY c.kind`;
-      return json({ user_id: session.userId, contacts: rows.map((row) => ({ kind: row.kind, value: row.normalized, verified: !!row.verified_at })) });
+      return json({ user_id: session.userId, contacts: rows.map((row) => ({ kind: row.kind, value: row.normalized, verified: !!row.verified_at })) }, 200, requestId);
     }
     if (path === "users" && await hasAnyPermission(db, session.userId, "users.read")) {
-      const rows = await db`SELECT u.id,u.status,u.created_at,c.kind,c.normalized,c.verified_at
-        FROM identity_user u LEFT JOIN identity_contact c ON c.user_id=u.id
-        WHERE EXISTS (SELECT 1 FROM identity_assignment a JOIN identity_role_permission rp ON rp.role_id=a.role_id
-          WHERE a.user_id=${session.userId} AND a.revoked_at IS NULL AND rp.permission_id='users.read'
-            AND ((a.scope_type='global' AND a.scope_id='*') OR (a.scope_type='resource' AND a.scope_id=u.id::text)))
-        ORDER BY u.created_at DESC LIMIT 50`;
-      return json({ users: rows });
+      const cursor = decodeCursor(request.nextUrl.searchParams.get("cursor"));
+      if (cursor === null) return error("INVALID_CURSOR", 400);
+      const page = await listUsers(db, session.userId, cursor);
+      return json({ users: page.items, next_cursor: page.nextCursor }, 200, requestId);
     }
     if (path === "roles" && await hasPermission(db, session.userId, "roles.read")) {
       const rows = await db`SELECT id,label,privileged FROM identity_role ORDER BY id`;
-      return json({ roles: rows });
+      return json({ roles: rows }, 200, requestId);
     }
     if (path === "grant-requests" && await hasPermission(db, session.userId, "roles.manage")) {
       const rows = await db`SELECT id,requested_by,target_user_id,role_id,scope_type,scope_id,reason,requested_at
         FROM identity_grant_request WHERE status='pending' ORDER BY requested_at DESC LIMIT 50`;
-      return json({ requests: rows });
+      return json({ requests: rows }, 200, requestId);
     }
     if (path === "audit" && await hasPermission(db, session.userId, "audit.read")) {
-      const rows = await db`SELECT id,actor_user_id,operator_identity,target_user_id,action,outcome,reason,request_id,created_at
-        FROM identity_audit ORDER BY created_at DESC LIMIT 50`;
-      return json({ events: rows });
+      const cursor = decodeCursor(request.nextUrl.searchParams.get("cursor"));
+      if (cursor === null) return error("INVALID_CURSOR", 400);
+      const page = await listAudit(db, cursor);
+      return json({ events: page.items, next_cursor: page.nextCursor }, 200, requestId);
     }
     return error("FORBIDDEN", 403);
   } finally { await db.end(); }
 }
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const requestId = randomUUID();
+  const error = (code: string, status: number) => responseError(request, code, status, requestId);
   const path = pathOf(await params);
   if (path === "mobile-recovery") return error("RECOVERY_DISABLED", 404);
   if (!sameOrigin(request)) return error("ORIGIN_REQUIRED", 403);
@@ -112,7 +119,6 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   const fields = allowed[path] ?? (/^grant-requests\/[0-9a-f-]{36}\/approve$/.test(path) ? [] : null);
   if (fields && !only(body, fields)) return error("UNKNOWN_FIELD", 400);
   const db = database();
-  const requestId = randomUUID();
   try {
     if (path === "registrations") {
       const contact = typeof body.contact === "string" ? normalizeContact(body.contact) : null;
@@ -141,7 +147,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         if (typeof cause === "object" && cause && "code" in cause && cause.code === "23505") return error("CONTACT_IN_USE", 409);
         throw cause;
       }
-      return json({ user_id: userId }, 201);
+      return json({ user_id: userId }, 201, requestId);
     }
 
     if (path === "sessions") {
@@ -172,13 +178,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           VALUES (${userId},${userId},'auth.login','success',${requestId})`;
         return { token, csrf, maxAge };
       });
-      return cookiesOn(json({ user_id: userId }), issued.token, issued.csrf, issued.maxAge);
+      return cookiesOn(json({ user_id: userId }, 200, requestId), issued.token, issued.csrf, issued.maxAge);
     }
 
     if (path === "email-verification-requests" || path === "password-reset-requests") {
       const contact = typeof body.email === "string" ? normalizeContact(body.email) : null;
-      if (!contact || contact.kind !== "email") return json(GENERIC_RECOVERY, 202);
-      if (!await limited(db, path, contact.normalized, 5, 3600)) return json(GENERIC_RECOVERY, 202);
+      if (!contact || contact.kind !== "email") return json(GENERIC_RECOVERY, 202, requestId);
+      if (!await limited(db, path, contact.normalized, 5, 3600)) return json(GENERIC_RECOVERY, 202, requestId);
       const rows = await db`SELECT c.id AS contact_id,c.user_id,c.verified_at FROM identity_contact c
         JOIN identity_user u ON u.id=c.user_id WHERE c.kind='email' AND c.normalized=${contact.normalized}
         AND u.status='active' LIMIT 1`;
@@ -206,7 +212,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       }
       if (row) await writeAudit(db, { target: row.user_id, action: verify ? "public.email_verification_request" : "public.password_reset_request",
         outcome: delivered ? "success" : "denied", requestId });
-      return json(GENERIC_RECOVERY, 202);
+      return json(GENERIC_RECOVERY, 202, requestId);
     }
 
     if (path === "email-verifications" || path === "password-resets") {
@@ -242,7 +248,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           VALUES (${row.user_id},${row.user_id},${verify ? "auth.email_verified" : "auth.password_reset"},'success',${requestId})`;
         return true;
       });
-      return applied ? json({ status: "ok" }) : error("INVALID_TOKEN", 400);
+      return applied ? json({ status: "ok" }, 200, requestId) : error("INVALID_TOKEN", 400);
     }
 
     const session = await readSession(db, request);
@@ -254,7 +260,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id)
           VALUES (${session.userId},${session.userId},'auth.logout','success',${requestId})`;
       });
-      return clearCookies(json({ status: "ok" }));
+      return clearCookies(json({ status: "ok" }, 200, requestId));
     }
     if (path === "change-password") {
       if (typeof body.current_password !== "string" || !validPassword(body.new_password)) return error("INVALID_INPUT", 400);
@@ -273,7 +279,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id)
           VALUES (${session.userId},${session.userId},'auth.change_password','success',${requestId})`;
       });
-      return clearCookies(json({ status: "ok" }));
+      return clearCookies(json({ status: "ok" }, 200, requestId));
     }
     if (path === "role-assignments") {
       const target = body.user_id;
@@ -304,7 +310,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
             ${requestId},${tx.json({ role, scopeType, scopeId })})`;
         return assigned[0].id;
       });
-      return json({ assignment_id: result }, 201);
+      return json({ assignment_id: result }, 201, requestId);
     }
     if (path === "grant-requests") {
       const target = body.user_id;
@@ -334,7 +340,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
             ${tx.json({ request_id: rows[0].id, role, scopeType, scopeId })})`;
         return rows[0].id;
       });
-      return created ? json({ request_id: created }, 201) : error("USER_NOT_FOUND", 404);
+      return created ? json({ request_id: created }, 201, requestId) : error("USER_NOT_FOUND", 404);
     }
     const approval = /^grant-requests\/([0-9a-f-]{36})\/approve$/.exec(path);
     if (approval) {
@@ -345,6 +351,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         if (!rows.length || rows[0].status !== "pending") return "missing";
         const item = rows[0];
         if (item.requested_by === session.userId || item.target_user_id === session.userId || item.target_status !== "active") return "denied";
+        const requesterRequired = await tx`SELECT rp.permission_id FROM identity_role_permission rp WHERE rp.role_id=${item.role_id}
+          AND NOT EXISTS (SELECT 1 FROM identity_assignment a JOIN identity_role_permission own ON own.role_id=a.role_id
+            WHERE a.user_id=${item.requested_by} AND a.revoked_at IS NULL AND own.permission_id=rp.permission_id
+              AND ((a.scope_type='global' AND a.scope_id='*') OR (a.scope_type=${item.scope_type} AND a.scope_id=${item.scope_id})))`;
+        const requesterManager = await tx`SELECT 1 FROM identity_assignment a JOIN identity_role_permission rp ON rp.role_id=a.role_id
+          WHERE a.user_id=${item.requested_by} AND a.revoked_at IS NULL AND rp.permission_id='roles.manage'
+            AND ((a.scope_type='global' AND a.scope_id='*') OR (a.scope_type=${item.scope_type} AND a.scope_id=${item.scope_id})) LIMIT 1`;
         const required = await tx`SELECT rp.permission_id FROM identity_role_permission rp WHERE rp.role_id=${item.role_id}
           AND NOT EXISTS (SELECT 1 FROM identity_assignment a JOIN identity_role_permission own ON own.role_id=a.role_id
             WHERE a.user_id=${session.userId} AND a.revoked_at IS NULL AND own.permission_id=rp.permission_id
@@ -352,7 +365,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         const manager = await tx`SELECT 1 FROM identity_assignment a JOIN identity_role_permission rp ON rp.role_id=a.role_id
           WHERE a.user_id=${session.userId} AND a.revoked_at IS NULL AND rp.permission_id='roles.manage'
             AND ((a.scope_type='global' AND a.scope_id='*') OR (a.scope_type=${item.scope_type} AND a.scope_id=${item.scope_id})) LIMIT 1`;
-        if (required.length || !manager.length) return "denied";
+        if (requesterRequired.length || !requesterManager.length || required.length || !manager.length) return "denied";
+        const existing = await tx`SELECT 1 FROM identity_assignment WHERE user_id=${item.target_user_id}
+          AND role_id=${item.role_id} AND scope_type=${item.scope_type} AND scope_id=${item.scope_id}
+          AND revoked_at IS NULL LIMIT 1`;
+        if (existing.length) return "existing";
         await tx`INSERT INTO identity_assignment(user_id,role_id,scope_type,scope_id,granted_by)
           VALUES (${item.target_user_id},${item.role_id},${item.scope_type},${item.scope_id},${session.userId})`;
         await tx`UPDATE identity_grant_request SET status='approved',approved_by=${session.userId},decided_at=now() WHERE id=${item.id}`;
@@ -362,13 +379,17 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
             ${tx.json({ request_id: item.id, role: item.role_id, scopeType: item.scope_type, scopeId: item.scope_id, requested_by: item.requested_by })})`;
         return "approved";
       });
-      return result === "approved" ? json({ status: "ok" }) : error(result === "missing" ? "NOT_FOUND" : "FORBIDDEN", result === "missing" ? 404 : 403);
+      return result === "approved" ? json({ status: "ok" }, 200, requestId)
+        : error(result === "missing" ? "NOT_FOUND" : result === "existing" ? "ALREADY_ASSIGNED" : "FORBIDDEN",
+          result === "missing" ? 404 : result === "existing" ? 409 : 403);
     }
     return error("NOT_FOUND", 404);
   } finally { await db.end(); }
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const requestId = randomUUID();
+  const error = (code: string, status: number) => responseError(request, code, status, requestId);
   const path = pathOf(await params);
   const match = /^users\/([0-9a-f-]{36})$/.exec(path);
   if (!match) return error("NOT_FOUND", 404);
@@ -398,14 +419,16 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
         await tx`UPDATE identity_token SET consumed_at=now() WHERE user_id=${target} AND consumed_at IS NULL`;
       }
       await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,reason,request_id,metadata)
-        VALUES (${session.userId},${target},'identity.status_change','success',${body.reason as string},${randomUUID()},${tx.json({ status: body.status as string })})`;
+        VALUES (${session.userId},${target},'identity.status_change','success',${body.reason as string},${requestId},${tx.json({ status: body.status as string })})`;
       return true;
     });
-    return updated ? json({ status: "ok" }) : error("USER_NOT_FOUND", 404);
+    return updated ? json({ status: "ok" }, 200, requestId) : error("USER_NOT_FOUND", 404);
   } finally { await db.end(); }
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const requestId = randomUUID();
+  const error = (code: string, status: number) => responseError(request, code, status, requestId);
   const path = pathOf(await params);
   const match = /^role-assignments\/([0-9a-f-]{36})$/.exec(path);
   if (!match) return error("NOT_FOUND", 404);
@@ -426,9 +449,9 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
       await tx`UPDATE identity_assignment SET revoked_at=now() WHERE id=${match[1]} AND revoked_at IS NULL`;
       await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${assignment.user_id} AND revoked_at IS NULL`;
       await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id,metadata)
-        VALUES (${session.userId},${assignment.user_id},'rbac.revoke','success',${randomUUID()},
+        VALUES (${session.userId},${assignment.user_id},'rbac.revoke','success',${requestId},
           ${tx.json({ role: assignment.role_id, scopeType: assignment.scope_type, scopeId: assignment.scope_id })})`;
     });
-    return json({ status: "ok" });
+    return json({ status: "ok" }, 200, requestId);
   } finally { await db.end(); }
 }

@@ -58,6 +58,8 @@ try {
   assert.equal((await call("registrations", { contact: "+8801700000000", password })).response.status, 409);
   const login = await call("sessions", { contact: email, password });
   assert.equal(login.response.status, 200);
+  const loginRequestId = login.response.headers.get("x-request-id");
+  assert.ok(loginRequestId);
   const member = cookies(login.response);
   assert.ok(member.csrf);
   const profile = await fetch(`${base}/api/v1/identity/profile`, { headers: { Cookie: member.cookie } });
@@ -66,8 +68,16 @@ try {
   assert.equal((await call("password-reset-requests", { email })).response.status, 202);
   assert.equal((await db`SELECT 1 FROM identity_token WHERE purpose='reset_password'`).length, 0);
   assert.equal((await call("mobile-recovery", { contact: "+8801700000000" })).response.status, 404);
+  const disabledBn = await fetch(`${base}/api/v1/identity/mobile-recovery`, { headers: { Cookie: "NEXT_LOCALE=bn" } });
+  assert.equal(disabledBn.status, 404);
+  const disabledMessage = await disabledBn.json();
+  assert.equal(disabledMessage.code, "RECOVERY_DISABLED");
+  assert.ok(disabledMessage.request_id);
+  assert.match(disabledMessage.message, /[\u0980-\u09ff]/);
 
   const user = (await db`SELECT u.id,c.id AS contact_id FROM identity_user u JOIN identity_contact c ON c.user_id=u.id WHERE c.normalized=${email}`)[0];
+  assert.equal((await db`SELECT 1 FROM identity_audit WHERE action='auth.login' AND target_user_id=${user.id}
+    AND request_id=${loginRequestId}`).length, 1);
   assert.equal((await call("email-verification-requests", { email })).response.status, 202);
   const verifyToken = tokenFromMail(await nextMail(), true);
   assert.equal((await call("email-verifications", { token: verifyToken })).response.status, 401);
@@ -122,6 +132,22 @@ try {
   assert.equal((await call(approvalPath, {}, ownerCookie.cookie, ownerCookie.csrf)).response.status, 403);
   assert.equal((await call(approvalPath, {}, reviewerCookie.cookie, reviewerCookie.csrf)).response.status, 200);
   assert.equal((await call(approvalPath, {}, reviewerCookie.cookie, reviewerCookie.csrf)).response.status, 404);
+  assert.equal((await fetch(`${base}/api/v1/identity/users?cursor=invalid`, { headers: { Cookie: ownerCookie.cookie } })).status, 400);
+  await db`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id,created_at)
+    SELECT ${owner.id},${owner.id},'ci.pagination','success',gen_random_uuid()::text,
+      now()+series.i*interval '1 microsecond' FROM generate_series(1,55) AS series(i)`;
+  const auditFirst = await fetch(`${base}/api/v1/identity/audit`, { headers: { Cookie: ownerCookie.cookie } });
+  assert.equal(auditFirst.status, 200);
+  const firstPage = await auditFirst.json();
+  assert.equal(firstPage.events.length, 50);
+  assert.ok(firstPage.next_cursor);
+  const auditSecond = await fetch(`${base}/api/v1/identity/audit?cursor=${encodeURIComponent(firstPage.next_cursor)}`, { headers: { Cookie: ownerCookie.cookie } });
+  assert.equal(auditSecond.status, 200);
+  const secondPage = await auditSecond.json();
+  assert.ok(secondPage.events.length > 0);
+  assert.ok(!secondPage.events.some((event) => firstPage.events.some((first) => first.id === event.id)));
+  assert.equal(firstPage.events.length + secondPage.events.length,
+    Number((await db`SELECT count(*)::int AS total FROM identity_audit`)[0].total));
   const suspended = await fetch(`${base}/api/v1/identity/users/${user.id}`, { method: "PATCH",
     headers: { "Content-Type": "application/json", Origin: base, Cookie: ownerCookie.cookie, "x-csrf-token": ownerCookie.csrf },
     body: JSON.stringify({ status: "suspended", reason: "Synthetic suspension check" }) });
