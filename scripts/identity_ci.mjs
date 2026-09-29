@@ -146,6 +146,10 @@ try {
   const secondPage = await auditSecond.json();
   assert.ok(secondPage.events.length > 0);
   assert.ok(!secondPage.events.some((event) => firstPage.events.some((first) => first.id === event.id)));
+  const seen = [...firstPage.events, ...secondPage.events].map((event) => event.id);
+  const allAuditRows = await db`SELECT id,created_at FROM identity_audit ORDER BY created_at DESC,id DESC`;
+  const missing = allAuditRows.filter((event) => !seen.includes(event.id));
+  if (missing.length) console.log("Pagination missing rows", JSON.stringify({ cursor: firstPage.next_cursor, missing }));
   assert.equal(firstPage.events.length + secondPage.events.length,
     Number((await db`SELECT count(*)::int AS total FROM identity_audit`)[0].total));
   const suspended = await fetch(`${base}/api/v1/identity/users/${user.id}`, { method: "PATCH",
