@@ -20,27 +20,27 @@ if (operator.length > 200 || review.length > 200 || reason.length > 500 || !/^[0
   throw new Error("Invalid operator context or target ID");
 }
 
-async function main() {
-  const db = postgres(url!, { max: 1 });
+async function main(databaseUrl: string, operatorId: string, reviewRef: string, actionReason: string, targetId: string) {
+  const db = postgres(databaseUrl, { max: 1 });
   try {
     const assigned = await db.begin(async (tx) => {
-    const users = await tx`SELECT id,status FROM identity_user WHERE id=${target} FOR UPDATE`;
+    const users = await tx`SELECT id,status FROM identity_user WHERE id=${targetId} FOR UPDATE`;
     if (users.length !== 1 || users[0].status !== "active") throw new Error("Target account is not active");
     const exists = await tx`SELECT 1 FROM identity_assignment WHERE role_id='owner' AND revoked_at IS NULL LIMIT 1`;
     if (exists.length) throw new Error("Owner already exists; use the separately reviewed two-person grant process");
     const rows = await tx`INSERT INTO identity_assignment(user_id,role_id,scope_type,scope_id)
-      VALUES (${target},'owner','global','*') RETURNING id`;
+      VALUES (${targetId},'owner','global','*') RETURNING id`;
     await tx`INSERT INTO identity_audit(operator_identity,target_user_id,action,outcome,reason,request_id,metadata)
-      VALUES (${operator},${target},'operator.bootstrap_owner','success',${reason},${randomUUID()},
-        ${tx.json({ review_reference: review, assignment_id: rows[0].id, role: "owner" })})`;
-    await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${target} AND revoked_at IS NULL`;
+      VALUES (${operatorId},${targetId},'operator.bootstrap_owner','success',${actionReason},${randomUUID()},
+        ${tx.json({ review_reference: reviewRef, assignment_id: rows[0].id, role: "owner" })})`;
+    await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${targetId} AND revoked_at IS NULL`;
     return rows[0].id;
     });
     process.stdout.write(`Owner assignment recorded: ${assigned}\n`);
   } finally { await db.end(); }
 }
 
-main().catch((error: unknown) => {
+main(url, operator, review, reason, target).catch((error: unknown) => {
   process.stderr.write(`${error instanceof Error ? error.message : "Owner bootstrap failed"}\n`);
   process.exitCode = 1;
 });

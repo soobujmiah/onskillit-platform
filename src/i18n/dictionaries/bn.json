@@ -24,6 +24,12 @@
     "verified": "আপনার ইমেইল যাচাই হয়েছে।", "resetDone": "আপনার গোপনশব্দ পরিবর্তন হয়েছে।",
     "invalid": "অনুরোধটি সম্পন্ন হয়নি। তথ্য দেখে আবার চেষ্টা করুন।",
     "back": "প্রবেশ পাতায় ফিরুন", "empty": "কোনো তথ্য পাওয়া যায়নি।",
-    "contactUnverified": "যাচাই হয়নি", "contactVerified": "যাচাই হয়েছে"
+    "contactUnverified": "যাচাই হয়নি", "contactVerified": "যাচাই হয়েছে",
+    "changePassword": "গোপনশব্দ পরিবর্তন করুন", "currentPassword": "বর্তমান গোপনশব্দ",
+    "passwordChanged": "গোপনশব্দ পরিবর্তন হয়েছে। আবার প্রবেশ করুন।",
+    "status": "হিসাবের অবস্থা", "activate": "সক্রিয় করুন", "suspend": "স্থগিত করুন",
+    "targetId": "লক্ষ্য ব্যবহারকারীর পরিচয়", "roleId": "ভূমিকা", "grant": "ভূমিকা দিন", "reason": "কারণ",
+    "saved": "পরিবর্তন সংরক্ষিত হয়েছে।", "supportRole": "সহায়তা", "memberRole": "সদস্য",
+    "activeStatus": "সক্রিয়", "suspendedStatus": "স্থগিত", "inactiveStatus": "নিষ্ক্রিয়", "pendingStatus": "মুছে ফেলার অপেক্ষায়"
   }
 }

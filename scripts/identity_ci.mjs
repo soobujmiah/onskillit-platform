@@ -66,6 +66,11 @@ try {
   assert.equal((await fetch(`${base}/api/v1/identity/audit`, { headers: { Cookie: ownerCookie.cookie } })).status, 200);
   assert.equal((await call("role-assignments", { user_id: user.id, role_id: "owner", scope_type: "global", scope_id: "*" }, ownerCookie.cookie, ownerCookie.csrf)).response.status, 403);
   assert.equal((await call("role-assignments", { user_id: user.id, role_id: "support", scope_type: "global", scope_id: "*" }, ownerCookie.cookie, ownerCookie.csrf)).response.status, 201);
+  const suspended = await fetch(`${base}/api/v1/identity/users/${user.id}`, { method: "PATCH",
+    headers: { "Content-Type": "application/json", Origin: base, Cookie: ownerCookie.cookie, "x-csrf-token": ownerCookie.csrf },
+    body: JSON.stringify({ status: "suspended" }) });
+  assert.equal(suspended.status, 200);
+  assert.equal((await call("sessions", { contact: email, password: newPassword })).response.status, 401);
   const audit = await db`SELECT action,operator_identity,target_user_id FROM identity_audit WHERE action='operator.bootstrap_owner'`;
   assert.equal(audit.length, 1);
   assert.equal(audit[0].operator_identity, "ci-operator");

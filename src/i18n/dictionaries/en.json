@@ -24,6 +24,12 @@
     "verified": "Your email is verified.", "resetDone": "Your password has been changed.",
     "invalid": "The request could not be completed. Check the details and try again.",
     "back": "Back to sign in", "empty": "No records are available.",
-    "contactUnverified": "Unverified", "contactVerified": "Verified"
+    "contactUnverified": "Unverified", "contactVerified": "Verified",
+    "changePassword": "Change password", "currentPassword": "Current password",
+    "passwordChanged": "Password changed. Please sign in again.",
+    "status": "Account status", "activate": "Activate", "suspend": "Suspend",
+    "targetId": "Target user ID", "roleId": "Role", "grant": "Grant role", "reason": "Reason",
+    "saved": "Change saved.", "supportRole": "Support", "memberRole": "Member",
+    "activeStatus": "Active", "suspendedStatus": "Suspended", "inactiveStatus": "Inactive", "pendingStatus": "Deletion pending"
   }
 }

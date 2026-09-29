@@ -183,6 +183,23 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       await writeAudit(db, { actor: session.userId, target: session.userId, action: "auth.logout", outcome: "success", requestId });
       return clearCookies(json({ status: "ok" }));
     }
+    if (path === "change-password") {
+      if (typeof body.current_password !== "string" || !validPassword(body.new_password)) return error("INVALID_INPUT", 400);
+      if (!await limited(db, "change-password", session.userId, 5, 3600)) return error("RATE_LIMITED", 429);
+      const current = await db`SELECT password_hash FROM identity_password WHERE user_id=${session.userId}`;
+      if (!current.length || !await verifyPassword(current[0].password_hash, body.current_password)) {
+        await writeAudit(db, { actor: session.userId, target: session.userId, action: "auth.change_password", outcome: "failure", requestId });
+        return error("INVALID_CREDENTIALS", 401);
+      }
+      const newHash = await hashPassword(body.new_password);
+      await db.begin(async (tx) => {
+        await tx`UPDATE identity_password SET password_hash=${newHash},changed_at=now() WHERE user_id=${session.userId}`;
+        await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${session.userId} AND revoked_at IS NULL`;
+        await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id)
+          VALUES (${session.userId},${session.userId},'auth.change_password','success',${requestId})`;
+      });
+      return clearCookies(json({ status: "ok" }));
+    }
     if (path === "role-assignments") {
       const target = body.user_id;
       const role = body.role_id;

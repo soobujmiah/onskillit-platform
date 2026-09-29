@@ -125,6 +125,14 @@ body {
   background: var(--surface-canvas);
   color: var(--text-primary);
 }
+.identity-form select {
+  min-height: 44px;
+  padding: var(--space-sm);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-field);
+  background: var(--surface-canvas);
+  color: var(--text-primary);
+}
 .identity-form button, .identity-panel button {
   min-height: 44px;
   padding: var(--space-sm) var(--space-md);
