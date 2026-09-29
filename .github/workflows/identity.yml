@@ -59,3 +59,14 @@ jobs:
           done
       - name: Exercise identity, mail delivery, recovery, RBAC and audit
         run: node scripts/identity_ci.mjs
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Exercise identity routes in browser
+        run: npx playwright test playwright/identity.spec.ts
+      - name: Upload browser report
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: identity-playwright-report
+          path: playwright-report/
+          retention-days: 14
