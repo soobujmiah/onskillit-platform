@@ -10,15 +10,15 @@ A page is a route-level responsibility with its own loading, access, error and n
 
 | Page ID | Page name | Route | Type/audience | Purpose | Parent | Module | Auth | Permission | SEO | Static/dynamic | Template | Priority | Implementation phase | Status | Dependencies |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| PAGE-HOME | Home | / | Public | Introduce verified offers | root | CMS | none | public | index | static | PAGE-HOME | P1 | PHASE-05 | IN PROGRESS | CMS, Service |
-| PAGE-ABOUT | About | /about | Public | Explain verified organization | root | CMS | none | public | index | static | PAGE-ABOUT | P1 | PHASE-05 | IN PROGRESS | Page |
-| PAGE-SERVICES | Services | /services | Public | Browse services | root | Catalog | none | public | index | listing | PAGE-SERVICES | P0 | PHASE-05 | IN PROGRESS | Service, Category |
-| PAGE-SERVICE-DETAIL | Service detail | /services/{slug} | Public | Explain one service | PAGE-SERVICES | Catalog | none | public | index | dynamic | PAGE-SERVICE-DETAIL | P0 | PHASE-05 | IN PROGRESS | Service, Media, SEO |
-| PAGE-CONTACT | Contact | /contact | Public | Submit inquiry | root | CRM | none | public | index | static | PAGE-CONTACT | P1 | PHASE-05 | IN PROGRESS | Inquiry, rate limit |
-| PAGE-FAQ | FAQ | /faq | Public | Answer approved questions | root | CMS | none | public | index | static | PAGE-FAQ | P1 | PHASE-05 | IN PROGRESS | FAQ, SEO |
-| PAGE-PRIVACY | Privacy | /privacy | Public | Publish approved notice | footer | CMS | none | public | index | static | PAGE-PRIVACY | P1 | PHASE-05 | IN PROGRESS | Approved legal text |
-| PAGE-TERMS | Terms | /terms | Public | Publish approved terms | footer | CMS | none | public | index | static | PAGE-TERMS | P1 | PHASE-05 | IN PROGRESS | Approved legal text |
-| PAGE-ACCESSIBILITY | Accessibility | /accessibility | Public | Explain access support | footer | CMS | none | public | index | static | PAGE-ACCESSIBILITY | P1 | PHASE-05 | IN PROGRESS | Approved support policy |
+| PAGE-HOME | Home | / | Public | Introduce verified offers | root | CMS | none | public | index | static | PAGE-HOME | P1 | PHASE-05 | CI-VERIFIED | CMS, Service |
+| PAGE-ABOUT | About | /about | Public | Explain verified organization | root | CMS | none | public | index | static | PAGE-ABOUT | P1 | PHASE-05 | CI-VERIFIED | Page |
+| PAGE-SERVICES | Services | /services | Public | Browse services | root | Catalog | none | public | index | listing | PAGE-SERVICES | P0 | PHASE-05 | CI-VERIFIED | Service, Category |
+| PAGE-SERVICE-DETAIL | Service detail | /services/{slug} | Public | Explain one service | PAGE-SERVICES | Catalog | none | public | index | dynamic | PAGE-SERVICE-DETAIL | P0 | PHASE-05 | CI-VERIFIED | Service, Media, SEO |
+| PAGE-CONTACT | Contact | /contact | Public | Submit inquiry | root | CRM | none | public | index | static | PAGE-CONTACT | P1 | PHASE-05 | CI-VERIFIED | Inquiry, rate limit |
+| PAGE-FAQ | FAQ | /faq | Public | Answer approved questions | root | CMS | none | public | index | static | PAGE-FAQ | P1 | PHASE-05 | CI-VERIFIED | FAQ, SEO |
+| PAGE-PRIVACY | Privacy | /privacy | Public | Publish approved notice | footer | CMS | none | public | index | static | PAGE-PRIVACY | P1 | PHASE-05 | CI-VERIFIED | Approved legal text |
+| PAGE-TERMS | Terms | /terms | Public | Publish approved terms | footer | CMS | none | public | index | static | PAGE-TERMS | P1 | PHASE-05 | CI-VERIFIED | Approved legal text |
+| PAGE-ACCESSIBILITY | Accessibility | /accessibility | Public | Explain access support | footer | CMS | none | public | index | static | PAGE-ACCESSIBILITY | P1 | PHASE-05 | CI-VERIFIED | Approved support policy |
 | PAGE-COURSES | Courses | /courses | Public | Browse real courses | root | LMS | none | public | index | listing | PAGE-COURSES | P0 | PHASE-06 | NOT STARTED | Course, Instructor |
 | PAGE-COURSE-DETAIL | Course detail | /courses/{slug} | Public | Choose a course | PAGE-COURSES | LMS | none | public | index | dynamic | PAGE-COURSE-DETAIL | P0 | PHASE-06 | NOT STARTED | Course, Edition, Media, SEO |
 | PAGE-PROGRAMS | Programs | /programs | Public | Browse training programs | root | TMS | none | public | index | listing | PAGE-PROGRAMS | P0 | PHASE-07 | NOT STARTED | Program |
