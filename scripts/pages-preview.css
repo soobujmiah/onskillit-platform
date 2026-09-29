@@ -1,0 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap');
+html[lang="bn"] body { font-family: 'Hind Siliguri', sans-serif; }
+html[lang="en"] body { font-family: Arial, sans-serif; line-height: 1.6; }
+.preview-banner { padding: .5rem 1rem; text-align: center; background: var(--action-primary-bg); color: var(--action-primary-text); font-size: .875rem; }
+.preview-header { width: min(100%, 82rem); margin: auto; padding: 1rem 1.5rem; display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 2rem; justify-content: space-between; }
+.site-nav { gap: .35rem 1rem; }
+.site-nav a[aria-current="page"] { font-weight: 800; text-decoration-thickness: 2px; }
+.preview-controls { display: flex; align-items: center; gap: 1rem; }
+.preview-controls a { color: var(--text-primary); }
+.preview-controls button { min-width: 44px; min-height: 44px; border: 1px solid var(--border-default); border-radius: var(--radius-field); background: var(--surface-raised); color: var(--text-primary); font: inherit; cursor: pointer; }
+main { padding: var(--space-xl) var(--space-lg) var(--space-section); }
+.public-card-grid { margin-bottom: 0; }
+.public-contact-details { margin-bottom: 0; }
+@media (max-width: 640px) { .preview-header { align-items: flex-start; } .site-nav { order: 3; width: 100%; } main { padding: var(--space-lg) var(--space-md); } }
