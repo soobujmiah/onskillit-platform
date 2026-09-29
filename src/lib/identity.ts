@@ -117,7 +117,7 @@ export async function writeAudit(db: Db, input: {
 
 export async function issueSession(db: Db, userId: string): Promise<{ token: string; csrf: string; staff: boolean; maxAge: number }> {
   const staffRows = await db`SELECT 1 FROM identity_assignment a JOIN identity_role r ON r.id=a.role_id
-    WHERE a.user_id=${userId} AND a.revoked_at IS NULL AND r.privileged=true LIMIT 1`;
+    WHERE a.user_id=${userId} AND a.revoked_at IS NULL AND r.staff=true LIMIT 1`;
   const staff = staffRows.length > 0;
   const maxAge = staff ? 12 * 3600 : 30 * 24 * 3600;
   const token = secret();

@@ -55,6 +55,7 @@ export const identityToken = pgTable("identity_token", {
 export const identityRole = pgTable("identity_role", {
   id: text("id").primaryKey(),
   label: text("label").notNull(),
+  staff: boolean("staff").notNull().default(false),
   privileged: boolean("privileged").notNull().default(false),
 });
 export const identityPermission = pgTable("identity_permission", { id: text("id").primaryKey() });

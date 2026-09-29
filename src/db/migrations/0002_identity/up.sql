@@ -54,6 +54,7 @@ CREATE INDEX identity_token_user_purpose_idx ON identity_token(user_id, purpose)
 CREATE TABLE identity_role (
   id TEXT PRIMARY KEY,
   label TEXT NOT NULL,
+  staff BOOLEAN NOT NULL DEFAULT false,
   privileged BOOLEAN NOT NULL DEFAULT false
 );
 CREATE TABLE identity_permission (
@@ -99,9 +100,9 @@ CREATE TABLE identity_rate_limit (
   window_start TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
-INSERT INTO identity_role(id,label,privileged) VALUES
-  ('owner','Owner',true),('security_admin','Security administrator',true),
-  ('support','Support',false),('member','Member',false);
+INSERT INTO identity_role(id,label,staff,privileged) VALUES
+  ('owner','Owner',true,true),('security_admin','Security administrator',true,true),
+  ('support','Support',true,false),('member','Member',false,false);
 INSERT INTO identity_permission(id) VALUES
   ('users.read'),('users.manage'),('roles.read'),('roles.manage'),
   ('audit.read'),('profile.read'),('profile.manage');

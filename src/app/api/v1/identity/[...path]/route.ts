@@ -117,6 +117,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         return error("INVALID_CREDENTIALS", 401);
       }
       const userId: string = rows[0].id;
+      await db`UPDATE identity_session SET revoked_at=now() WHERE user_id=${userId} AND revoked_at IS NULL`;
       const issued = await issueSession(db, userId);
       await writeAudit(db, { actor: userId, target: userId, action: "auth.login", outcome: "success", requestId });
       return cookiesOn(json({ user_id: userId }), issued.token, issued.csrf, issued.maxAge);
@@ -212,5 +213,63 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       return json({ assignment_id: result }, 201);
     }
     return error("NOT_FOUND", 404);
+  } finally { await db.end(); }
+}
+
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const path = pathOf(await params);
+  const match = /^users\/([0-9a-f-]{36})$/.exec(path);
+  if (!match) return error("NOT_FOUND", 404);
+  if (!sameOrigin(request)) return error("ORIGIN_REQUIRED", 403);
+  const body = await bodyOf(request);
+  if (!body || !["active", "inactive", "suspended", "deletion_pending"].includes(String(body.status))) return error("INVALID_INPUT", 400);
+  const db = database();
+  try {
+    const session = await readSession(db, request);
+    if (!session) return error("UNAUTHENTICATED", 401);
+    if (!validCsrf(request, session)) return error("CSRF_REJECTED", 403);
+    if (!await hasPermission(db, session.userId, "users.manage")) return error("FORBIDDEN", 403);
+    const target = match[1];
+    if (target === session.userId) return error("SELF_CHANGE_DENIED", 403);
+    const targetPrivileged = await db`SELECT 1 FROM identity_assignment a JOIN identity_role r ON r.id=a.role_id
+      WHERE a.user_id=${target} AND a.revoked_at IS NULL AND r.privileged=true LIMIT 1`;
+    if (targetPrivileged.length) return error("SECOND_APPROVAL_REQUIRED", 403);
+    const updated = await db.begin(async (tx) => {
+      const rows = await tx`UPDATE identity_user SET status=${body.status as string},updated_at=now()
+        WHERE id=${target} RETURNING id`;
+      if (!rows.length) return false;
+      if (body.status !== "active") await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${target} AND revoked_at IS NULL`;
+      await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id,metadata)
+        VALUES (${session.userId},${target},'identity.status_change','success',${randomUUID()},${tx.json({ status: body.status as string })})`;
+      return true;
+    });
+    return updated ? json({ status: "ok" }) : error("USER_NOT_FOUND", 404);
+  } finally { await db.end(); }
+}
+
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const path = pathOf(await params);
+  const match = /^role-assignments\/([0-9a-f-]{36})$/.exec(path);
+  if (!match) return error("NOT_FOUND", 404);
+  if (!sameOrigin(request)) return error("ORIGIN_REQUIRED", 403);
+  const db = database();
+  try {
+    const session = await readSession(db, request);
+    if (!session) return error("UNAUTHENTICATED", 401);
+    if (!validCsrf(request, session)) return error("CSRF_REJECTED", 403);
+    const rows = await db`SELECT a.user_id,a.role_id,a.scope_type,a.scope_id,r.privileged FROM identity_assignment a
+      JOIN identity_role r ON r.id=a.role_id WHERE a.id=${match[1]} AND a.revoked_at IS NULL`;
+    if (!rows.length) return error("NOT_FOUND", 404);
+    const assignment = rows[0];
+    if (assignment.privileged) return error("SECOND_APPROVAL_REQUIRED", 403);
+    if (!await hasPermission(db, session.userId, "roles.manage", assignment.scope_type, assignment.scope_id)) return error("FORBIDDEN", 403);
+    await db.begin(async (tx) => {
+      await tx`UPDATE identity_assignment SET revoked_at=now() WHERE id=${match[1]} AND revoked_at IS NULL`;
+      await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${assignment.user_id} AND revoked_at IS NULL`;
+      await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id,metadata)
+        VALUES (${session.userId},${assignment.user_id},'rbac.revoke','success',${randomUUID()},
+          ${tx.json({ role: assignment.role_id, scopeType: assignment.scope_type, scopeId: assignment.scope_id })})`;
+    });
+    return json({ status: "ok" });
   } finally { await db.end(); }
 }

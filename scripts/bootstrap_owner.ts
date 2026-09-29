@@ -20,9 +20,10 @@ if (operator.length > 200 || review.length > 200 || reason.length > 500 || !/^[0
   throw new Error("Invalid operator context or target ID");
 }
 
-const db = postgres(url, { max: 1 });
-try {
-  const assigned = await db.begin(async (tx) => {
+async function main() {
+  const db = postgres(url!, { max: 1 });
+  try {
+    const assigned = await db.begin(async (tx) => {
     const users = await tx`SELECT id,status FROM identity_user WHERE id=${target} FOR UPDATE`;
     if (users.length !== 1 || users[0].status !== "active") throw new Error("Target account is not active");
     const exists = await tx`SELECT 1 FROM identity_assignment WHERE role_id='owner' AND revoked_at IS NULL LIMIT 1`;
@@ -34,6 +35,12 @@ try {
         ${tx.json({ review_reference: review, assignment_id: rows[0].id, role: "owner" })})`;
     await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${target} AND revoked_at IS NULL`;
     return rows[0].id;
-  });
-  process.stdout.write(`Owner assignment recorded: ${assigned}\n`);
-} finally { await db.end(); }
+    });
+    process.stdout.write(`Owner assignment recorded: ${assigned}\n`);
+  } finally { await db.end(); }
+}
+
+main().catch((error: unknown) => {
+  process.stderr.write(`${error instanceof Error ? error.message : "Owner bootstrap failed"}\n`);
+  process.exitCode = 1;
+});
