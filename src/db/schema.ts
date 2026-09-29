@@ -168,8 +168,12 @@ export const catalogService = pgTable("catalog_service", {
 });
 export const publicInquiry = pgTable("public_inquiry", {
   id: uuid("id").primaryKey().defaultRandom(),
-  name: text("name").notNull(), email: text("email").notNull(), phone: text("phone"), message: text("message").notNull(),
+  name: text("name"), email: text("email"), phone: text("phone"), message: text("message"),
   locale: text("locale").notNull(), servicePageId: uuid("service_page_id").references(() => catalogService.pageId),
   consentVersion: text("consent_version").notNull(), sourcePath: text("source_path").notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  redactedAt: timestamp("redacted_at", { withTimezone: true }),
+  redactedBy: text("redacted_by"),
+  redactionRequestReference: text("redaction_request_reference"),
+  redactionReviewReference: text("redaction_review_reference"),
 });

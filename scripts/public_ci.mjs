@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 import postgres from "postgres";
 
 const db = postgres(process.env.DATABASE_URL, { max: 1 });
@@ -62,5 +63,23 @@ try {
   assert.equal((await db`SELECT category FROM catalog_service WHERE page_id=${service.id}`)[0].category, "synthetic-category");
   for (let i = 0; i < 3; i++) assert.equal((await inquiry(valid)).status, 202);
   assert.equal((await inquiry(valid)).status, 429);
-  console.log("Public core integration passed: draft isolation, paired service routes, privacy consent, inquiry rate limit and sitemap");
+  const [intake] = await db`SELECT id FROM public_inquiry ORDER BY created_at LIMIT 1`;
+  await assert.rejects(db`UPDATE public_inquiry SET message='Tampered inquiry' WHERE id=${intake.id}`);
+  const redactionEnv = { ...process.env, INQUIRY_ID: intake.id, OPERATOR_IDENTITY: "ci-operator",
+    PRIVACY_REQUEST_REFERENCE: "synthetic-request-1", PRIVACY_REVIEW_REFERENCE: "synthetic-review-1" };
+  assert.throws(() => execFileSync("./node_modules/.bin/tsx", ["scripts/redact_public_inquiry.ts"], { env: redactionEnv }));
+  execFileSync("./node_modules/.bin/tsx", ["scripts/redact_public_inquiry.ts"], {
+    env: { ...redactionEnv, PRIVACY_REDACTION_APPROVED: "yes" },
+  });
+  const [redacted] = await db`SELECT name,email,phone,message,redacted_at FROM public_inquiry WHERE id=${intake.id}`;
+  assert.equal(redacted.name, null);
+  assert.equal(redacted.email, null);
+  assert.equal(redacted.phone, null);
+  assert.equal(redacted.message, null);
+  assert(redacted.redacted_at);
+  const audits = await db`SELECT id FROM identity_audit WHERE action='operator.redact_public_inquiry'
+    AND metadata->>'inquiry_id'=${intake.id}`;
+  assert.equal(audits.length, 1);
+  await assert.rejects(db`DELETE FROM public_inquiry WHERE id=${intake.id}`);
+  console.log("Public core integration passed: publication, inquiry controls and reviewed personal-field redaction");
 } finally { await db.end(); }
