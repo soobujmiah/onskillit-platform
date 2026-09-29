@@ -32,6 +32,7 @@ jobs:
           node-version: '24'
           cache: npm
       - run: npm ci
+      - run: npm run check:api
       - name: Apply identity migrations
         run: |
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0001_foundation_probe/up.sql

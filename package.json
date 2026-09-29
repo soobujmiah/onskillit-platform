@@ -14,6 +14,7 @@
     "lint": "eslint .",
     "check:docs": "python3 scripts/check_docs_architecture.py",
     "check:locale": "python3 scripts/check_locale_purity.py",
+    "check:api": "node scripts/check_openapi.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {
@@ -31,6 +32,7 @@
     "esbuild": "^0.25.0"
   },
   "devDependencies": {
+    "@apidevtools/swagger-parser": "^13.1.0",
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "@types/node": "^24.0.0",
