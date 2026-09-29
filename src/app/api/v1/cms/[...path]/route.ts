@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { database, hasPermission, readSession, sameOrigin, validCsrf } from "@/lib/identity";
-import { content, hash, mimeOf, UUID, type LocaleContent } from "@/lib/cms";
+import { content, hash, mimeOf, UUID, localeProse, type LocaleContent } from "@/lib/cms";
 
 export const runtime = "nodejs";
 type Body = Record<string, unknown>;
@@ -99,7 +99,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       const raw=await bounded(request, 6*1024*1024); if (!raw) return bad("FILE_TOO_LARGE",413);
       const form=await new Request(request.url,{method:"POST",headers:{"content-type":request.headers.get("content-type") ?? ""},body:new Uint8Array(raw)}).formData().catch(()=>null);
       const file=form?.get("file"), rights=form?.get("rights_reference"), altEn=form?.get("alt_en"), altBn=form?.get("alt_bn");
-      if (!(file instanceof File) || !string(rights,500) || !string(altEn,200) || !string(altBn,200) || file.size > 5242880 || file.size===0) return bad("INVALID_MEDIA");
+      if (!(file instanceof File) || !string(rights,500) || !string(altEn,200) || !string(altBn,200) || !localeProse(altEn as string,"en") || !localeProse(altBn as string,"bn") || file.size > 5242880 || file.size===0) return bad("INVALID_MEDIA");
       const rightsText=rights as string, altEnText=altEn as string, altBnText=altBn as string;
       const bytes=Buffer.from(await file.arrayBuffer()), mime=mimeOf(bytes);
       if (!mime || mime !== file.type || !/^[-.a-zA-Z0-9_]{1,120}$/.test(file.name)) return bad("INVALID_MIME");
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const body=await bodyOf(request); if (!body) return bad("INVALID_BODY");
     if (part === "pages") {
       if (!await allowed("pages.write")) return bad("FORBIDDEN",403);
-      if (!only(body,["page_key","kind","en","bn"]) || typeof body.page_key !== "string" || !KEY.test(body.page_key) || !["page","landing"].includes(String(body.kind)) || !content(body.en,false) || !content(body.bn,false)) return bad("INVALID_PAGE");
+      if (!only(body,["page_key","kind","en","bn"]) || typeof body.page_key !== "string" || !KEY.test(body.page_key) || !["page","landing"].includes(String(body.kind)) || !content(body.en,false,"en") || !content(body.bn,false,"bn")) return bad("INVALID_PAGE");
       const en=body.en as LocaleContent, bn=body.bn as LocaleContent;
       try { const id=await db.begin(async tx=>{ const pages=await tx`INSERT INTO cms_page(page_key,kind,created_by) VALUES (${body.page_key as string},${body.kind as string},${session.userId}) RETURNING id`;
         await tx`INSERT INTO cms_revision(page_id,revision_no,en,bn,created_by) VALUES (${pages[0].id},1,${tx.json(en)},${tx.json(bn)},${session.userId})`;
@@ -126,7 +126,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       const permission=action==="revisions"?"pages.write":action==="reviews"?"pages.review":"pages.publish";
       if (!await allowed(permission)) return bad("FORBIDDEN",403);
       if (action==="revisions") {
-        if (!only(body,["base_revision_id","en","bn"]) || !UUID.test(String(body.base_revision_id)) || !content(body.en,false) || !content(body.bn,false)) return bad("INVALID_REVISION");
+        if (!only(body,["base_revision_id","en","bn"]) || !UUID.test(String(body.base_revision_id)) || !content(body.en,false,"en") || !content(body.bn,false,"bn")) return bad("INVALID_REVISION");
         const en=body.en as LocaleContent, bn=body.bn as LocaleContent;
         const result=await db.begin(async tx=>{ await tx`SELECT id FROM cms_page WHERE id=${id} AND state<>'archived' FOR UPDATE`;
           const latest=await tx`SELECT id,revision_no FROM cms_revision WHERE page_id=${id} ORDER BY revision_no DESC LIMIT 1`;
@@ -143,7 +143,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           const revision=await tx`SELECT id,created_by,en,bn FROM cms_revision WHERE page_id=${id} AND id=${body.revision_id as string}`;
           if (!revision.length) return "NOT_FOUND";
           if (revision[0].created_by===session.userId) return "SELF_REVIEW_DENIED";
-          if (body.decision==="approved" && (!content(revision[0].en,true) || !content(revision[0].bn,true))) return "LOCALE_INCOMPLETE";
+          if (body.decision==="approved" && (!content(revision[0].en,true,"en") || !content(revision[0].bn,true,"bn"))) return "LOCALE_INCOMPLETE";
           await tx`INSERT INTO cms_review(revision_id,reviewer_id,decision,note) VALUES (${revision[0].id},${session.userId},${body.decision as string},${body.note as string})`;
           await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.review','success',${requestId},${tx.json({page_id:id,revision_id:revision[0].id,decision:body.decision as string})})`;
           return "OK"; }); return result==="OK"?json({status:"recorded"}):bad(result,result==="NOT_FOUND"?404:409);
@@ -156,7 +156,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           if (!latest.length || latest[0].id!==body.revision_id) return "REVISION_CONFLICT";
           const review=await tx`SELECT decision,reviewer_id FROM cms_review WHERE revision_id=${latest[0].id} ORDER BY created_at DESC,id DESC LIMIT 1`;
           if (!review.length || review[0].decision!=="approved" || review[0].reviewer_id===session.userId || latest[0].created_by===session.userId) return "APPROVAL_REQUIRED";
-          if (!content(latest[0].en,true) || !content(latest[0].bn,true)) return "LOCALE_INCOMPLETE";
+          if (!content(latest[0].en,true,"en") || !content(latest[0].bn,true,"bn")) return "LOCALE_INCOMPLETE";
           const mediaIds=new Set<string>();
           for (const locale of ["en","bn"] as const) for (const section of (latest[0][locale] as {sections:Array<{mediaId?:string}>}).sections)
             if (section.mediaId) mediaIds.add(section.mediaId);
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     }
     if (part==="navigation") {
       if (!await allowed("navigation.write")) return bad("FORBIDDEN",403);
-      if (!only(body,["slot","position","page_id","label_en","label_bn"]) || !["header","footer"].includes(String(body.slot)) || !Number.isInteger(body.position) || Number(body.position)<0 || Number(body.position)>99 || !UUID.test(String(body.page_id)) || !string(body.label_en,80) || !string(body.label_bn,80)) return bad("INVALID_NAVIGATION");
+      if (!only(body,["slot","position","page_id","label_en","label_bn"]) || !["header","footer"].includes(String(body.slot)) || !Number.isInteger(body.position) || Number(body.position)<0 || Number(body.position)>99 || !UUID.test(String(body.page_id)) || !string(body.label_en,80) || !string(body.label_bn,80) || !localeProse(body.label_en as string,"en") || !localeProse(body.label_bn as string,"bn")) return bad("INVALID_NAVIGATION");
       const pages=await db`SELECT id FROM cms_page WHERE id=${body.page_id as string} AND state='published'`;
       if (!pages.length) return bad("PAGE_NOT_PUBLISHED",409);
       try { const rows=await db.begin(async tx=>{ const item=await tx`INSERT INTO cms_navigation(slot,position,page_id,label_en,label_bn,updated_by) VALUES (${body.slot as string},${body.position as number},${body.page_id as string},${body.label_en as string},${body.label_bn as string},${session.userId}) RETURNING id`;
@@ -215,6 +215,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       if (!only(body,["key","value"]) || !settingKeys.includes(String(body.key)) || typeof body.value!=="string" || body.value.length>200) return bad("INVALID_SETTING");
       if (body.key==="robots_enabled" && !["true","false"].includes(body.value)) return bad("INVALID_SETTING");
       if (body.key==="contact_email" && body.value!=="" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.value)) return bad("INVALID_SETTING");
+      if (body.key==="site_name_en" && !localeProse(body.value,"en")) return bad("INVALID_SETTING");
+      if (body.key==="site_name_bn" && !localeProse(body.value,"bn")) return bad("INVALID_SETTING");
       const rows=await db.begin(async tx=>{ const item=await tx`INSERT INTO cms_setting(key,value,updated_by) VALUES (${body.key as string},${body.value as string},${session.userId}) ON CONFLICT(key) DO UPDATE SET value=EXCLUDED.value,updated_by=EXCLUDED.updated_by,updated_at=now() RETURNING key`;
         await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.setting_set','success',${requestId},${tx.json({key:item[0].key})})`; return item[0]; }); return json(rows);
     }

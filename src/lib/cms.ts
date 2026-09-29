@@ -7,13 +7,20 @@ export type LocaleContent = {
   title: string; slug: string; description: string; seoTitle: string; seoDescription: string;
   sections: Array<{ type: "hero" | "text" | "cta"; heading: string; body: string; href?: string; mediaId?: string; source: string }>;
 };
-export function content(value: unknown, complete: boolean): value is LocaleContent {
+export function localeProse(value: string, locale: "en"|"bn") {
+  if (!value.trim()) return true;
+  return locale === "en" ? !/[\u0980-\u09ff]/u.test(value) && /[A-Za-z]/.test(value)
+    : !/[A-Za-z]/.test(value) && /[\u0980-\u09ff]/u.test(value);
+}
+export function content(value: unknown, complete: boolean, locale: "en"|"bn"): value is LocaleContent {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
   const v = value as Record<string, unknown>;
   if (Object.keys(v).some((key) => !["title","slug","description","seoTitle","seoDescription","sections"].includes(key))) return false;
   for (const key of ["title","slug","description","seoTitle","seoDescription"]) {
     if (typeof v[key] !== "string" || v[key].length > (key === "description" || key === "seoDescription" ? 500 : 160)) return false;
   }
+  for (const key of ["title","description","seoTitle","seoDescription"])
+    if (!localeProse(v[key] as string,locale)) return false;
   if (v.slug !== "" && !/^[a-z0-9][a-z0-9-]{0,79}$/.test(v.slug as string)) return false;
   if (!Array.isArray(v.sections) || v.sections.length > 20) return false;
   for (const item of v.sections) {
@@ -23,8 +30,9 @@ export function content(value: unknown, complete: boolean): value is LocaleConte
     if (!["hero","text","cta"].includes(String(s.type)) || typeof s.heading !== "string" ||
       typeof s.body !== "string" || typeof s.source !== "string" ||
       s.heading.length > 160 || s.body.length > 4000 || s.source.length > 500) return false;
-    if (s.href !== undefined && (s.type !== "cta" || typeof s.href !== "string" || !/^\/[a-z0-9/-]{0,200}$/.test(s.href))) return false;
+    if (s.href !== undefined && (s.type !== "cta" || typeof s.href !== "string" || !/^\/(?!\/)[a-z0-9/-]{0,200}$/.test(s.href))) return false;
     if (s.mediaId !== undefined && (s.type === "cta" || typeof s.mediaId !== "string" || !UUID.test(s.mediaId))) return false;
+    if (!localeProse(s.heading,locale) || !localeProse(s.body,locale)) return false;
     if (complete && (!s.heading.trim() || !s.body.trim() || !s.source.trim() || (s.type === "cta" && !s.href))) return false;
   }
   return !complete || !!(String(v.title).trim() && String(v.slug).trim() && String(v.description).trim() &&

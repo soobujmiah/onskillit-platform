@@ -62,7 +62,7 @@ export function CmsWorkspace({locale,section,id,t,title}:{locale:string;section:
     </fieldset>;
   }
   const revisions=(data.revisions??[]) as Revision[];
-  return <main className="cms-workspace"><header className="cms-heading"><p className="cms-eyebrow">{t.noPublicPages}</p><h1>{title}</h1>
+  return <div className="cms-workspace"><header className="cms-heading"><p className="cms-eyebrow">{t.noPublicPages}</p><h1>{title}</h1>
     {section==="editor"&&<Link href={`/${locale}/staff/content/pages`}>{t.back}</Link>}</header>
     {message&&<p role="status" className="cms-message">{message}</p>}
     {section==="pages"&&<div className="cms-grid"><section className="cms-card"><h2>{t.pages}</h2><ul className="cms-list">{((data.pages??[]) as Page[]).map(p=><li key={p.id}><Link href={`/${locale}/staff/content/pages/${p.id}`}>{p.page_key}</Link><span className="cms-badge">{t[p.state]}</span><small>{t.latest}: {p.latest_revision}</small></li>)}</ul>{!(data.pages as Page[]|undefined)?.length&&<p>{t.empty}</p>}</section>
@@ -87,5 +87,5 @@ export function CmsWorkspace({locale,section,id,t,title}:{locale:string;section:
     {section==="seo"&&<div className="cms-grid"><section className="cms-card"><h2>{t.seo}</h2><ul className="cms-list">{((data.pages??[]) as Array<{id:string;page_key:string;state:string;seo_title_en:string|null;seo_title_bn:string|null}>).map(p=><li key={p.id}><strong>{p.page_key}</strong><span className="cms-badge">{t[p.state]}</span><small>{p.seo_title_en??"—"} / {p.seo_title_bn??"—"}</small></li>)}</ul></section><section className="cms-card"><h2>{t.addRedirect}</h2><label className="cms-field"><span>{t.locale}</span><select value={form.locale??"en"} onChange={e=>setForm({...form,locale:e.target.value})}><option value="en">{t.english}</option><option value="bn">{t.bangla}</option></select></label>{field("source_path",t.sourcePath)}
       <label className="cms-field"><span>{t.targetPage}</span><select value={form.target_page_id??""} onChange={e=>setForm({...form,target_page_id:e.target.value})}><option value="">{t.selectPage}</option>{((data.pages??[]) as Page[]).filter(p=>p.state==="published").map(p=><option key={p.id} value={p.id}>{p.page_key}</option>)}</select></label><button disabled={busy} onClick={()=>void action("seo",{...form,locale:form.locale??"en"})}>{t.save}</button></section></div>}
     {section==="settings"&&<div className="cms-grid"><section className="cms-card"><h2>{t.siteSettings}</h2><ul className="cms-list">{((data.settings??[]) as Array<{key:string;value:string}>).map(s=><li key={s.key}><strong>{s.key}</strong><small>{s.value}</small></li>)}</ul></section><section className="cms-card"><h2>{t.save}</h2><label className="cms-field"><span>{t.settingKey}</span><select value={form.key??"site_name_en"} onChange={e=>setForm({...form,key:e.target.value})}>{["site_name_en","site_name_bn","contact_email","robots_enabled"].map(k=><option key={k} value={k}>{k}</option>)}</select></label>{field("value",t.value)}<button disabled={busy} onClick={()=>void action("settings",{key:form.key??"site_name_en",value:form.value??""})}>{t.save}</button></section></div>}
-  </main>;
+  </div>;
 }

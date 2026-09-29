@@ -19,7 +19,7 @@ for (const locale of ["en","bn"] as const) {
     ] as const;
     for(const [route,title,name] of routes){
       await page.goto(`/${locale}/staff/${route}`);
-      await expect(page.getByRole("heading",{name,level:1})).toHaveText(title);
+      await expect(page.getByRole("heading",{name:title,level:1})).toBeVisible();
       await expect(page.locator("html")).toHaveAttribute("lang",locale);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
       await page.screenshot({path:testInfo.outputPath(`${name}.png`),fullPage:true});

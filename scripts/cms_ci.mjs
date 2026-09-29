@@ -18,7 +18,7 @@ async function cms(path,body,session,method="POST") {const headers={Origin:base,
   const response=await fetch(`${base}/api/v1/cms/${path}`,{method,headers,body:body instanceof FormData?body:JSON.stringify(body)});
   return {response,value:await response.json()}; }
 async function get(path,session) {return fetch(`${base}/api/v1/cms/${path}`,{headers:{Cookie:session?.cookie??""}});}
-const localized=(slug)=>({title:"Verified sample title",slug,description:"Synthetic editorial description",seoTitle:"Synthetic search title",seoDescription:"Synthetic search description",sections:[{type:"text",heading:"Sample heading",body:"Synthetic content only",source:"ci-fixture"}]});
+const localized=(slug)=>slug.endsWith("-bn") ? ({title:"যাচাই করা নমুনা শিরোনাম",slug,description:"কৃত্রিম সম্পাদনার বিবরণ",seoTitle:"কৃত্রিম অনুসন্ধান শিরোনাম",seoDescription:"কৃত্রিম অনুসন্ধান বিবরণ",sections:[{type:"text",heading:"নমুনা শিরোনাম",body:"শুধু কৃত্রিম বিষয়বস্তু",source:"ci-fixture"}]}) : ({title:"Verified sample title",slug,description:"Synthetic editorial description",seoTitle:"Synthetic search title",seoDescription:"Synthetic search description",sections:[{type:"text",heading:"Sample heading",body:"Synthetic content only",source:"ci-fixture"}]});
 try {
   const authorId=await account("cms-author@example.test");
   const reviewerId=await account("cms-reviewer@example.test");
@@ -36,6 +36,7 @@ try {
   assert.equal((await cms("pages",{page_key:"sample-page",kind:"page",en:localized("sample-en"),bn:localized("sample-bn")},{cookie:author.cookie,csrf:"wrong"})).response.status,403);
   const created=await cms("pages",{page_key:"sample-page",kind:"page",en:localized("sample-en"),bn:localized("sample-bn")},author);
   assert.equal(created.response.status,201);const pageId=created.value.id;
+  assert.equal((await cms("pages",{page_key:"mixed-script",kind:"page",en:localized("mixed-en"),bn:localized("mixed-en")},author)).response.status,400);
   const initial=await (await get(`pages/${pageId}`,author)).json();const first=initial.revisions[0].id;
   assert.equal((await get(`preview/${pageId}`,member)).status,403);
   const preview=await get(`preview/${pageId}?revision=${first}`,author);assert.equal(preview.status,200);
