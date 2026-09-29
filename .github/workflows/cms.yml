@@ -58,3 +58,15 @@ jobs:
           done
       - name: Exercise CMS security and publishing workflows
         run: node scripts/cms_ci.mjs
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Exercise CMS staff pages in browser
+        run: npx playwright test playwright/cms.spec.ts
+      - name: Upload synthetic CMS page previews
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: cms-page-previews
+          path: test-results/**/*.png
+          if-no-files-found: ignore
+          retention-days: 14

@@ -145,6 +145,9 @@
     "back": "Back to pages",
     "reviewRequired": "A different reviewer must approve before another publisher can publish.",
     "previewWarning": "Staff preview only. Unpublished content is not public.",
-    "noPublicPages": "Public business pages are scheduled for the next phase."
+    "noPublicPages": "Public business pages are scheduled for the next phase.",
+    "header": "Header",
+    "footer": "Footer",
+    "selectPage": "Select a published page"
   }
 }

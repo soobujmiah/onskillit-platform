@@ -67,7 +67,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       if (!rows.length) return bad("NOT_FOUND",404);
       return json({ preview: rows[0], watermark: "STAFF PREVIEW — UNPUBLISHED" });
     }
-    if (part === "navigation" && await allowed("pages.read")) return json({ items: await db`SELECT n.id,n.slot,n.position,n.page_id,n.label_en,n.label_bn,p.state FROM cms_navigation n JOIN cms_page p ON p.id=n.page_id ORDER BY n.slot,n.position` });
+    if (part === "navigation" && await allowed("pages.read")) return json({ items: await db`SELECT n.id,n.slot,n.position,n.page_id,n.label_en,n.label_bn,p.state FROM cms_navigation n JOIN cms_page p ON p.id=n.page_id ORDER BY n.slot,n.position`, pages: await db`SELECT id,page_key FROM cms_page WHERE state='published' ORDER BY page_key` });
     if (part === "media" && await allowed("media.read")) return json({ assets: await db`SELECT id,filename,mime_type,byte_length,sha256,public,rights_reference,alt_en,alt_bn,created_at FROM cms_media ORDER BY created_at DESC LIMIT 100` });
     if (part === "seo" && await allowed("pages.read")) return json({ pages: await db`SELECT p.id,p.page_key,p.state,r.en->>'seoTitle' AS seo_title_en,r.bn->>'seoTitle' AS seo_title_bn,r.en->>'slug' AS slug_en,r.bn->>'slug' AS slug_bn FROM cms_page p LEFT JOIN cms_revision r ON r.id=p.published_revision_id ORDER BY p.page_key`, redirects: await db`SELECT id,locale,source_path,target_page_id FROM cms_redirect ORDER BY locale,source_path` });
     if (part === "settings" && await allowed("settings.site")) return json({ settings: await db`SELECT key,value,updated_at FROM cms_setting ORDER BY key` });

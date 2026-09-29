@@ -70,5 +70,6 @@ try {
   assert.equal((await cms(`pages/${pageId}/archive`,{},reviewer)).response.status,200);
   assert.equal((await db`SELECT count(*)::int AS count FROM cms_navigation WHERE page_id=${pageId}`)[0].count,0);
   assert.ok((await db`SELECT 1 FROM identity_audit WHERE action='cms.publish' AND metadata->>'page_id'=${pageId}`).length);
+  assert.equal((await cms("pages",{page_key:"cms-showcase",kind:"landing",en:localized("showcase-en"),bn:localized("showcase-bn")},author)).response.status,201);
   console.log("CMS integration passed: permissions, review/publish, revision stability, private media, MIME, preview and audit");
 } finally {await db.end();}

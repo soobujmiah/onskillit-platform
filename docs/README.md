@@ -1,6 +1,6 @@
 # Documentation map
 
-PHASE-00 through PHASE-03 are complete. PHASE-04 is in progress with its gate open; see `PHASE-03-PLAN.md`, `PHASE-03-WORKLOG.md` and `openapi/identity.json`. The documentation is a living specification with explicit evidence states. Branch implementation does not imply production verification.
+PHASE-00 through PHASE-03 are complete. PHASE-04 is in progress with its gate open; see `PHASE-04-WORKLOG.md`, `CMS-PUBLISHING.md` and `openapi/cms.json`. The documentation is a living specification with explicit evidence states. Branch implementation does not imply production verification.
 
 | Question | Document |
 |---|---|
