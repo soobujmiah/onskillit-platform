@@ -9,26 +9,42 @@ head:
   branch: main
   committed_at: '2026-09-29T13:02:32Z'
 phases:
-  source: not_configured
-  completed: []
-  active: null
-  next: null
+  source: .repo/phases.yaml
+  completed:
+  - PHASE-00
+  - PHASE-01
+  - PHASE-02
+  - PHASE-03
+  - PHASE-04
+  active: PHASE-05
+  next: PHASE-06
 build:
   status: passed
-  run_id: '36572252346'
+  run_id: '36572213250'
   commit: 356f576ed3965a64aa7c97bc114259a5acf972ef
   run_attempt: '1'
   at: '2026-09-29T13:02:58Z'
-  timestamp_source: observed
+  timestamp_source: ci
+  conclusion: success
+  workflow_name: Repo Knowledge Sync
+  event_type: push
+  run_url: https://github.com/soobujmiah/onskillit-platform/actions/runs/36572213250
 test:
-  status: unknown
-  run_id: null
-  at: null
-  summary: null
+  status: passed
+  run_id: '36571645321'
+  commit: 356f576ed3965a64aa7c97bc114259a5acf972ef
+  run_attempt: '1'
+  at: '2026-09-29T12:55:21Z'
+  timestamp_source: ci
+  conclusion: success
+  workflow_name: Repo Knowledge Sync
+  event_type: push
+  run_url: https://github.com/soobujmiah/onskillit-platform/actions/runs/36572213250
+  summary: check_locale_purity.py (en/bn script purity and key parity)
 last_successful_build:
   commit: 356f576ed3965a64aa7c97bc114259a5acf972ef
   at: '2026-09-29T13:02:58Z'
-  run_id: '36572252346'
+  run_id: '36572213250'
 last_failed_build: null
 sync:
   status: ok

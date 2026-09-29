@@ -8,12 +8,14 @@
 
 ## Build / test
 
-- Build: **passed** (run `36572252346`)
-- Test: **unknown**
+- Build: **passed** (run `36572213250`)
+- Test: **passed** -- check_locale_purity.py (en/bn script purity and key parity)
 - Last successful build: `356f576ed3965a64aa7c97bc114259a5acf972ef` at 2026-09-29T13:02:58Z
 
 ## Phases
-- Not configured (no `.repo/phases.yaml`).
+- Completed: PHASE-00, PHASE-01, PHASE-02, PHASE-03, PHASE-04
+- Active: PHASE-05
+- Next: PHASE-06
 
 ## Sync
 

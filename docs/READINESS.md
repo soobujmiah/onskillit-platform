@@ -1,6 +1,8 @@
-# Phase 0 final readiness decision — 2026-09-25
+# Phase 0 final readiness decision — 2026-09-25 (historical gate record; current phase: PHASE-04 COMPLETE)
 
-**Current phase:** PHASE-00 **COMPLETE**. **Gate:** DOCUMENTATION READY **PASSED** under the founding partner's explicit final Phase 0 architectural delegation. PHASE-01 through PHASE-15 remain NOT STARTED; no application implementation occurred. This gate accepts an implementation-ready architecture, not unverified business facts or production readiness. The 16-phase/74-V1-template registers and ADR 0005 are unchanged. Dispositions below are exactly `PASS`, `PASS WITH OWNER DECISION`, `EXTERNAL DEPENDENCY`, `UNKNOWN NON-BLOCKING`, or `BLOCKED`.
+> **Current lifecycle update (2026-09-29):** `PHASE-00` through `PHASE-04` are **COMPLETE** (`DOCUMENTATION READY`, `FOUNDATION VERIFIED`, `SHELL VERIFIED`, `IDENTITY VERIFIED`, and `PUBLISHING CORE VERIFIED` passed on GitHub Actions CI; see [PHASES.md](PHASES.md), [PHASE-01-WORKLOG.md](PHASE-01-WORKLOG.md), [PHASE-02-WORKLOG.md](PHASE-02-WORKLOG.md), [PHASE-03-WORKLOG.md](PHASE-03-WORKLOG.md), and [PHASE-04-WORKLOG.md](PHASE-04-WORKLOG.md)). `PHASE-05` (`PUBLIC CORE VERIFIED`) is the next implementation phase. The sections below preserve the dated `2026-09-25` Phase 0 gate closure record unchanged.
+
+**Historical Phase 0 snapshot (2026-09-25):** PHASE-00 **COMPLETE**. **Gate:** DOCUMENTATION READY **PASSED** under the founding partner's explicit final Phase 0 architectural delegation. At that 2026-09-25 milestone, PHASE-01 through PHASE-15 were NOT STARTED; phases PHASE-01 through PHASE-04 subsequently completed through 2026-09-29. This gate accepted an implementation-ready architecture, not unverified business facts or production readiness. The 16-phase/74-V1-template registers and ADR 0005 are unchanged. Dispositions below are exactly `PASS`, `PASS WITH OWNER DECISION`, `EXTERNAL DEPENDENCY`, `UNKNOWN NON-BLOCKING`, or `BLOCKED`.
 
 ## Gate matrix
 

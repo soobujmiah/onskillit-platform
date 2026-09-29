@@ -93,6 +93,35 @@ for line in gate_rows:
         errors.append(f"invalid Phase 0 gate row/status: {line[:100]}")
 if "accepted by founding partner" not in read("docs/decisions/0005-phase-and-page-registers.md"):
     errors.append("ADR 0005 acceptance state missing")
+
+# Ensure .repo/phases.yaml stays in deterministic parity with docs/PHASES.md.
+repo_phases_path = ROOT / ".repo" / "phases.yaml"
+if not repo_phases_path.is_file():
+    errors.append("missing .repo/phases.yaml deterministic phase register")
+else:
+    try:
+        import yaml
+        repo_phases = yaml.safe_load(repo_phases_path.read_text(encoding="utf-8")) or {}
+        declared_items = repo_phases.get("phases") or []
+        declared_ids = [item.get("name") for item in declared_items]
+        if declared_ids != phase_ids:
+            errors.append(f".repo/phases.yaml sequence mismatch: {declared_ids}")
+        doc_completed = [
+            line.split("|")[1].strip()
+            for line in phase_lines
+            if line.strip("|").split("|")[-1].strip() == "COMPLETE"
+        ]
+        yaml_completed = [
+            item.get("name")
+            for item in declared_items
+            if str(item.get("status") or "").strip().lower() == "completed"
+        ]
+        if doc_completed != yaml_completed:
+            errors.append(
+                f"phase completion drift between docs/PHASES.md ({doc_completed}) and .repo/phases.yaml ({yaml_completed})"
+            )
+    except ImportError:
+        pass
 if errors:
     print("Documentation architecture check FAILED")
     for error in errors:
