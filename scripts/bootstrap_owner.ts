@@ -24,6 +24,8 @@ async function main(databaseUrl: string, operatorId: string, reviewRef: string, 
   const db = postgres(databaseUrl, { max: 1 });
   try {
     const assigned = await db.begin(async (tx) => {
+    // Serialize first-owner attempts across different target accounts.
+    await tx`SELECT pg_advisory_xact_lock(93003, 1)`;
     const users = await tx`SELECT id,status FROM identity_user WHERE id=${targetId} FOR UPDATE`;
     if (users.length !== 1 || users[0].status !== "active") throw new Error("Target account is not active");
     const exists = await tx`SELECT 1 FROM identity_assignment WHERE role_id='owner' AND revoked_at IS NULL LIMIT 1`;
