@@ -1,6 +1,6 @@
-# Phase 5 content intake — draft, not approved for publication
+# Phase 5 content intake — owner clarification and open approvals
 
-Source: my 2026-09-29 content brief in the current work session. This is an editorial intake record, not proof that a product, customer, payment integration, legal entity relationship, policy, price, or service level is operational. I explicitly marked the brief **owner review before publish**. No CMS publication or production seed follows from this document.
+Source: my 2026-09-29 content brief and subsequent 2026-09-30 clarification in the current work session. The clarification confirms the unmarked business descriptions for editorial use. These remain owner statements rather than independent evidence that a product or payment integration is operational. Items explicitly marked `[CONFIRM]` and all policy text remain open. No CMS publication or production seed follows from this document.
 
 ## Confirmed public contact details
 
@@ -16,9 +16,9 @@ I explicitly confirmed these values for exact public display:
 
 Office hours were marked `[CONFIRM]` and must remain unpublished until approved.
 
-## Business and service copy awaiting owner review
+## Owner-confirmed business and service descriptions
 
-The brief proposes the tagline “Software and skills for growing Bangladeshi businesses” / “বাংলাদেশের ব্যবসার জন্য সফটওয়্যার ও দক্ষতা”, a software and Bangla IT training focus, and five service groups: hospital/clinic management, hotel management, ecommerce stores, custom website/web application development, and IT training. It also proposes audience sectors, delivery features, payment methods, named projects, course counts, a consultation flow, and FAQ answers. **None of these is approved for public CMS publication by this intake alone.** The claim that OnSkillIT is a brand of another named organization needs separate legal/brand authority evidence before public use. Do not infer accreditation, product availability, live payment support, ownership, client references, or capacity from the draft.
+The owner confirmed the unmarked brief content: the tagline “Software and skills for growing Bangladeshi businesses” / “বাংলাদেশের ব্যবসার জন্য সফটওয়্যার ও দক্ষতা”, the About description including the stated CODE GENARATE brand relationship, the audience sectors, five service groups and their listed scope, the unmarked course descriptions, the consultation flow, the Bangladesh-wide online-support statement, and the unmarked FAQ answers. These can become bilingual CMS drafts with the brief as their owner source. Named projects are owner-supplied portfolio leads for PHASE-11, where their live status and publication rights need review. The brief does not establish accreditation, production readiness of every module, or independent payment-provider verification.
 
 Prices, office hours, a one-working-day response promise, subscription cancellation, course refunds, hotel SaaS status, and ecommerce SaaS status were explicitly tagged `[CONFIRM]`; omit them from any publishable copy until I resolve each one. I prohibited testimonials, client logos, user counts and statistics. I requested **Hind Siliguri** for Bangla UI text.
 
@@ -26,4 +26,4 @@ I said there is **no approved Privacy, Terms, or Accessibility policy**. Any lat
 
 ## Editorial next step
 
-Prepare bilingual CMS drafts with source references and a factual checklist. Before publication, obtain partner approval for each service's actual scope and availability, all business/ownership/product/payment claims, FAQ commitments, and complete policy text. Then use the Phase 4 independent review/publish workflow. Contact details above may appear on the noindex contact route before the wider copy is approved.
+Prepare bilingual CMS drafts from the owner-confirmed unmarked descriptions. Review the Bangla translations and the claims in the preview, then use the Phase 4 independent review/publish workflow. Resolve each `[CONFIRM]` item and approve complete policy text before including it in published content. Contact details above may appear on the noindex contact route. The inquiry form remains disabled until a privacy notice is published.

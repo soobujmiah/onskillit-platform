@@ -14,7 +14,7 @@ Current phase: **IN PROGRESS**. Gate: **PUBLIC CORE VERIFIED OPEN**. Source work
 
 ## Publication inputs
 
-I supplied exact **confirmed contact details** and a broader **draft content brief** on 2026-09-29; its classification and review needs are recorded in [PHASE-05-CONTENT-DRAFT](PHASE-05-CONTENT-DRAFT.md). The brief did not approve business/service claims or any policy for publication. Proposed offerings in `OFFERINGS.md` are not public facts. Public routes show a clear unpublished state and stay `noindex` until their CMS records are approved and published. The inquiry form is disabled until a privacy notice is published. Production indexing and domain cutover remain separate owner gates.
+I supplied exact **confirmed contact details** and a broader content brief on 2026-09-29, then clarified on 2026-09-30 that the unmarked business and service information was already confirmed. Its classification and remaining review needs are recorded in [PHASE-05-CONTENT-DRAFT](PHASE-05-CONTENT-DRAFT.md). Explicit `[CONFIRM]` items and legal policies remain unapproved. Public routes show a clear unpublished state and stay `noindex` until their CMS records are reviewed and published. The inquiry form is disabled until a privacy notice is published. Production indexing and domain cutover remain separate owner gates.
 
 ## Source and verification
 
@@ -24,4 +24,4 @@ The first [Public Core run 36605215028](https://github.com/soobujmiah/onskillit-
 
 Source and documentation commit `053f1b7` passed all eleven [PR checks](https://github.com/soobujmiah/onskillit-platform/pull/17/checks), including [Public Core 36609412791](https://github.com/soobujmiah/onskillit-platform/actions/runs/36609412791), identity, CMS, locale/browser, web build, migrations, documentation, repository checks and deploy smoke. Nine Phase 5 page templates are **CI-VERIFIED for synthetic source behavior**, not released. No local build or test has been run. After `main` advanced independently, I merged it into this branch and aligned its machine-readable phase register with the accepted [canonical phase register](PHASES.md); final-head CI is pending.
 
-The phase gate remains **OPEN** because business and legal content lacks publication approval, a shareable preview host is unselected, manual visual/content review is outstanding, and the merged final head needs its own CI evidence. No production deployment, data migration or domain change occurred.
+The phase gate remains **OPEN** because the `[CONFIRM]` items and legal policies are unresolved, a shareable preview host is unselected, manual visual/content review is outstanding, and the merged final head needs its own CI evidence. No production deployment, data migration or domain change occurred.
