@@ -1,6 +1,6 @@
 # Security, privacy and content integrity architecture
 
-PHASE-03 branch status: the founding partner deferred and disabled mobile-only recovery; unverified email may register/sign in but cannot reset until email verification establishes mailbox control; the first owner grant is an audited operator action only. Source and synthetic CI details are in [PHASE-03-WORKLOG](PHASE-03-WORKLOG.md). No deployed security control or external mail delivery is claimed.
+PHASE-03 source status: the founding partner deferred and disabled mobile-only recovery; unverified email may register/sign in but cannot reset until email verification establishes mailbox control; first and second owner grants require separate audited operator procedures. The second procedure bridges exactly one active owner to two eligible approvers with an independent owner approval record, then the application handles later privileged grants through separate requester/approver actions. Source and synthetic CI details are in [PHASE-03-WORKLOG](PHASE-03-WORKLOG.md). No real owner grant, deployed security control or external mail delivery is claimed.
 
 The email verification link alone cannot verify an account: redemption also requires an active CSRF-protected session for the same user ID. This prevents an attacker who registered someone else's unverified email from making the rightful mailbox owner verify the attacker's account by merely following a link. Contact dispute/reassignment remains a separate private support procedure and is not implemented in PHASE-03.
 
