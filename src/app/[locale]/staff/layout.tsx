@@ -17,6 +17,11 @@ export default async function StaffLayout({ children, params }: {
       { path: "users", label: t.users, permission: "users.read" },
       { path: "roles", label: t.roles, permission: "roles.read" },
       { path: "audit", label: t.audit, permission: "audit.read" },
+      { path: "content/pages", label: getDictionary(locale).cms.pages, permission: "pages.read" },
+      { path: "content/navigation", label: getDictionary(locale).cms.navigation, permission: "pages.read" },
+      { path: "content/media", label: getDictionary(locale).cms.media, permission: "media.read" },
+      { path: "content/seo", label: getDictionary(locale).cms.seo, permission: "pages.read" },
+      { path: "settings/site", label: getDictionary(locale).cms.siteSettings, permission: "settings.site" },
     ];
     const allowed = [];
     for (const link of links) if (await hasAnyPermission(db, session.userId, link.permission)) allowed.push(link);

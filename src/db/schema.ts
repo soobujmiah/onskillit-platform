@@ -1,4 +1,4 @@
-import { pgTable, serial, timestamp, uuid, text, boolean, jsonb, integer, primaryKey } from "drizzle-orm/pg-core";
+import { pgTable, serial, timestamp, uuid, text, boolean, jsonb, integer, primaryKey, customType } from "drizzle-orm/pg-core";
 
 /**
  * PHASE-01 infrastructure-only table. It exists solely to prove the
@@ -102,4 +102,60 @@ export const identityRateLimit = pgTable("identity_rate_limit", {
   keyHash: text("key_hash").primaryKey(),
   count: integer("count").notNull().default(0),
   windowStart: timestamp("window_start", { withTimezone: true }).notNull().defaultNow(),
+});
+
+// PHASE-04 CMS. SQL migration 0003 is authoritative; these definitions mirror it.
+const bytea = customType<{ data: Buffer }>({ dataType() { return "bytea"; } });
+export const cmsPage = pgTable("cms_page", {
+  id: uuid("id").primaryKey().defaultRandom(), pageKey: text("page_key").notNull().unique(),
+  kind: text("kind").notNull(), state: text("state").notNull().default("draft"),
+  publishedRevisionId: uuid("published_revision_id"),
+  createdBy: uuid("created_by").notNull().references(() => identityUser.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+export const cmsRevision = pgTable("cms_revision", {
+  id: uuid("id").primaryKey().defaultRandom(), pageId: uuid("page_id").notNull().references(() => cmsPage.id),
+  revisionNo: integer("revision_no").notNull(), en: jsonb("en").notNull(), bn: jsonb("bn").notNull(),
+  createdBy: uuid("created_by").notNull().references(() => identityUser.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+export const cmsReview = pgTable("cms_review", {
+  id: uuid("id").primaryKey().defaultRandom(), revisionId: uuid("revision_id").notNull().references(() => cmsRevision.id),
+  reviewerId: uuid("reviewer_id").notNull().references(() => identityUser.id),
+  decision: text("decision").notNull(), note: text("note").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+export const cmsPublication = pgTable("cms_publication", {
+  id: uuid("id").primaryKey().defaultRandom(), pageId: uuid("page_id").notNull().references(() => cmsPage.id),
+  revisionId: uuid("revision_id").references(() => cmsRevision.id), action: text("action").notNull(),
+  actorId: uuid("actor_id").notNull().references(() => identityUser.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+export const cmsMedia = pgTable("cms_media", {
+  id: uuid("id").primaryKey().defaultRandom(), filename: text("filename").notNull(),
+  mimeType: text("mime_type").notNull(), bytes: bytea("bytes").notNull(),
+  byteLength: integer("byte_length").notNull(), sha256: text("sha256").notNull(),
+  public: boolean("public").notNull().default(false), rightsReference: text("rights_reference").notNull(),
+  altEn: text("alt_en").notNull(), altBn: text("alt_bn").notNull(),
+  uploadedBy: uuid("uploaded_by").notNull().references(() => identityUser.id),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+export const cmsNavigation = pgTable("cms_navigation", {
+  id: uuid("id").primaryKey().defaultRandom(), slot: text("slot").notNull(), position: integer("position").notNull(),
+  pageId: uuid("page_id").notNull().references(() => cmsPage.id),
+  labelEn: text("label_en").notNull(), labelBn: text("label_bn").notNull(),
+  updatedBy: uuid("updated_by").notNull().references(() => identityUser.id),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+export const cmsSetting = pgTable("cms_setting", {
+  key: text("key").primaryKey(), value: text("value").notNull(),
+  updatedBy: uuid("updated_by").notNull().references(() => identityUser.id),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+});
+export const cmsRedirect = pgTable("cms_redirect", {
+  id: uuid("id").primaryKey().defaultRandom(), locale: text("locale").notNull(),
+  sourcePath: text("source_path").notNull(), targetPageId: uuid("target_page_id").notNull().references(() => cmsPage.id),
+  updatedBy: uuid("updated_by").notNull().references(() => identityUser.id),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });

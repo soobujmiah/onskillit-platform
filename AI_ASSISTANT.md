@@ -1,6 +1,6 @@
 # OnSkillIT agent working agreement
 
-Status: PHASE-00 through PHASE-03 gates passed; PHASE-04 CMS and publishing core is IN PROGRESS with PUBLISHING CORE VERIFIED gate open. The founding partner approved the PHASE-03 plan on 2026-09-29 with mobile-only recovery deferred and disabled, reviewed/audited first-owner bootstrap, and verified-email-only reset. No production deployment, migration or change to `onskillit.com` occurred. The public GitHub repository is the project source of truth; agent chat history is not.
+Status: PHASE-00 through PHASE-04 gates passed; PHASE-04 CMS and publishing core is CI-verified with PUBLISHING CORE VERIFIED passed on synthetic GitHub evidence. The founding partner approved the PHASE-03 plan on 2026-09-29 with mobile-only recovery deferred and disabled, reviewed/audited first-owner bootstrap, and verified-email-only reset. No production deployment, migration or change to `onskillit.com` occurred. The public GitHub repository is the project source of truth; agent chat history is not.
 
 At session start: read this file, `README.md`, `docs/PHASES.md`, `docs/PAGES.md`, `docs/TRACEABILITY.md`, `docs/READINESS.md`, `docs/README.md`, and only the task-relevant linked documents. Then discover canonical `soobujmiah/skb` at `ASSISTANT_CONTEXT.md` and `profile/assistant-guidance.md`, followed by task-relevant standards. Verify the SKB Git remote when using a local checkout. Compare dated claims with live repository and source evidence. Follow `standards/policy-resolution.md` for authorization.
 
