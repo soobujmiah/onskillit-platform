@@ -1,6 +1,6 @@
 # OnSkillIT agent working agreement
 
-Current work: PHASE-05 public core is IN PROGRESS on `phase-05/public-core`; PUBLIC CORE VERIFIED is open. See `docs/PHASE-05-WORKLOG.md` and the owner's classified content brief. Production publication remains unapproved.
+Current work: PHASE-05 public core is IN PROGRESS; PUBLIC CORE VERIFIED is open. See `docs/PHASE-05-WORKLOG.md` and the owner's classified content brief. The GitHub Pages editorial preview is live; server and production publication remain pending.
 
 Status: PHASE-00 through PHASE-04 gates passed; PHASE-04 CMS and publishing core is CI-verified with PUBLISHING CORE VERIFIED passed on synthetic GitHub evidence. The founding partner approved the PHASE-03 plan on 2026-09-29 with mobile-only recovery deferred and disabled, reviewed/audited first-owner bootstrap, and verified-email-only reset. No production deployment, migration or change to `onskillit.com` occurred. The public GitHub repository is the project source of truth; agent chat history is not.
 
