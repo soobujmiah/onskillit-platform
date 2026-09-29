@@ -28,3 +28,7 @@ The first [CMS run 36566863812](https://github.com/soobujmiah/onskillit-platform
 ## Gate decision
 
 PUBLISHING CORE VERIFIED **PASSED** for the six Phase 4 staff routes and CMS source. Security checks cover permission denial, CSRF, independent review and publication, private media, MIME mismatch, preview isolation and audit. Documentation, OpenAPI and SQL contracts are in this PR. The next phase is PHASE-05; public pages still require owner-verified copy and a separately selected preview or staging environment.
+
+## Merge verification
+
+[PR #15](https://github.com/soobujmiah/onskillit-platform/pull/15) merged as `aeb3d696223f4f7870458b14913e357afc41386b` after eleven final PR checks passed on `65cb2d9`. [Post-merge CMS CI](https://github.com/soobujmiah/onskillit-platform/actions/runs/36571645321) and the other eight `main` workflows passed on the merge commit. The gate remains scoped to source and synthetic GitHub evidence; Phase 5 owns public rendering and verified content.
