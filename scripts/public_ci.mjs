@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import postgres from "postgres";
 
 const db = postgres(process.env.DATABASE_URL, { max: 1 });
@@ -81,5 +82,24 @@ try {
     AND metadata->>'inquiry_id'=${intake.id}`;
   assert.equal(audits.length, 1);
   await assert.rejects(db`DELETE FROM public_inquiry WHERE id=${intake.id}`);
+  // Render owner-supplied editorial drafts only inside this disposable CI database.
+  // No policy draft is included or published by this fixture.
+  await db`UPDATE cms_page SET state='archived',published_revision_id=NULL WHERE id=${service.id}`;
+  const editorial = JSON.parse(readFileSync(new URL("../docs/PHASE-05-CMS-COPY.json", import.meta.url), "utf8"));
+  for (const draft of editorial.pages) {
+    let [stored] = await db`SELECT id FROM cms_page WHERE page_key=${draft.page_key}`;
+    if (!stored) {
+      [stored] = await db`INSERT INTO cms_page(page_key,kind,created_by)
+        VALUES (${draft.page_key},${draft.kind},${author.id}) RETURNING id`;
+    }
+    if (draft.kind === "service") await db`INSERT INTO catalog_service(page_id,category)
+      VALUES (${stored.id},${draft.category})`;
+    const [version] = await db`SELECT coalesce(max(revision_no),0)::int + 1 AS next
+      FROM cms_revision WHERE page_id=${stored.id}`;
+    const [revision] = await db`INSERT INTO cms_revision(page_id,revision_no,en,bn,created_by)
+      VALUES (${stored.id},${version.next},${db.json(draft.en)},${db.json(draft.bn)},${author.id}) RETURNING id`;
+    await db`UPDATE cms_page SET state='published',published_revision_id=${revision.id}
+      WHERE id=${stored.id}`;
+  }
   console.log("Public core integration passed: publication, inquiry controls and reviewed personal-field redaction");
 } finally { await db.end(); }
