@@ -2,15 +2,15 @@
 # onskillit-platform -- deterministic status
 
 - Repository: `soobujmiah/onskillit-platform`
-- Generated at: 2026-09-29T11:14:08Z (by `tools/repo_knowledge collect`)
-- Version: `90d4fa0`
-- Head: `90d4fa0578898524860abe7d8a4af99c1cecee96` on `main` (2026-09-29T11:13:43Z)
+- Generated at: 2026-09-29T11:20:27Z (by `tools/repo_knowledge collect`)
+- Version: `714e084`
+- Head: `714e08441d30c7ac74114e934221e59b265aec0a` on `main` (2026-09-29T11:20:01Z)
 
 ## Build / test
 
-- Build: **passed** (run `36560439251`)
+- Build: **passed** (run `36561083962`)
 - Test: **unknown**
-- Last successful build: `90d4fa0578898524860abe7d8a4af99c1cecee96` at 2026-09-29T11:14:08Z
+- Last successful build: `714e08441d30c7ac74114e934221e59b265aec0a` at 2026-09-29T11:20:27Z
 
 ## Phases
 - Not configured (no `.repo/phases.yaml`).
@@ -19,4 +19,4 @@
 
 - Status: ok
 - Source: ci
-- Last synced at: 2026-09-29T11:14:08Z
+- Last synced at: 2026-09-29T11:20:27Z
