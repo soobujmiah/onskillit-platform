@@ -212,6 +212,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     if (path === "email-verifications" || path === "password-resets") {
       if (typeof body.token !== "string" || body.token.length > 128) return error("INVALID_TOKEN", 400);
       const verify = path === "email-verifications";
+      const verifierSession = verify ? await readSession(db, request) : null;
+      if (verify && !verifierSession) return error("UNAUTHENTICATED", 401);
+      if (verify && !validCsrf(request, verifierSession!)) return error("CSRF_REJECTED", 403);
       if (!verify && !validPassword(body.password)) return error("INVALID_INPUT", 400);
       const purpose = verify ? "verify_email" : "reset_password";
       const applied = await db.begin(async (tx) => {
@@ -219,7 +222,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           JOIN identity_contact c ON c.id=t.contact_id JOIN identity_user u ON u.id=t.user_id
           WHERE t.token_hash=${digest(body.token as string)} AND t.purpose=${purpose}
             AND t.consumed_at IS NULL AND t.expires_at>now() FOR UPDATE OF t`;
-        if (!rows.length || rows[0].status !== "active" || (!verify && !rows[0].verified_at)) return false;
+        if (!rows.length || rows[0].status !== "active" || (!verify && !rows[0].verified_at) ||
+            (verify && rows[0].user_id !== verifierSession?.userId)) return false;
         const row = rows[0];
         await tx`UPDATE identity_token SET consumed_at=now() WHERE id=${row.id}`;
         if (verify) {
@@ -281,6 +285,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           (scopeType !== "global" && scopeType !== "account" && scopeType !== "resource") ||
           typeof scopeId !== "string" || scopeId.length > 100 ||
           (scopeType === "global" ? scopeId !== "*" : scopeId === "*")) return error("INVALID_INPUT", 400);
+      const reason = body.reason.trim();
       if (!await hasPermission(db, session.userId, "roles.manage", scopeType, scopeId)) return error("FORBIDDEN", 403);
       const roleRows = await db`SELECT privileged FROM identity_role WHERE id=${role}`;
       if (!roleRows.length || roleRows[0].privileged) return error("SECOND_APPROVAL_REQUIRED", 403);
@@ -295,7 +300,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           VALUES (${target},${role},${scopeType},${scopeId},${session.userId}) RETURNING id`;
         await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${target} AND revoked_at IS NULL`;
         await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,reason,request_id,metadata)
-          VALUES (${session.userId},${target},'rbac.grant','success',${body.reason.trim()},
+          VALUES (${session.userId},${target},'rbac.grant','success',${reason},
             ${requestId},${tx.json({ role, scopeType, scopeId })})`;
         return assigned[0].id;
       });

@@ -19,6 +19,9 @@ export function IdentityForm({ mode, locale, dictionary, token }: {
     "sign-in": "sessions", register: "registrations", recovery: "password-reset-requests",
     "verify-request": "email-verification-requests", reset: "password-resets", verify: "email-verifications",
   } as const)[mode];
+  function csrfCookie() {
+    return document.cookie.split("; ").find((part) => part.startsWith("onskillit_csrf="))?.split("=")[1] ?? "";
+  }
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -33,7 +36,8 @@ export function IdentityForm({ mode, locale, dictionary, token }: {
     if (token) payload.token = token;
     try {
       const response = await fetch(`/api/v1/identity/${path}`, {
-        method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" },
+        method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json",
+          ...(mode === "verify" ? { "x-csrf-token": csrfCookie() } : {}) },
         body: JSON.stringify(payload),
       });
       if (!response.ok) { setMessage(t.invalid); return; }

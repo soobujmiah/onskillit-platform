@@ -52,7 +52,9 @@ try {
   assert.equal((await call("registrations", { contact: email, password })).response.status, 201);
   assert.equal((await call("registrations", { contact: email.toUpperCase(), password })).response.status, 409);
   assert.equal((await call("registrations", { contact: "both@example.test", secondary_contact: "+8801700000000", password })).response.status, 201);
-  assert.equal((await call("sessions", { contact: "+8801700000000", password })).response.status, 200);
+  const bothLogin = await call("sessions", { contact: "+8801700000000", password });
+  assert.equal(bothLogin.response.status, 200);
+  const bothCookie = cookies(bothLogin.response);
   assert.equal((await call("registrations", { contact: "+8801700000000", password })).response.status, 409);
   const login = await call("sessions", { contact: email, password });
   assert.equal(login.response.status, 200);
@@ -68,8 +70,10 @@ try {
   const user = (await db`SELECT u.id,c.id AS contact_id FROM identity_user u JOIN identity_contact c ON c.user_id=u.id WHERE c.normalized=${email}`)[0];
   assert.equal((await call("email-verification-requests", { email })).response.status, 202);
   const verifyToken = tokenFromMail(await nextMail(), true);
-  assert.equal((await call("email-verifications", { token: verifyToken })).response.status, 200);
-  assert.equal((await call("email-verifications", { token: verifyToken })).response.status, 400);
+  assert.equal((await call("email-verifications", { token: verifyToken })).response.status, 401);
+  assert.equal((await call("email-verifications", { token: verifyToken }, bothCookie.cookie, bothCookie.csrf)).response.status, 400);
+  assert.equal((await call("email-verifications", { token: verifyToken }, member.cookie, member.csrf)).response.status, 200);
+  assert.equal((await call("email-verifications", { token: verifyToken }, member.cookie, member.csrf)).response.status, 400);
   assert.equal((await call("password-reset-requests", { email })).response.status, 202);
   const resetToken = tokenFromMail(await nextMail(), false);
   assert.equal((await call("password-reset-requests", { email })).response.status, 202);

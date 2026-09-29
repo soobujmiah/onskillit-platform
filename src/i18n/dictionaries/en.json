@@ -23,7 +23,7 @@
     "verificationRequest": "Send email verification link", "recoveryNote": "Mobile-only recovery is currently unavailable. Email reset requires a verified address.",
     "emailVerifySubject": "Verify your email", "emailResetSubject": "Reset your password", "emailIgnore": "If you did not request this, ignore this message.",
     "genericSent": "If the address is eligible and delivery is configured, a link will be sent.",
-    "verified": "Your email is verified.", "resetDone": "Your password has been changed.",
+    "verified": "Your email is verified.", "verifySignInNote": "Sign in to the account that requested this link before verifying.", "resetDone": "Your password has been changed.",
     "invalid": "The request could not be completed. Check the details and try again.",
     "back": "Back to sign in", "empty": "No records are available.",
     "contactUnverified": "Unverified", "contactVerified": "Verified",

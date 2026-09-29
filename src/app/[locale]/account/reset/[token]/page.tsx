@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { IdentityForm } from "@/components/identity/IdentityForm";
+import Link from "next/link";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { isLocale } from "@/i18n/locales";
 
@@ -15,5 +16,6 @@ export default async function ResetPage({ params }: { params: Promise<{ locale: 
   const dictionary = getDictionary(locale);
   const verify = token.startsWith("v_");
   return <section className="identity-panel"><h1>{verify ? dictionary.identity.verify : dictionary.identity.reset}</h1>
+    {verify && <p>{dictionary.identity.verifySignInNote} <Link href={`/${locale}/account/sign-in`}>{dictionary.identity.signIn}</Link></p>}
     <IdentityForm mode={verify ? "verify" : "reset"} locale={locale} dictionary={dictionary} token={token} /></section>;
 }
