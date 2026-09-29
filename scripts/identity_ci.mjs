@@ -151,7 +151,13 @@ try {
     to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"') AS precise_at
     FROM identity_audit ORDER BY created_at DESC,id DESC`;
   const missing = allAuditRows.filter((event) => !seen.includes(event.id));
-  if (missing.length) console.log("Pagination missing rows", JSON.stringify({ cursor: firstPage.next_cursor, missing }));
+  if (missing.length) {
+    const cursor = JSON.parse(Buffer.from(firstPage.next_cursor, "base64url").toString("utf8"));
+    const directlyAfter = await db`SELECT id FROM identity_audit WHERE (created_at,id) < (${cursor.at}::timestamptz,${cursor.id}::uuid)`;
+    console.log("Pagination missing rows", JSON.stringify({ cursor, missing,
+      firstTail: firstPage.events.slice(-6).map((item) => ({ id: item.id, at: item.cursor_at })),
+      expectedAfter: directlyAfter.length, missingAfter: missing.filter((item) => directlyAfter.some((row) => row.id === item.id)).length }));
+  }
   assert.equal(firstPage.events.length + secondPage.events.length,
     Number((await db`SELECT count(*)::int AS total FROM identity_audit`)[0].total));
   const suspended = await fetch(`${base}/api/v1/identity/users/${user.id}`, { method: "PATCH",
