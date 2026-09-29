@@ -6,7 +6,11 @@ import { LogoutButton } from "@/components/identity/LogoutButton";
 import { ChangePassword } from "@/components/identity/ChangePassword";
 import { IdentityForm } from "@/components/identity/IdentityForm";
 
-export const metadata = { robots: { index: false, follow: false } };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  return { title: isLocale(locale) ? getDictionary(locale).identity.profile : undefined,
+    robots: { index: false, follow: false } };
+}
 export default async function ProfilePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();

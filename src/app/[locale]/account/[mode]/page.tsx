@@ -4,7 +4,13 @@ import { IdentityForm } from "@/components/identity/IdentityForm";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { isLocale } from "@/i18n/locales";
 
-export const metadata = { robots: { index: false, follow: false } };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; mode: string }> }) {
+  const { locale, mode } = await params;
+  if (!isLocale(locale)) return { robots: { index: false, follow: false } };
+  const t = getDictionary(locale).identity;
+  return { title: mode === "sign-in" ? t.signIn : mode === "register" ? t.register : t.recovery,
+    robots: { index: false, follow: false } };
+}
 
 export default async function AccountPage({ params }: { params: Promise<{ locale: string; mode: string }> }) {
   const { locale, mode } = await params;

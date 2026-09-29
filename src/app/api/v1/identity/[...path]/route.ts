@@ -186,7 +186,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       const verify = path === "email-verification-requests";
       let delivered = false;
       if (row && (verify ? !row.verified_at : !!row.verified_at)) {
-        const token = secret();
+        const token = `${verify ? "v" : "r"}_${secret()}`;
         const purpose = verify ? "verify_email" : "reset_password";
         const minutes = verify ? 60 : 15;
         const inserted = await db`INSERT INTO identity_token(user_id,contact_id,purpose,token_hash,expires_at)
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           const locale = isLocale(rawLocale) ? rawLocale : "en";
           const copy = getDictionary(locale).identity;
           const sent = await sendIdentityLink(contact.normalized,
-            `/${locale}/account/reset/${token}${verify ? "?purpose=verify" : ""}`,
+            `/${locale}/account/reset/${token}`,
             verify ? copy.emailVerifySubject : copy.emailResetSubject, copy.emailIgnore);
           delivered = sent;
           if (!sent) await db`DELETE FROM identity_token WHERE id=${inserted[0].id}`;
@@ -222,11 +222,17 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         if (!rows.length || rows[0].status !== "active" || (!verify && !rows[0].verified_at)) return false;
         const row = rows[0];
         await tx`UPDATE identity_token SET consumed_at=now() WHERE id=${row.id}`;
-        if (verify) await tx`UPDATE identity_contact SET verified_at=now() WHERE id=${row.contact_id} AND verified_at IS NULL`;
+        if (verify) {
+          await tx`UPDATE identity_contact SET verified_at=now() WHERE id=${row.contact_id} AND verified_at IS NULL`;
+          await tx`UPDATE identity_token SET consumed_at=now() WHERE contact_id=${row.contact_id}
+            AND purpose='verify_email' AND consumed_at IS NULL`;
+        }
         else {
           const hash = await hashPassword(body.password as string);
           await tx`UPDATE identity_password SET password_hash=${hash},changed_at=now() WHERE user_id=${row.user_id}`;
           await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${row.user_id} AND revoked_at IS NULL`;
+          await tx`UPDATE identity_token SET consumed_at=now() WHERE user_id=${row.user_id}
+            AND purpose='reset_password' AND consumed_at IS NULL`;
         }
         await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id)
           VALUES (${row.user_id},${row.user_id},${verify ? "auth.email_verified" : "auth.password_reset"},'success',${requestId})`;
@@ -258,6 +264,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       await db.begin(async (tx) => {
         await tx`UPDATE identity_password SET password_hash=${newHash},changed_at=now() WHERE user_id=${session.userId}`;
         await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${session.userId} AND revoked_at IS NULL`;
+        await tx`UPDATE identity_token SET consumed_at=now() WHERE user_id=${session.userId}
+          AND purpose='reset_password' AND consumed_at IS NULL`;
         await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id)
           VALUES (${session.userId},${session.userId},'auth.change_password','success',${requestId})`;
       });
@@ -269,6 +277,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       const scopeType = body.scope_type;
       const scopeId = body.scope_id;
       if (typeof target !== "string" || !UUID_PATTERN.test(target) || typeof role !== "string" ||
+          typeof body.reason !== "string" || !body.reason.trim() || body.reason.length > 300 ||
           (scopeType !== "global" && scopeType !== "account" && scopeType !== "resource") ||
           typeof scopeId !== "string" || scopeId.length > 100 ||
           (scopeType === "global" ? scopeId !== "*" : scopeId === "*")) return error("INVALID_INPUT", 400);
@@ -286,7 +295,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           VALUES (${target},${role},${scopeType},${scopeId},${session.userId}) RETURNING id`;
         await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${target} AND revoked_at IS NULL`;
         await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,reason,request_id,metadata)
-          VALUES (${session.userId},${target},'rbac.grant','success',${typeof body.reason === "string" ? body.reason.slice(0, 300) : null},
+          VALUES (${session.userId},${target},'rbac.grant','success',${body.reason.trim()},
             ${requestId},${tx.json({ role, scopeType, scopeId })})`;
         return assigned[0].id;
       });
@@ -358,10 +367,12 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   const path = pathOf(await params);
   const match = /^users\/([0-9a-f-]{36})$/.exec(path);
   if (!match) return error("NOT_FOUND", 404);
+  if (!UUID_PATTERN.test(match[1])) return error("INVALID_INPUT", 400);
   if (!sameOrigin(request)) return error("ORIGIN_REQUIRED", 403);
   const body = await bodyOf(request);
-  if (!body || !["active", "inactive", "suspended", "deletion_pending"].includes(String(body.status))) return error("INVALID_INPUT", 400);
-  if (!only(body, ["status"])) return error("UNKNOWN_FIELD", 400);
+  if (!body || !["active", "inactive", "suspended", "deletion_pending"].includes(String(body.status)) ||
+      typeof body.reason !== "string" || !body.reason.trim() || body.reason.length > 300) return error("INVALID_INPUT", 400);
+  if (!only(body, ["status", "reason"])) return error("UNKNOWN_FIELD", 400);
   const db = database();
   try {
     const session = await readSession(db, request);
@@ -377,9 +388,12 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       const rows = await tx`UPDATE identity_user SET status=${body.status as string},updated_at=now()
         WHERE id=${target} RETURNING id`;
       if (!rows.length) return false;
-      if (body.status !== "active") await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${target} AND revoked_at IS NULL`;
-      await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id,metadata)
-        VALUES (${session.userId},${target},'identity.status_change','success',${randomUUID()},${tx.json({ status: body.status as string })})`;
+      if (body.status !== "active") {
+        await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${target} AND revoked_at IS NULL`;
+        await tx`UPDATE identity_token SET consumed_at=now() WHERE user_id=${target} AND consumed_at IS NULL`;
+      }
+      await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,reason,request_id,metadata)
+        VALUES (${session.userId},${target},'identity.status_change','success',${body.reason as string},${randomUUID()},${tx.json({ status: body.status as string })})`;
       return true;
     });
     return updated ? json({ status: "ok" }) : error("USER_NOT_FOUND", 404);
@@ -390,6 +404,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
   const path = pathOf(await params);
   const match = /^role-assignments\/([0-9a-f-]{36})$/.exec(path);
   if (!match) return error("NOT_FOUND", 404);
+  if (!UUID_PATTERN.test(match[1])) return error("INVALID_INPUT", 400);
   if (!sameOrigin(request)) return error("ORIGIN_REQUIRED", 403);
   const db = database();
   try {

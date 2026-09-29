@@ -34,6 +34,15 @@ test.describe("Phase 3 public account pages", () => {
     await expect(page).toHaveURL(/\/en\/forbidden$/);
   });
 
+  test("language switch preserves account route and verification token", async ({ page }) => {
+    const token = `v_${"a".repeat(43)}`;
+    await page.goto(`/en/account/reset/${token}`);
+    await page.getByRole("link", { name: "Switch to Bangla" }).click();
+    await expect(page).toHaveURL(new RegExp(`/bn/account/reset/${token}$`));
+    await expect(page.locator("html")).toHaveAttribute("lang", "bn");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("ইমেইল যাচাই");
+  });
+
   test("staff shell shows scoped queues to the synthetic owner", async ({ page }) => {
     await page.goto("/en/account/sign-in");
     await page.getByLabel("Email or international mobile number").fill("owner@example.test");

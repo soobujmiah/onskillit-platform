@@ -1,4 +1,5 @@
 {
+  "brand": "অনস্কিলআইটি",
   "skipLink": "মূল বিষয়বস্তুতে যান",
   "theme": {
     "light": "হালকা",
@@ -29,7 +30,9 @@
     "changePassword": "গোপনশব্দ পরিবর্তন করুন", "currentPassword": "বর্তমান গোপনশব্দ",
     "passwordChanged": "গোপনশব্দ পরিবর্তন হয়েছে। আবার প্রবেশ করুন।",
     "status": "হিসাবের অবস্থা", "activate": "সক্রিয় করুন", "suspend": "স্থগিত করুন",
+    "actor": "কর্তা", "target": "লক্ষ্য", "at": "সময়", "outcome": "ফলাফল",
     "targetId": "লক্ষ্য ব্যবহারকারীর পরিচয়", "roleId": "ভূমিকা", "grant": "ভূমিকা দিন", "reason": "কারণ",
+    "scope": "পরিধি", "scopeId": "ব্যবহারকারীর পরিচয়", "globalScope": "সর্বত্র", "resourceScope": "একজন ব্যবহারকারী",
     "saved": "পরিবর্তন সংরক্ষিত হয়েছে।", "supportRole": "সহায়তা", "memberRole": "সদস্য",
     "ownerRole": "মালিক", "securityRole": "নিরাপত্তা প্রশাসক", "pendingGrants": "অনুমোদনের অপেক্ষায় থাকা উচ্চক্ষমতার ভূমিকা",
     "approveGrant": "ভূমিকা অনুমোদন করুন", "requestGrant": "স্বতন্ত্র অনুমোদন চান",

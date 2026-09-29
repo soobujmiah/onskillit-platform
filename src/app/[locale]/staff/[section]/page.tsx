@@ -5,7 +5,13 @@ import { hasAnyPermission, hasPermission } from "@/lib/identity";
 import { privateIdentity } from "@/lib/identity-page";
 import { ApproveGrantAction, GrantRoleAction, UserStatusAction } from "@/components/identity/StaffActions";
 
-export const metadata = { robots: { index: false, follow: false } };
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; section: string }> }) {
+  const { locale, section } = await params;
+  if (!isLocale(locale)) return { robots: { index: false, follow: false } };
+  const t = getDictionary(locale).identity;
+  return { title: section === "users" ? t.users : section === "roles" ? t.roles : t.audit,
+    robots: { index: false, follow: false } };
+}
 const permissions = { users: "users.read", roles: "roles.read", audit: "audit.read" } as const;
 
 export default async function StaffPage({ params }: { params: Promise<{ locale: string; section: string }> }) {
@@ -35,12 +41,18 @@ export default async function StaffPage({ params }: { params: Promise<{ locale: 
           ORDER BY u.created_at DESC LIMIT 50`
       : section === "roles"
         ? await db`SELECT id,label FROM identity_role ORDER BY id`
-        : await db`SELECT action,outcome,created_at FROM identity_audit ORDER BY created_at DESC LIMIT 50`;
+        : await db`SELECT action,outcome,actor_user_id,operator_identity,target_user_id,reason,created_at
+          FROM identity_audit ORDER BY created_at DESC LIMIT 50`;
     const pending = canManageRoles ? await db`SELECT id,requested_by,target_user_id,role_id,reason
       FROM identity_grant_request WHERE status='pending' ORDER BY requested_at DESC LIMIT 50` : [];
     return <section className="identity-panel"><h1>{title}</h1>
       {rows.length ? <ul>{rows.map((row, index) => <li key={index} className="identity-record">
-        {section === "users" ? <>{row.normalized} ({statusLabel[row.status] ?? row.status}) {row.can_manage && <UserStatusAction userId={row.id} status={row.status} dictionary={dictionary} />}</> : section === "roles" ? roleLabel[row.id] ?? row.id : <>{row.action} — {row.outcome}</>}
+        {section === "users" ? <>{row.normalized} ({statusLabel[row.status] ?? row.status}) {row.can_manage && <UserStatusAction userId={row.id} status={row.status} dictionary={dictionary} />}</> : section === "roles" ? roleLabel[row.id] ?? row.id : <>
+          <strong>{row.action}</strong> — {t.outcome}: {row.outcome}<br />
+          {t.actor}: {row.operator_identity ?? row.actor_user_id ?? "—"}<br />
+          {t.target}: {row.target_user_id ?? "—"}<br />
+          {t.at}: {new Intl.DateTimeFormat(locale === "bn" ? "bn-BD" : "en-US", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Dhaka" }).format(new Date(row.created_at))}
+          {row.reason && <p>{t.reason}: {row.reason}</p>}</>}
       </li>)}</ul> : <p>{t.empty}</p>}
       {canManageRoles && <GrantRoleAction dictionary={dictionary} />}
       {canManageRoles && <section><h2>{t.pendingGrants}</h2><ul>{pending.map((item) =>

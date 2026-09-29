@@ -12,8 +12,8 @@
       "Token": { "type": "object", "additionalProperties": false, "required": ["token"], "properties": { "token": { "type": "string" } } },
       "Reset": { "type": "object", "additionalProperties": false, "required": ["token", "password"], "properties": { "token": { "type": "string" }, "password": { "type": "string", "minLength": 12, "maxLength": 128 } } },
       "ChangePassword": { "type": "object", "additionalProperties": false, "required": ["current_password", "new_password"], "properties": { "current_password": { "type": "string" }, "new_password": { "type": "string", "minLength": 12, "maxLength": 128 } } },
-      "Status": { "type": "object", "additionalProperties": false, "required": ["status"], "properties": { "status": { "type": "string", "enum": ["active", "inactive", "suspended", "deletion_pending"] } } },
-      "Grant": { "type": "object", "additionalProperties": false, "required": ["user_id", "role_id", "scope_type", "scope_id"], "properties": { "user_id": { "type": "string", "format": "uuid" }, "role_id": { "type": "string" }, "scope_type": { "type": "string", "enum": ["global", "account", "resource"] }, "scope_id": { "type": "string" }, "reason": { "type": "string", "maxLength": 300 } } }
+      "Status": { "type": "object", "additionalProperties": false, "required": ["status", "reason"], "properties": { "status": { "type": "string", "enum": ["active", "inactive", "suspended", "deletion_pending"] }, "reason": { "type": "string", "minLength": 1, "maxLength": 300 } } },
+      "Grant": { "type": "object", "additionalProperties": false, "required": ["user_id", "role_id", "scope_type", "scope_id", "reason"], "properties": { "user_id": { "type": "string", "format": "uuid" }, "role_id": { "type": "string" }, "scope_type": { "type": "string", "enum": ["global", "account", "resource"] }, "scope_id": { "type": "string" }, "reason": { "type": "string", "minLength": 1, "maxLength": 300 } } }
     },
     "responses": { "Error": { "description": "Safe error code; no account-existence disclosure on recovery.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } } }
   },
