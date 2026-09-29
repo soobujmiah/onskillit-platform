@@ -2,15 +2,15 @@
 # onskillit-platform -- deterministic status
 
 - Repository: `soobujmiah/onskillit-platform`
-- Generated at: 2026-09-29T16:27:12Z (by `tools/repo_knowledge collect`)
-- Version: `86afd14`
-- Head: `86afd14a4d55356a4872b4ccc00ed6454cc46121` on `main` (2026-09-29T16:26:47Z)
+- Generated at: 2026-09-29T17:20:24Z (by `tools/repo_knowledge collect`)
+- Version: `eaa76dc`
+- Head: `eaa76dc643749102da97046dc3a1f83c253a17db` on `main` (2026-09-29T17:17:14Z)
 
 ## Build / test
 
-- Build: **passed** (run `36597773469`)
+- Build: **passed** (run `36603867385`)
 - Test: **passed** -- check_locale_purity.py (en/bn script purity and key parity)
-- Last successful build: `86afd14a4d55356a4872b4ccc00ed6454cc46121` at 2026-09-29T16:27:12Z
+- Last successful build: `eaa76dc643749102da97046dc3a1f83c253a17db` at 2026-09-29T17:20:24Z
 
 ## Phases
 - Completed: PHASE-00, PHASE-01, PHASE-02, PHASE-03, PHASE-04
@@ -21,4 +21,4 @@
 
 - Status: ok
 - Source: ci
-- Last synced at: 2026-09-29T16:27:12Z
+- Last synced at: 2026-09-29T17:20:24Z

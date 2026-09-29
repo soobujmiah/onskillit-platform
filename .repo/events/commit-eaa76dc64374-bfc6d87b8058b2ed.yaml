@@ -1,0 +1,8 @@
+event_id: commit-eaa76dc64374-bfc6d87b8058b2ed
+repository: soobujmiah/onskillit-platform
+commit: eaa76dc643749102da97046dc3a1f83c253a17db
+kind: commit
+occurred_at: '2026-09-29T17:17:14Z'
+status: completed
+summary: 'feat(repo-knowledge): upgrade vendored tooling, schemas, and final-run sync
+  contract'
