@@ -1,6 +1,6 @@
 # OnSkillIT canonical agent handoff
 
-Updated: 2026-09-29 (Asia/Dhaka). **This file is the canonical cross-agent handoff in this repository.** Recheck Git, GitHub CI and dated external facts before acting; source and current CI evidence outrank this snapshot.
+Updated: 2026-09-30 (Asia/Dhaka). **This file is the canonical cross-agent handoff in this repository.** Recheck Git, GitHub CI and dated external facts before acting; source and current CI evidence outrank this snapshot.
 
 ## State and source of truth
 
@@ -13,9 +13,9 @@ Updated: 2026-09-29 (Asia/Dhaka). **This file is the canonical cross-agent hando
 
 - PHASE-01 established the Next.js runtime, database-aware health endpoint, reviewed SQL migration pipeline, worker, OCI smoke and GitHub CI. PHASE-02 established bilingual routing, theme, design tokens and browser/locale checks. PHASE-03 delivered identity migration/API, bilingual account and staff pages, scoped RBAC, append-only audit, reviewed operator bootstraps, OpenAPI, and synthetic PostgreSQL/mail/browser CI.
 - No real owner grant, external SMTP delivery, production deployment, production data migration or change to `onskillit.com` occurred. Mobile-only recovery remains deferred and disabled. The protected operator context must authenticate the operator and retain independent approval before any live owner bootstrap; those scripts are never HTTP routes or migration seeds.
-- A live public preview/staging host still needs owner selection and environment configuration. GitHub browser CI currently supplies synthetic screenshots, not a shareable site. A full manual accessibility pass remains a later cross-system gate.
+- A live public preview/staging host still needs owner selection and environment configuration. GitHub browser CI currently supplies synthetic screenshots, not a shareable site. A full manual accessibility pass remains a later cross-system gate. The confirmed unmarked business brief is mapped to ten bilingual [editorial CMS drafts](PHASE-05-CMS-COPY.json); they are not imported, reviewed or published. Explicit `[CONFIRM]` terms and all legal policies remain open.
 
 ## Exact continuation order
 
-1. Continue PHASE-05 on `phase-05/public-core`. Resolve draft PR #17 GitHub checks, review publication/security contracts, and complete the source and documentation work before deciding the phase gate. The owner has confirmed exact contact details and provided only draft business/service copy; no policy text is approved. Arrange a shareable preview only after selecting a host and protected environment configuration.
+1. Continue PHASE-05 on `phase-05/public-core`. Check draft PR #17 final-head GitHub CI, review the bilingual editorial drafts and publication/security contracts, and complete source and documentation work before deciding the phase gate. The owner confirmed exact contact details and the unmarked business/service brief; no policy text is approved. Arrange a shareable preview only after selecting a host and protected environment configuration.
 2. Keep real content claims, external mail, preview hosting and production/domain changes at their respective gates. Never place credentials or private records in this public repository.

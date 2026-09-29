@@ -26,4 +26,4 @@ I said there is **no approved Privacy, Terms, or Accessibility policy**. Any lat
 
 ## Editorial next step
 
-Prepare bilingual CMS drafts from the owner-confirmed unmarked descriptions. Review the Bangla translations and the claims in the preview, then use the Phase 4 independent review/publish workflow. Resolve each `[CONFIRM]` item and approve complete policy text before including it in published content. Contact details above may appear on the noindex contact route. The inquiry form remains disabled until a privacy notice is published.
+Ten bilingual [CMS editorial drafts](PHASE-05-CMS-COPY.json) now map the owner-confirmed unmarked descriptions to home, about, services, five service details, contact and FAQ. Review the Bangla translations and the claims in a preview, import the chosen copy as drafts, then use the Phase 4 independent review/publish workflow. Resolve each `[CONFIRM]` item and approve complete policy text before including it in published content. Contact details above may appear on the noindex contact route. The inquiry form remains disabled until a privacy notice is published.
