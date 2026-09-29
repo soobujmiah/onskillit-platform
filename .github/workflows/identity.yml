@@ -65,6 +65,8 @@ jobs:
         run: npx playwright install --with-deps chromium
       - name: Exercise identity routes in browser
         run: npx playwright test playwright/identity.spec.ts
+      - name: Verify concurrent first-owner bootstrap
+        run: node scripts/bootstrap_race_ci.mjs
       - name: Upload browser report
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
