@@ -49,3 +49,12 @@ jobs:
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0003_cms/up.sql
       - run: npm run typecheck
       - run: npm run build
+      - name: Start synthetic CMS web process
+        run: |
+          npm start > /tmp/onskillit-cms.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3000/api/v1/health > /dev/null; then break; fi
+            sleep 1
+          done
+      - name: Exercise CMS security and publishing workflows
+        run: node scripts/cms_ci.mjs

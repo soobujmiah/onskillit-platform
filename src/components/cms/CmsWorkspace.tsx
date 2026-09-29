@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 
 type Text = Record<string,string>;
@@ -13,10 +14,11 @@ function Field({label,value,onChange,multiline=false}:{label:string;value:string
   return <label className="cms-field"><span>{label}</span>{multiline?<textarea value={value} onChange={e=>onChange(e.target.value)} rows={4}/>:<input value={value} onChange={e=>onChange(e.target.value)}/>}</label>;
 }
 export function CmsWorkspace({locale,section,id,t,title}:{locale:string;section:"pages"|"editor"|"navigation"|"media"|"seo"|"settings";id?:string;t:Text;title:string}) {
+  const router=useRouter();
   const [data,setData]=useState<Record<string,unknown>>({});
   const [busy,setBusy]=useState(false); const [message,setMessage]=useState("");
   const [en,setEn]=useState<LocaleContent>(blank); const [bn,setBn]=useState<LocaleContent>(blank);
-  const [pageKey,setPageKey]=useState(""); const [kind,setKind]=useState("page");
+  const [kind,setKind]=useState("page");
   const [note,setNote]=useState(""); const [preview,setPreview]=useState<Record<string,unknown>|null>(null);
   const [form,setForm]=useState<Record<string,string>>({});
   const endpoint=section==="editor"?`pages/${id}`:section;
@@ -27,7 +29,13 @@ export function CmsWorkspace({locale,section,id,t,title}:{locale:string;section:
     if (section==="editor") { const revisions=next.revisions as Revision[];
       if (revisions?.length) {setEn(revisions[0].en);setBn(revisions[0].bn);} }
   },[endpoint,section,t.error]);
-  useEffect(()=>{void reload();},[reload]);
+  useEffect(()=>{let active=true;
+    void fetch(`/api/v1/cms/${endpoint}`,{credentials:"same-origin",cache:"no-store"})
+      .then(response=>response.json()).then((next:Record<string,unknown>)=>{if(!active)return;setData(next);
+        if(section==="editor"){const revisions=next.revisions as Revision[];if(revisions?.length){setEn(revisions[0].en);setBn(revisions[0].bn);}}})
+      .catch(()=>{if(active)setMessage(t.error);});
+    return ()=>{active=false;};
+  },[endpoint,section,t.error]);
   async function action(path:string,body:object|FormData) {
     setBusy(true);setMessage("");
     try { const csrf=document.cookie.split("; ").find(x=>x.startsWith("onskillit_csrf="))?.split("=")[1] ?? "";
@@ -36,7 +44,7 @@ export function CmsWorkspace({locale,section,id,t,title}:{locale:string;section:
         body:body instanceof FormData?body:JSON.stringify(body)});
       const result=await response.json() as {id?:string;code?:string};
       setMessage(response.ok?t.success:`${t.error} ${result.code ?? ""}`);
-      if (response.ok) {await reload(); if (path==="pages" && result.id) window.location.href=`/${locale}/staff/content/pages/${result.id}`;}
+      if (response.ok) {await reload(); if (path==="pages" && result.id) router.push(`/${locale}/staff/content/pages/${result.id}`);}
     } catch {setMessage(t.error);} finally {setBusy(false);} }
   function field(name:string,label:string,type="text") {return <label className="cms-field"><span>{label}</span><input type={type} value={form[name]??""} onChange={e=>setForm({...form,[name]:e.target.value})}/></label>;}
   function localeEditor(value:LocaleContent,set:(next:LocaleContent)=>void,label:string) {

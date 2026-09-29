@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { database, hasPermission, readSession, sameOrigin, validCsrf } from "@/lib/identity";
-import { content, hash, mimeOf, UUID } from "@/lib/cms";
+import { content, hash, mimeOf, UUID, type LocaleContent } from "@/lib/cms";
 
 export const runtime = "nodejs";
 type Body = Record<string, unknown>;
@@ -24,7 +24,7 @@ async function bodyOf(request: NextRequest): Promise<Body | null> {
   } catch { return null; }
 }
 function only(body: Body, keys: string[]) { return Object.keys(body).every((key) => keys.includes(key)); }
-function string(value: unknown, max: number) { return typeof value === "string" && value.trim().length > 0 && value.length <= max; }
+function string(value: unknown, max: number): value is string { return typeof value === "string" && value.trim().length > 0 && value.length <= max; }
 function path(params: { path: string[] }) { return params.path.join("/"); }
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
@@ -100,10 +100,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       const form=await new Request(request.url,{method:"POST",headers:{"content-type":request.headers.get("content-type") ?? ""},body:new Uint8Array(raw)}).formData().catch(()=>null);
       const file=form?.get("file"), rights=form?.get("rights_reference"), altEn=form?.get("alt_en"), altBn=form?.get("alt_bn");
       if (!(file instanceof File) || !string(rights,500) || !string(altEn,200) || !string(altBn,200) || file.size > 5242880 || file.size===0) return bad("INVALID_MEDIA");
+      const rightsText=rights as string, altEnText=altEn as string, altBnText=altBn as string;
       const bytes=Buffer.from(await file.arrayBuffer()), mime=mimeOf(bytes);
       if (!mime || mime !== file.type || !/^[-.a-zA-Z0-9_]{1,120}$/.test(file.name)) return bad("INVALID_MIME");
       const id=await db.begin(async tx=>{ const rows=await tx`INSERT INTO cms_media(filename,mime_type,bytes,byte_length,sha256,rights_reference,alt_en,alt_bn,uploaded_by)
-        VALUES (${file.name},${mime},${bytes},${bytes.length},${hash(bytes)},${rights},${altEn},${altBn},${session.userId}) RETURNING id`;
+        VALUES (${file.name},${mime},${bytes},${bytes.length},${hash(bytes)},${rightsText},${altEnText},${altBnText},${session.userId}) RETURNING id`;
         await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.media_upload','success',${requestId},${tx.json({ media_id: rows[0].id })})`;
         return rows[0].id as string; });
       return json({ id },201);
@@ -112,8 +113,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     if (part === "pages") {
       if (!await allowed("pages.write")) return bad("FORBIDDEN",403);
       if (!only(body,["page_key","kind","en","bn"]) || typeof body.page_key !== "string" || !KEY.test(body.page_key) || !["page","landing"].includes(String(body.kind)) || !content(body.en,false) || !content(body.bn,false)) return bad("INVALID_PAGE");
+      const en=body.en as LocaleContent, bn=body.bn as LocaleContent;
       try { const id=await db.begin(async tx=>{ const pages=await tx`INSERT INTO cms_page(page_key,kind,created_by) VALUES (${body.page_key as string},${body.kind as string},${session.userId}) RETURNING id`;
-        await tx`INSERT INTO cms_revision(page_id,revision_no,en,bn,created_by) VALUES (${pages[0].id},1,${tx.json(body.en)},${tx.json(body.bn)},${session.userId})`;
+        await tx`INSERT INTO cms_revision(page_id,revision_no,en,bn,created_by) VALUES (${pages[0].id},1,${tx.json(en)},${tx.json(bn)},${session.userId})`;
         await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.page_create','success',${requestId},${tx.json({ page_id: pages[0].id })})`;
         return pages[0].id as string; }); return json({id},201);
       } catch (error) { if (typeof error === "object" && error && "code" in error && error.code === "23505") return bad("PAGE_KEY_IN_USE",409); throw error; }
@@ -125,10 +127,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       if (!await allowed(permission)) return bad("FORBIDDEN",403);
       if (action==="revisions") {
         if (!only(body,["base_revision_id","en","bn"]) || !UUID.test(String(body.base_revision_id)) || !content(body.en,false) || !content(body.bn,false)) return bad("INVALID_REVISION");
+        const en=body.en as LocaleContent, bn=body.bn as LocaleContent;
         const result=await db.begin(async tx=>{ await tx`SELECT id FROM cms_page WHERE id=${id} AND state<>'archived' FOR UPDATE`;
           const latest=await tx`SELECT id,revision_no FROM cms_revision WHERE page_id=${id} ORDER BY revision_no DESC LIMIT 1`;
           if (!latest.length) return {error:"NOT_FOUND"}; if (latest[0].id!==body.base_revision_id) return {error:"REVISION_CONFLICT"};
-          const rows=await tx`INSERT INTO cms_revision(page_id,revision_no,en,bn,created_by) VALUES (${id},${Number(latest[0].revision_no)+1},${tx.json(body.en)},${tx.json(body.bn)},${session.userId}) RETURNING id`;
+          const rows=await tx`INSERT INTO cms_revision(page_id,revision_no,en,bn,created_by) VALUES (${id},${Number(latest[0].revision_no)+1},${tx.json(en)},${tx.json(bn)},${session.userId}) RETURNING id`;
           await tx`UPDATE cms_page SET updated_at=now() WHERE id=${id}`;
           await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.revision_create','success',${requestId},${tx.json({page_id:id,revision_id:rows[0].id})})`;
           return {id:rows[0].id}; });

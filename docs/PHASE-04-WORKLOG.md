@@ -16,4 +16,4 @@ Design uses the approved Phase 2 token system. The Superdesign CLI login timed o
 
 ## GitHub evidence
 
-Pending implementation and final-head checks. GitHub-only builds and tests are required; no local build/test results may pass the gate.
+The first [CMS run 36566863812](https://github.com/soobujmiah/onskillit-platform/actions/runs/36566863812) on `aeeaf04` failed at TypeScript: multipart fields and validated content were not narrowed across a transaction callback. The first Web run failed at the React effect lint rule. These are source-level CI defects; a follow-up commit fixes them and adds the OpenAPI contract and synthetic CMS integration. Final-head evidence remains pending. GitHub-only builds and tests are required; no local build/test results may pass the gate.

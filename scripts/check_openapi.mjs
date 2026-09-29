@@ -1,4 +1,5 @@
 import SwaggerParser from "@apidevtools/swagger-parser";
 
 await SwaggerParser.validate("docs/openapi/identity.json");
-console.log("Identity OpenAPI contract validated");
+await SwaggerParser.validate("docs/openapi/cms.json");
+console.log("Identity and CMS OpenAPI contracts validated");
