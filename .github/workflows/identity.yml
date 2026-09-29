@@ -1,0 +1,57 @@
+name: Identity
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  identity-integration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: onskillit
+          POSTGRES_PASSWORD: onskillit
+          POSTGRES_DB: onskillit
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://onskillit:onskillit@localhost:5432/onskillit
+      PUBLIC_BASE_URL: http://localhost:3000
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Apply identity migrations
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0001_foundation_probe/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0002_identity/up.sql
+      - name: Verify identity migration reversal and reapply
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0002_identity/down.sql
+          if psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'select 1 from identity_user limit 0' > /dev/null 2>&1; then
+            echo 'identity_user survived down migration' >&2
+            exit 1
+          fi
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0002_identity/up.sql
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Start synthetic web process
+        run: |
+          npm start > /tmp/onskillit-identity.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3000/api/v1/health > /dev/null; then break; fi
+            sleep 1
+          done
+      - name: Exercise identity, recovery, RBAC and audit
+        run: node scripts/identity_ci.mjs

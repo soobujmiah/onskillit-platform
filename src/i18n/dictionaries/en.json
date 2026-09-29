@@ -12,5 +12,18 @@
   "placeholder": {
     "heading": "OnSkillIT platform foundation",
     "body": "The public experience is under development."
+  },
+  "identity": {
+    "signIn": "Sign in", "register": "Create account", "recovery": "Recover account",
+    "reset": "Set a new password", "verify": "Verify email", "profile": "Profile and security",
+    "users": "Users", "roles": "Roles and permissions", "audit": "Audit log", "forbidden": "Access denied",
+    "contact": "Email or international mobile number", "email": "Email address", "password": "Password",
+    "newPassword": "New password", "submit": "Continue", "logout": "Sign out",
+    "verificationRequest": "Send email verification link", "recoveryNote": "Mobile-only recovery is currently unavailable. Email reset requires a verified address.",
+    "genericSent": "If the address is eligible and delivery is configured, a link will be sent.",
+    "verified": "Your email is verified.", "resetDone": "Your password has been changed.",
+    "invalid": "The request could not be completed. Check the details and try again.",
+    "back": "Back to sign in", "empty": "No records are available.",
+    "contactUnverified": "Unverified", "contactVerified": "Verified"
   }
 }

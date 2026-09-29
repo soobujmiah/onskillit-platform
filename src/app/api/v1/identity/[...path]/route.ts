@@ -1,0 +1,216 @@
+import { randomUUID } from "node:crypto";
+import { NextRequest, NextResponse } from "next/server";
+import {
+  CSRF_COOKIE, SESSION_COOKIE, database, digest, hasPermission, hashPassword, issueSession,
+  limited, normalizeContact, readSession, sameOrigin, secret, validCsrf, validPassword,
+  verifyPassword, writeAudit,
+} from "@/lib/identity";
+import { sendIdentityLink } from "@/lib/identity-mail";
+
+export const runtime = "nodejs";
+const GENERIC_RECOVERY = { status: "accepted" };
+type Body = Record<string, unknown>;
+
+function json(body: object, status = 200) {
+  return NextResponse.json(body, { status, headers: { "Cache-Control": "no-store" } });
+}
+function error(code: string, status: number) { return json({ code }, status); }
+async function bodyOf(request: NextRequest): Promise<Body | null> {
+  const raw = await request.text();
+  if (raw.length > 4096) return null;
+  try {
+    const value: unknown = JSON.parse(raw);
+    return value && typeof value === "object" && !Array.isArray(value) ? value as Body : null;
+  } catch { return null; }
+}
+function pathOf(params: { path: string[] }) { return params.path.join("/"); }
+function cookiesOn(response: NextResponse, token: string, csrf: string, maxAge: number) {
+  const secure = process.env.PUBLIC_BASE_URL?.startsWith("https://") ?? false;
+  response.cookies.set(SESSION_COOKIE, token, { httpOnly: true, secure, sameSite: "lax", path: "/", maxAge });
+  response.cookies.set(CSRF_COOKIE, csrf, { httpOnly: false, secure, sameSite: "lax", path: "/", maxAge });
+  return response;
+}
+function clearCookies(response: NextResponse) {
+  response.cookies.delete(SESSION_COOKIE);
+  response.cookies.delete(CSRF_COOKIE);
+  return response;
+}
+
+export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const path = pathOf(await params);
+  if (path === "mobile-recovery") return error("RECOVERY_DISABLED", 404);
+  const db = database();
+  try {
+    const session = await readSession(db, request);
+    if (!session) return error("UNAUTHENTICATED", 401);
+    if (path === "session") {
+      return json({ user_id: session.userId, staff: session.staff });
+    }
+    if (path === "profile") {
+      const rows = await db`SELECT u.id,u.status,c.kind,c.normalized,c.verified_at FROM identity_user u
+        JOIN identity_contact c ON c.user_id=u.id WHERE u.id=${session.userId} ORDER BY c.kind`;
+      return json({ user_id: session.userId, contacts: rows.map((row) => ({ kind: row.kind, value: row.normalized, verified: !!row.verified_at })) });
+    }
+    if (path === "users" && await hasPermission(db, session.userId, "users.read")) {
+      const rows = await db`SELECT u.id,u.status,u.created_at,c.kind,c.normalized,c.verified_at
+        FROM identity_user u LEFT JOIN identity_contact c ON c.user_id=u.id
+        ORDER BY u.created_at DESC LIMIT 50`;
+      return json({ users: rows });
+    }
+    if (path === "roles" && await hasPermission(db, session.userId, "roles.read")) {
+      const rows = await db`SELECT id,label,privileged FROM identity_role ORDER BY id`;
+      return json({ roles: rows });
+    }
+    if (path === "audit" && await hasPermission(db, session.userId, "audit.read")) {
+      const rows = await db`SELECT id,actor_user_id,operator_identity,target_user_id,action,outcome,reason,request_id,created_at
+        FROM identity_audit ORDER BY created_at DESC LIMIT 50`;
+      return json({ events: rows });
+    }
+    return error("FORBIDDEN", 403);
+  } finally { await db.end(); }
+}
+
+export async function POST(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
+  const path = pathOf(await params);
+  if (path === "mobile-recovery") return error("RECOVERY_DISABLED", 404);
+  if (!sameOrigin(request)) return error("ORIGIN_REQUIRED", 403);
+  const body = await bodyOf(request);
+  if (!body) return error("INVALID_BODY", 400);
+  const db = database();
+  const requestId = randomUUID();
+  try {
+    if (path === "registrations") {
+      const contact = typeof body.contact === "string" ? normalizeContact(body.contact) : null;
+      if (!contact || !validPassword(body.password)) return error("INVALID_INPUT", 400);
+      if (!await limited(db, "register", contact.normalized, 5, 3600)) return error("RATE_LIMITED", 429);
+      const hash = await hashPassword(body.password);
+      let userId: string;
+      try {
+        userId = await db.begin(async (tx) => {
+          const users = await tx`INSERT INTO identity_user DEFAULT VALUES RETURNING id`;
+          const id: string = users[0].id;
+          await tx`INSERT INTO identity_contact(user_id,kind,normalized) VALUES (${id},${contact.kind},${contact.normalized})`;
+          await tx`INSERT INTO identity_password(user_id,password_hash) VALUES (${id},${hash})`;
+          await tx`INSERT INTO identity_assignment(user_id,role_id,scope_type,scope_id) VALUES (${id},'member','global','*')`;
+          await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id)
+            VALUES (${id},${id},'public.register','success',${requestId})`;
+          return id;
+        });
+      } catch (cause) {
+        if (typeof cause === "object" && cause && "code" in cause && cause.code === "23505") return error("CONTACT_IN_USE", 409);
+        throw cause;
+      }
+      return json({ user_id: userId }, 201);
+    }
+
+    if (path === "sessions") {
+      const contact = typeof body.contact === "string" ? normalizeContact(body.contact) : null;
+      if (!contact || typeof body.password !== "string" || body.password.length > 128) return error("INVALID_INPUT", 400);
+      if (!await limited(db, "login", contact.normalized, 10, 900)) return error("RATE_LIMITED", 429);
+      const rows = await db`SELECT u.id,u.status,p.password_hash FROM identity_contact c
+        JOIN identity_user u ON u.id=c.user_id JOIN identity_password p ON p.user_id=u.id
+        WHERE c.kind=${contact.kind} AND c.normalized=${contact.normalized} LIMIT 1`;
+      const hash = rows[0]?.password_hash ?? await hashPassword(secret());
+      const okay = await verifyPassword(hash, body.password);
+      if (!rows.length || !okay || rows[0].status !== "active") {
+        await writeAudit(db, { action: "public.login", outcome: "failure", requestId });
+        return error("INVALID_CREDENTIALS", 401);
+      }
+      const userId: string = rows[0].id;
+      const issued = await issueSession(db, userId);
+      await writeAudit(db, { actor: userId, target: userId, action: "auth.login", outcome: "success", requestId });
+      return cookiesOn(json({ user_id: userId }), issued.token, issued.csrf, issued.maxAge);
+    }
+
+    if (path === "email-verification-requests" || path === "password-reset-requests") {
+      const contact = typeof body.email === "string" ? normalizeContact(body.email) : null;
+      if (!contact || contact.kind !== "email") return json(GENERIC_RECOVERY, 202);
+      if (!await limited(db, path, contact.normalized, 5, 3600)) return json(GENERIC_RECOVERY, 202);
+      const rows = await db`SELECT c.id AS contact_id,c.user_id,c.verified_at FROM identity_contact c
+        JOIN identity_user u ON u.id=c.user_id WHERE c.kind='email' AND c.normalized=${contact.normalized}
+        AND u.status='active' LIMIT 1`;
+      const row = rows[0];
+      const verify = path === "email-verification-requests";
+      if (row && (verify ? !row.verified_at : !!row.verified_at)) {
+        const token = secret();
+        const purpose = verify ? "verify_email" : "reset_password";
+        const minutes = verify ? 60 : 15;
+        const inserted = await db`INSERT INTO identity_token(user_id,contact_id,purpose,token_hash,expires_at)
+          VALUES (${row.user_id},${row.contact_id},${purpose},${digest(token)},now()+${minutes}*interval '1 minute') RETURNING id`;
+        try {
+          const route = verify ? "verify-email" : "reset";
+          const sent = await sendIdentityLink(contact.normalized, `/en/account/${route}/${token}`, verify ? "Verify your email" : "Reset your password");
+          if (!sent) await db`DELETE FROM identity_token WHERE id=${inserted[0].id}`;
+        } catch {
+          await db`DELETE FROM identity_token WHERE id=${inserted[0].id}`;
+        }
+      }
+      return json(GENERIC_RECOVERY, 202);
+    }
+
+    if (path === "email-verifications" || path === "password-resets") {
+      if (typeof body.token !== "string" || body.token.length > 128) return error("INVALID_TOKEN", 400);
+      const verify = path === "email-verifications";
+      if (!verify && !validPassword(body.password)) return error("INVALID_INPUT", 400);
+      const purpose = verify ? "verify_email" : "reset_password";
+      const applied = await db.begin(async (tx) => {
+        const rows = await tx`SELECT t.id,t.user_id,t.contact_id,c.verified_at,u.status FROM identity_token t
+          JOIN identity_contact c ON c.id=t.contact_id JOIN identity_user u ON u.id=t.user_id
+          WHERE t.token_hash=${digest(body.token as string)} AND t.purpose=${purpose}
+            AND t.consumed_at IS NULL AND t.expires_at>now() FOR UPDATE OF t`;
+        if (!rows.length || rows[0].status !== "active" || (!verify && !rows[0].verified_at)) return false;
+        const row = rows[0];
+        await tx`UPDATE identity_token SET consumed_at=now() WHERE id=${row.id}`;
+        if (verify) await tx`UPDATE identity_contact SET verified_at=now() WHERE id=${row.contact_id} AND verified_at IS NULL`;
+        else {
+          const hash = await hashPassword(body.password as string);
+          await tx`UPDATE identity_password SET password_hash=${hash},changed_at=now() WHERE user_id=${row.user_id}`;
+          await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${row.user_id} AND revoked_at IS NULL`;
+        }
+        await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,request_id)
+          VALUES (${row.user_id},${row.user_id},${verify ? "auth.email_verified" : "auth.password_reset"},'success',${requestId})`;
+        return true;
+      });
+      return applied ? json({ status: "ok" }) : error("INVALID_TOKEN", 400);
+    }
+
+    const session = await readSession(db, request);
+    if (!session) return error("UNAUTHENTICATED", 401);
+    if (!validCsrf(request, session)) return error("CSRF_REJECTED", 403);
+    if (path === "logout") {
+      await db`UPDATE identity_session SET revoked_at=now() WHERE id=${session.sessionId}`;
+      await writeAudit(db, { actor: session.userId, target: session.userId, action: "auth.logout", outcome: "success", requestId });
+      return clearCookies(json({ status: "ok" }));
+    }
+    if (path === "role-assignments") {
+      const target = body.user_id;
+      const role = body.role_id;
+      const scopeType = body.scope_type;
+      const scopeId = body.scope_id;
+      if (typeof target !== "string" || !/^[0-9a-f-]{36}$/.test(target) || typeof role !== "string" ||
+          (scopeType !== "global" && scopeType !== "account" && scopeType !== "resource") ||
+          typeof scopeId !== "string" || scopeId.length > 100 ||
+          (scopeType === "global" ? scopeId !== "*" : scopeId === "*")) return error("INVALID_INPUT", 400);
+      if (!await hasPermission(db, session.userId, "roles.manage", scopeType, scopeId)) return error("FORBIDDEN", 403);
+      const roleRows = await db`SELECT privileged FROM identity_role WHERE id=${role}`;
+      if (!roleRows.length || roleRows[0].privileged) return error("SECOND_APPROVAL_REQUIRED", 403);
+      const grantable = await db`SELECT p.permission_id FROM identity_role_permission p WHERE p.role_id=${role}`;
+      for (const item of grantable) {
+        if (!await hasPermission(db, session.userId, item.permission_id, scopeType, scopeId)) return error("DELEGATION_EXCEEDS_SCOPE", 403);
+      }
+      const exists = await db`SELECT 1 FROM identity_user WHERE id=${target} AND status='active'`;
+      if (!exists.length) return error("USER_NOT_FOUND", 404);
+      const result = await db.begin(async (tx) => {
+        const assigned = await tx`INSERT INTO identity_assignment(user_id,role_id,scope_type,scope_id,granted_by)
+          VALUES (${target},${role},${scopeType},${scopeId},${session.userId}) RETURNING id`;
+        await tx`UPDATE identity_session SET revoked_at=now() WHERE user_id=${target} AND revoked_at IS NULL`;
+        await tx`INSERT INTO identity_audit(actor_user_id,target_user_id,action,outcome,reason,request_id,metadata)
+          VALUES (${session.userId},${target},'rbac.grant','success',${typeof body.reason === "string" ? body.reason.slice(0, 300) : null},
+            ${requestId},${tx.json({ role, scopeType, scopeId })})`;
+        return assigned[0].id;
+      });
+      return json({ assignment_id: result }, 201);
+    }
+    return error("NOT_FOUND", 404);
+  } finally { await db.end(); }
+}
