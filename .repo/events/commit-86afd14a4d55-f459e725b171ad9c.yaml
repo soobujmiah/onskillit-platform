@@ -1,0 +1,8 @@
+event_id: commit-86afd14a4d55-f459e725b171ad9c
+repository: soobujmiah/onskillit-platform
+commit: 86afd14a4d55356a4872b4ccc00ed6454cc46121
+kind: commit
+occurred_at: '2026-09-29T16:26:47Z'
+status: completed
+summary: 'feat(repo-knowledge): add .repo/phases.yaml, phase parity gate, and expanded
+  CI state sync'

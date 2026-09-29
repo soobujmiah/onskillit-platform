@@ -1,36 +1,54 @@
 schema_version: 1
 project_id: onskillit-platform
 repository: soobujmiah/onskillit-platform
-generated_at: '2026-09-29T13:02:58Z'
+generated_at: '2026-09-29T17:20:24Z'
 generated_by: tools/repo_knowledge collect
-version: 356f576
+version: eaa76dc
 head:
-  commit: 356f576ed3965a64aa7c97bc114259a5acf972ef
+  commit: eaa76dc643749102da97046dc3a1f83c253a17db
   branch: main
-  committed_at: '2026-09-29T13:02:32Z'
+  committed_at: '2026-09-29T17:17:14Z'
 phases:
-  source: not_configured
-  completed: []
-  active: null
-  next: null
+  source: .repo/phases.yaml
+  completed:
+  - PHASE-00
+  - PHASE-01
+  - PHASE-02
+  - PHASE-03
+  - PHASE-04
+  active: PHASE-05
+  next: PHASE-06
 build:
   status: passed
-  run_id: '36572252346'
-  commit: 356f576ed3965a64aa7c97bc114259a5acf972ef
+  run_id: '36603867385'
+  commit: eaa76dc643749102da97046dc3a1f83c253a17db
   run_attempt: '1'
-  at: '2026-09-29T13:02:58Z'
+  at: '2026-09-29T17:20:24Z'
   timestamp_source: observed
+  conclusion: success
+  workflow_name: Repo Knowledge Sync
+  event_type: push
+  actor: soobujmiah
+  run_url: https://github.com/soobujmiah/onskillit-platform/actions/runs/36603867385
 test:
-  status: unknown
-  run_id: null
-  at: null
-  summary: null
+  status: passed
+  run_id: '36603867385'
+  commit: eaa76dc643749102da97046dc3a1f83c253a17db
+  run_attempt: '1'
+  at: '2026-09-29T17:20:24Z'
+  timestamp_source: observed
+  conclusion: success
+  workflow_name: Repo Knowledge Sync
+  event_type: push
+  actor: soobujmiah
+  run_url: https://github.com/soobujmiah/onskillit-platform/actions/runs/36603867385
+  summary: check_locale_purity.py (en/bn script purity and key parity)
 last_successful_build:
-  commit: 356f576ed3965a64aa7c97bc114259a5acf972ef
-  at: '2026-09-29T13:02:58Z'
-  run_id: '36572252346'
+  commit: eaa76dc643749102da97046dc3a1f83c253a17db
+  at: '2026-09-29T17:20:24Z'
+  run_id: '36603867385'
 last_failed_build: null
 sync:
   status: ok
-  last_synced_at: '2026-09-29T13:02:58Z'
+  last_synced_at: '2026-09-29T17:20:24Z'
   source: ci
