@@ -18,6 +18,7 @@ for (const locale of ["en", "bn"] as const) {
       await page.goto(`/${locale}/contact`);
       await expect(page.getByRole("link", { name: "onskillitbd@gmail.com" })).toHaveAttribute("href", "mailto:onskillitbd@gmail.com");
       await expect(page.getByRole("link", { name: "+8801617301184" })).toHaveAttribute("href", "tel:+8801617301184");
+      await expect(page.getByRole("button", { name: locale === "bn" ? "অনুরোধ পাঠান" : "Send inquiry" })).toBeVisible();
     });
   }
 }

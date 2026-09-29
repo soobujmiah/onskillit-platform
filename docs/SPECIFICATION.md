@@ -1,5 +1,7 @@
 # OnSkillIT Digital Platform — Product & Technical Specification
 
+PHASE-05 is in source implementation on draft PR #17. The founding partner's 2026-09-29 content brief confirms exact contact details but labels the wider business/service text as draft for owner review and provides no approved Privacy, Terms or Accessibility policy. See [PHASE-05-CONTENT-DRAFT](PHASE-05-CONTENT-DRAFT.md). Public routes therefore render only published CMS content, plus the confirmed contact details on a noindex contact state; inquiry intake remains disabled until a privacy notice is published. Source and synthetic GitHub CI do not attest that draft product/payment/service claims are operational.
+
 Status: **Phase 0 product architecture accepted, 2026-09-25; factual catalog/legal inputs remain external**. This document records the founding partner's requested product direction. Specific business offerings remain unverified. Read the [audit](SITE-AUDIT.md), [architecture](ARCHITECTURE.md), [requirements matrix](TRACEABILITY.md), and [readiness report](READINESS.md) together.
 
 ## Executive summary, business understanding and capability map

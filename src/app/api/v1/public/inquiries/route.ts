@@ -39,7 +39,7 @@ export async function POST(request: NextRequest) {
   if (!databaseUrl || !secret || secret.length < 32) return fail("UNAVAILABLE", 503);
   const origin = request.headers.get("origin");
   if (origin) {
-    try { if (new URL(origin).host !== request.nextUrl.host) return fail("FORBIDDEN", 403); }
+    try { if (new URL(origin).origin !== request.nextUrl.origin) return fail("FORBIDDEN", 403); }
     catch { return fail("FORBIDDEN", 403); }
   }
   const body = await limitedBody(request);
@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
   const db = createDbClient(databaseUrl);
   try {
     const keys = [
+      { key: digest("public-inquiry:global"), limit: 300, minutes: 60 },
       { key: digest(`public-inquiry:ip:${ip}`), limit: 10, minutes: 60 },
       { key: digest(`public-inquiry:email:${email}`), limit: 5, minutes: 60 },
     ];

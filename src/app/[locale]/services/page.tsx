@@ -20,7 +20,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
   const [page, services] = await Promise.all([publishedPage("services", locale), publishedServices(locale)]);
   const t = getDictionary(locale).public;
   return <div className="public-article">
-    <header className="public-hero"><p className="public-kicker">OnSkillIT</p><h1>{page?.content.title ?? t.services}</h1>
+    <header className="public-hero"><p className="public-kicker">{locale === "bn" ? "অনস্কিলআইটি" : "OnSkillIT"}</p><h1>{page?.content.title ?? t.services}</h1>
       {page && <p className="public-lead">{page.content.description}</p>}</header>
     {services.length ? <ul className="public-card-grid">{services.map((service) => <li key={service.key} className="public-card">
       <h2>{service.content.title}</h2><p>{service.content.description}</p>

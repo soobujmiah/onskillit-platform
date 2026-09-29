@@ -19,5 +19,5 @@ export default async function LocaleHomePage({ params }: { params: Promise<{ loc
   if (!isLocale(locale)) notFound();
   const page = await publishedPage("home", locale);
   const t = getDictionary(locale).public;
-  return page ? <PublicContent page={page} locale={locale} /> : <UnpublishedPage title={t.home} message={t.unpublished} />;
+  return page ? <PublicContent page={page} locale={locale} /> : <UnpublishedPage title={t.home} message={t.unpublished} locale={locale} />;
 }

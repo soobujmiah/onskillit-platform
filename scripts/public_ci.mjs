@@ -41,9 +41,11 @@ try {
   const service = await page("service-sample", "service", author.id, true, "synthetic-category");
   const invalid = { name: "Synthetic Sender", email: "sender@example.test", message: "Synthetic inquiry message", locale: "en",
     consent: true, consentVersion: "00000000-0000-4000-8000-000000000000", sourcePath: "/en/contact", website: "" };
+  assert.match(await (await get("/en/contact")).text(), /Inquiry intake is not available/);
   assert.equal((await inquiry(invalid)).status, 503);
   const privacy = await page("privacy", "page", author.id, true);
   const valid = { ...invalid, consentVersion: privacy.revisionId };
+  assert.equal((await fetch(`${base}/api/v1/public/inquiries`, { method: "POST", headers: { "content-type": "application/json", Origin: "https://other.example.test" }, body: JSON.stringify(valid) })).status, 403);
   assert.equal((await inquiry({ ...valid, consent: false })).status, 400);
   assert.equal((await inquiry({ ...valid, website: "bot.example" })).status, 400);
   assert.equal((await inquiry(valid)).status, 202);

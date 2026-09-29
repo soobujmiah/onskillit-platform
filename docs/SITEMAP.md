@@ -1,5 +1,7 @@
 # Public sitemap and navigation projection
 
+PHASE-05 source (CI review in progress): the existing nine Phase 5 templates are routed under `/en/` and `/bn/`. CMS navigation renders only published destinations; the XML sitemap contains only published complete static and service records when production indexing is explicitly enabled. Unpublished pages return a noindex information state, while unknown service slugs return 404. No proposed or demo offering is seeded. See [PHASE-05-WORKLOG](PHASE-05-WORKLOG.md).
+
 [PAGES.md](PAGES.md) owns page IDs, template counts, phase assignments and route patterns. This file is the public URL/navigation projection only. Every published page has complete approved English and Bangla content; locale URL format is an open ADR. Public routes are proposals until real content/legal text is approved. No draft, private, auth or staff URL enters XML sitemap. Dynamic records create URLs only when published and indexable.
 
 | Section | Page IDs / route templates | Navigation | Phase |

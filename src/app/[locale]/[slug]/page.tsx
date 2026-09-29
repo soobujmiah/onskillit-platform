@@ -25,7 +25,7 @@ export default async function PublicStaticPage({ params }: { params: Promise<{ l
   const [page, privacy] = await Promise.all([publishedPage(slug, locale), slug === "contact" ? publishedPage("privacy", locale) : Promise.resolve(null)]);
   const t = getDictionary(locale).public;
   return <>
-    {page ? <PublicContent page={page} locale={locale} /> : <UnpublishedPage title={t[slug]} message={t.unpublished} />}
+    {page ? <PublicContent page={page} locale={locale} /> : <UnpublishedPage title={t[slug]} message={t.unpublished} locale={locale} />}
     {slug === "contact" && <ContactDetails labels={t} />}
     {slug === "contact" && page && (privacy && (process.env.INQUIRY_RATE_SECRET?.length ?? 0) >= 32
       ? <ContactForm locale={locale} consentVersion={privacy.revisionId} copy={{ ...t, privacy: t.privacy }} />

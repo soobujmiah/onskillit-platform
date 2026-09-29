@@ -5,7 +5,7 @@ import type { PublicPage } from "@/lib/public-content";
 export function PublicContent({ page, locale }: { page: PublicPage; locale: Locale }) {
   return <article className="public-article" lang={locale}>
     <header className="public-hero">
-      <p className="public-kicker">OnSkillIT</p>
+      <p className="public-kicker">{locale === "bn" ? "অনস্কিলআইটি" : "OnSkillIT"}</p>
       <h1>{page.content.title}</h1>
       <p className="public-lead">{page.content.description}</p>
     </header>
@@ -21,6 +21,6 @@ export function PublicContent({ page, locale }: { page: PublicPage; locale: Loca
   </article>;
 }
 
-export function UnpublishedPage({ title, message }: { title: string; message: string }) {
-  return <div className="public-empty"><p className="public-kicker">OnSkillIT</p><h1>{title}</h1><p>{message}</p></div>;
+export function UnpublishedPage({ title, message, locale }: { title: string; message: string; locale: Locale }) {
+  return <div className="public-empty"><p className="public-kicker">{locale === "bn" ? "অনস্কিলআইটি" : "OnSkillIT"}</p><h1>{title}</h1><p>{message}</p></div>;
 }
