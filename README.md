@@ -5,6 +5,8 @@
 
 Current work: PHASE-05 public core is IN PROGRESS on `phase-05/public-core` with PUBLIC CORE VERIFIED open; see `docs/PHASE-05-WORKLOG.md`.
 
+The [GitHub Pages Phase 5 preview](https://soobujmiah.github.io/onskillit-platform/) presents confirmed English/Bangla business copy for review. It is static and noindex; the server application and external-domain deployment remain separate.
+
 Status: PHASE-00 through PHASE-04 gates passed. PHASE-04 CMS and publishing core passed PUBLISHING CORE VERIFIED on synthetic GitHub evidence. See `docs/PHASE-04-WORKLOG.md` and `docs/CMS-PUBLISHING.md`. No production deployment or data migration has occurred. The public GitHub repository is `soobujmiah/onskillit-platform`.
 
 ![OnSkillIT Digital Platform Phase 0 architecture blueprint](docs/assets/onskillit-platform-architecture.svg)
