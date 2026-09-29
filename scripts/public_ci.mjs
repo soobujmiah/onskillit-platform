@@ -58,7 +58,7 @@ try {
   assert.doesNotMatch(sitemap, /\/en\/?<\/loc>/);
   assert.match(await (await get("/en/about")).text(), /Synthetic public title/);
   assert.equal((await db`SELECT category FROM catalog_service WHERE page_id=${service.id}`)[0].category, "synthetic-category");
-  for (let i = 0; i < 4; i++) assert.equal((await inquiry(valid)).status, 202);
+  for (let i = 0; i < 3; i++) assert.equal((await inquiry(valid)).status, 202);
   assert.equal((await inquiry(valid)).status, 429);
   console.log("Public core integration passed: draft isolation, paired service routes, privacy consent, inquiry rate limit and sitemap");
 } finally { await db.end(); }

@@ -40,7 +40,8 @@
     "sent": "Your inquiry has been received.",
     "invalid": "Please check the form and try again.",
     "unavailable": "Inquiry intake is not available until the privacy notice is published.",
-    "footer": "Explore"
+    "primaryNav": "Primary navigation",
+    "footerNav": "Footer navigation"
   },
   "identity": {
     "account": "Account",

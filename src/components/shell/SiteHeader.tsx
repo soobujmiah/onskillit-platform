@@ -29,9 +29,9 @@ export function SiteHeader({
       }}
     >
       <Link href={`/${locale}`} className="site-brand">{dictionary.brand}</Link>
-      <nav className="site-nav" aria-label={dictionary.public.footer}>
+      {navigation.some((item) => item.slot === "header") && <nav className="site-nav" aria-label={dictionary.public.primaryNav}>
         {navigation.filter((item) => item.slot === "header").map((item) => <Link key={item.id} href={item.href}>{item.label}</Link>)}
-      </nav>
+      </nav>}
       <div style={{ display: "flex", gap: "var(--space-sm)", alignItems: "center" }}>
         <Link href={`/${locale}/learn/profile`} style={{ color: "var(--text-primary)" }}>{dictionary.identity.account}</Link>
         <LanguageSwitcher locale={locale} dictionary={dictionary} />
