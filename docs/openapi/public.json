@@ -1,0 +1,47 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OnSkillIT public core API",
+    "version": "0.1.0",
+    "description": "PHASE-05 anonymous inquiry intake. Public pages and service catalog render from published CMS records on the server."
+  },
+  "servers": [{ "url": "/api/v1/public" }],
+  "paths": {
+    "/inquiries": {
+      "post": {
+        "summary": "Submit an inquiry after consenting to the current published privacy notice",
+        "operationId": "submitInquiry",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["name", "email", "message", "locale", "consent", "consentVersion", "sourcePath"],
+                "properties": {
+                  "name": { "type": "string", "minLength": 2, "maxLength": 120 },
+                  "email": { "type": "string", "format": "email", "maxLength": 254 },
+                  "phone": { "type": "string", "maxLength": 25 },
+                  "message": { "type": "string", "minLength": 10, "maxLength": 4000 },
+                  "locale": { "type": "string", "enum": ["en", "bn"] },
+                  "consent": { "type": "boolean", "const": true },
+                  "consentVersion": { "type": "string", "format": "uuid" },
+                  "sourcePath": { "type": "string", "enum": ["/en/contact", "/bn/contact"] },
+                  "website": { "type": "string", "description": "Honeypot; must be empty" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": { "description": "Received without disclosing internal record identifiers" },
+          "400": { "description": "Invalid request or consent" },
+          "403": { "description": "Origin mismatch" },
+          "429": { "description": "Rate limited" },
+          "503": { "description": "Intake or current privacy notice unavailable" }
+        }
+      }
+    }
+  }
+}

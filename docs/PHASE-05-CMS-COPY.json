@@ -1,0 +1,462 @@
+{
+  "status": "editorial_draft",
+  "source": "Owner content brief, 2026-09-29; unmarked descriptions confirmed 2026-09-30",
+  "publication": "Import through the staff CMS as drafts, review Bangla copy, then use the independent review and publish workflow. This file is never a production seed.",
+  "pages": [
+    {
+      "page_key": "home",
+      "kind": "landing",
+      "en": {
+        "title": "Software and skills for growing Bangladeshi businesses",
+        "slug": "home",
+        "description": "OnSkillIT builds cloud software for businesses in Bangladesh and offers practical IT training in Bangla.",
+        "seoTitle": "OnSkillIT | Software and skills for Bangladesh",
+        "seoDescription": "Explore business software and practical IT training from OnSkillIT in Bangladesh.",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "Who we serve",
+            "body": "Hospitals and diagnostic centers, clinics, hotels and resorts, restaurants, retailers and F-commerce sellers, teachers and learners.",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "cta",
+            "heading": "Explore our services",
+            "body": "See the software and training services described by OnSkillIT.",
+            "href": "/services",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      },
+      "bn": {
+        "title": "বাংলাদেশের ব্যবসার জন্য সফটওয়্যার ও দক্ষতা",
+        "slug": "home",
+        "description": "অনস্কিলআইটি বাংলাদেশের ব্যবসার জন্য ক্লাউড সফটওয়্যার তৈরি করে এবং বাংলায় ব্যবহারিক তথ্যপ্রযুক্তি প্রশিক্ষণ দেয়।",
+        "seoTitle": "অনস্কিলআইটি | বাংলাদেশের জন্য সফটওয়্যার ও দক্ষতা",
+        "seoDescription": "অনস্কিলআইটির ব্যবসায়িক সফটওয়্যার ও ব্যবহারিক তথ্যপ্রযুক্তি প্রশিক্ষণ সম্পর্কে জানুন।",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "যাঁদের জন্য কাজ করি",
+            "body": "হাসপাতাল ও ডায়াগনস্টিক সেন্টার, ক্লিনিক, হোটেল ও রিসোর্ট, রেস্তোরাঁ, খুচরা বিক্রেতা ও সামাজিক মাধ্যমে বিক্রেতা, শিক্ষক ও শিক্ষার্থী।",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "cta",
+            "heading": "সেবাগুলো দেখুন",
+            "body": "অনস্কিলআইটির সফটওয়্যার ও প্রশিক্ষণ সেবা সম্পর্কে জানুন।",
+            "href": "/services",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      }
+    },
+    {
+      "page_key": "about",
+      "kind": "page",
+      "en": {
+        "title": "About OnSkillIT",
+        "slug": "about",
+        "description": "OnSkillIT, a brand of CODE GENARATE, builds cloud software and offers practical IT training in Bangla.",
+        "seoTitle": "About OnSkillIT",
+        "seoDescription": "Learn about OnSkillIT's software and Bangla IT training for businesses in Bangladesh.",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "What we do",
+            "body": "We build cloud software for hospitals, clinics, hotels and online shops in Bangladesh, and offer practical IT training in Bangla. Our products are designed for mobile use and support Bangla and English.",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "Working with us",
+            "body": "Tell us what you need by email or WhatsApp. We discuss your requirements, arrange a demo and provide a quotation before setup. We serve clients across Bangladesh with online support.",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      },
+      "bn": {
+        "title": "অনস্কিলআইটি সম্পর্কে",
+        "slug": "about",
+        "description": "কোড জেনারেটের একটি ব্র্যান্ড অনস্কিলআইটি ক্লাউড সফটওয়্যার তৈরি করে এবং বাংলায় ব্যবহারিক তথ্যপ্রযুক্তি প্রশিক্ষণ দেয়।",
+        "seoTitle": "অনস্কিলআইটি সম্পর্কে",
+        "seoDescription": "বাংলাদেশের ব্যবসার জন্য অনস্কিলআইটির সফটওয়্যার ও প্রশিক্ষণ সম্পর্কে জানুন।",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "আমাদের কাজ",
+            "body": "আমরা বাংলাদেশের হাসপাতাল, ক্লিনিক, হোটেল ও অনলাইন দোকানের জন্য ক্লাউড সফটওয়্যার তৈরি করি এবং বাংলায় ব্যবহারিক তথ্যপ্রযুক্তি প্রশিক্ষণ দিই। আমাদের পণ্য মুঠোফোনে ব্যবহারের উপযোগী এবং বাংলা ও ইংরেজি সমর্থন করে।",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "আমাদের সঙ্গে কাজের ধাপ",
+            "body": "ইমেইল বা হোয়াটসঅ্যাপে আপনার প্রয়োজন জানান। আলোচনা ও প্রদর্শনের পর আমরা মূল্যপ্রস্তাব দিই এবং তারপর সেটআপ করি। সারা বাংলাদেশে অনলাইন সহায়তা দিই।",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      }
+    },
+    {
+      "page_key": "services",
+      "kind": "page",
+      "en": {
+        "title": "Services",
+        "slug": "services",
+        "description": "Explore hospital and clinic software, hotel management, online stores, custom development and IT training.",
+        "seoTitle": "Software and IT training services | OnSkillIT",
+        "seoDescription": "See OnSkillIT's software, web development and Bangla IT training services.",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "Choose a service",
+            "body": "Explore the service descriptions below, then contact us to discuss your requirements and request a demo or quotation.",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      },
+      "bn": {
+        "title": "সেবাসমূহ",
+        "slug": "services",
+        "description": "হাসপাতাল ও ক্লিনিক সফটওয়্যার, হোটেল ব্যবস্থাপনা, অনলাইন দোকান, নিজস্ব ওয়েব উন্নয়ন ও তথ্যপ্রযুক্তি প্রশিক্ষণ দেখুন।",
+        "seoTitle": "সফটওয়্যার ও প্রশিক্ষণ সেবা | অনস্কিলআইটি",
+        "seoDescription": "অনস্কিলআইটির সফটওয়্যার, ওয়েব উন্নয়ন ও বাংলা প্রশিক্ষণ সেবা দেখুন।",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "সেবা বেছে নিন",
+            "body": "নিচের সেবাগুলোর বিবরণ দেখুন। আপনার প্রয়োজন নিয়ে আলোচনা, প্রদর্শন বা মূল্যপ্রস্তাবের জন্য যোগাযোগ করুন।",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      }
+    },
+    {
+      "page_key": "hospital-clinic",
+      "kind": "service",
+      "category": "software",
+      "en": {
+        "title": "Hospital and Clinic Management Software",
+        "slug": "hospital-clinic",
+        "description": "Cloud software for hospital and clinic operations, with setup, data import, staff training and support.",
+        "seoTitle": "Hospital and clinic software | OnSkillIT",
+        "seoDescription": "Explore OnSkillIT hospital and clinic management software and its service scope.",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "Included workflows",
+            "body": "Appointments, e-prescriptions, pharmacy, laboratory, patient admission and beds, ambulance, staff, accounting, patient portal and SMS reminders.",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "Delivery",
+            "body": "Setup, data import, staff training and support are part of the service discussion. Contact us to confirm the fit and request a quotation.",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      },
+      "bn": {
+        "title": "হাসপাতাল ও ক্লিনিক ব্যবস্থাপনা সফটওয়্যার",
+        "slug": "hospital-clinic",
+        "description": "হাসপাতাল ও ক্লিনিক পরিচালনার ক্লাউড সফটওয়্যার; সেটআপ, তথ্য আমদানি, কর্মী প্রশিক্ষণ ও সহায়তাসহ।",
+        "seoTitle": "হাসপাতাল ও ক্লিনিক সফটওয়্যার | অনস্কিলআইটি",
+        "seoDescription": "অনস্কিলআইটির হাসপাতাল ও ক্লিনিক ব্যবস্থাপনা সফটওয়্যারের পরিধি জানুন।",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "কাজের পরিধি",
+            "body": "অ্যাপয়েন্টমেন্ট, ইলেকট্রনিক ব্যবস্থাপত্র, ফার্মেসি, পরীক্ষাগার, রোগী ভর্তি ও শয্যা, অ্যাম্বুলেন্স, কর্মী, হিসাবরক্ষণ, রোগী পোর্টাল এবং খুদে বার্তার স্মারক।",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "সেবা প্রদানের ধাপ",
+            "body": "সেটআপ, তথ্য আমদানি, কর্মী প্রশিক্ষণ ও সহায়তা নিয়ে আলোচনা করা যায়। উপযোগিতা যাচাই ও মূল্যপ্রস্তাবের জন্য যোগাযোগ করুন।",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      }
+    },
+    {
+      "page_key": "hotel-booking",
+      "kind": "service",
+      "category": "software",
+      "en": {
+        "title": "Hotel Booking and Management Software",
+        "slug": "hotel-booking",
+        "description": "Hotel software for room booking, front desk, food orders, invoices and local payments.",
+        "seoTitle": "Hotel booking software | OnSkillIT",
+        "seoDescription": "Explore OnSkillIT's hotel booking and management software scope.",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "Included workflows",
+            "body": "Online room booking designed to prevent double booking, front desk operations, restaurant and food orders, and A4 invoices with the amount in Bangla words.",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "Payments",
+            "body": "The described payment options are bKash, Nagad and SSLCommerz. Discuss configuration and availability for your hotel during the consultation.",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      },
+      "bn": {
+        "title": "হোটেল বুকিং ও ব্যবস্থাপনা সফটওয়্যার",
+        "slug": "hotel-booking",
+        "description": "কক্ষ বুকিং, অভ্যর্থনা, খাবারের অর্ডার, চালান ও স্থানীয় পেমেন্টের জন্য হোটেল সফটওয়্যার।",
+        "seoTitle": "হোটেল বুকিং সফটওয়্যার | অনস্কিলআইটি",
+        "seoDescription": "অনস্কিলআইটির হোটেল বুকিং ও ব্যবস্থাপনা সফটওয়্যারের পরিধি জানুন।",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "কাজের পরিধি",
+            "body": "একই কক্ষের দ্বৈত বুকিং ঠেকানোর ব্যবস্থা, অভ্যর্থনা বিভাগের কাজ, রেস্তোরাঁ ও খাবারের অর্ডার এবং বাংলায় কথায় টাকার পরিমাণসহ কাগজের চালান।",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "পেমেন্ট",
+            "body": "উল্লিখিত পেমেন্ট পদ্ধতিগুলো হলো বিকাশ, নগদ ও এসএসএলকমার্স। আপনার হোটেলের জন্য সংযোগ ও প্রাপ্যতা আলোচনার সময় নিশ্চিত করুন।",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      }
+    },
+    {
+      "page_key": "ecommerce",
+      "kind": "service",
+      "category": "software",
+      "en": {
+        "title": "E-commerce Store Platform",
+        "slug": "ecommerce",
+        "description": "An online store platform with products, orders, local payment options and a mobile storefront.",
+        "seoTitle": "E-commerce store platform | OnSkillIT",
+        "seoDescription": "Explore OnSkillIT's online store platform for Bangladeshi sellers.",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "Store features",
+            "body": "Ready online store, product and order management, Bangla and English storefronts, and a mobile-friendly shopping experience.",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "Payment options",
+            "body": "The described options are bKash, Nagad, SSLCommerz and cash on delivery. Contact us to discuss setup for your store.",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      },
+      "bn": {
+        "title": "অনলাইন দোকান প্ল্যাটফর্ম",
+        "slug": "ecommerce",
+        "description": "পণ্য, অর্ডার, স্থানীয় পেমেন্ট পদ্ধতি ও মুঠোফোনের উপযোগী দোকানসহ অনলাইন বিক্রয় প্ল্যাটফর্ম।",
+        "seoTitle": "অনলাইন দোকান প্ল্যাটফর্ম | অনস্কিলআইটি",
+        "seoDescription": "বাংলাদেশের বিক্রেতাদের জন্য অনস্কিলআইটির অনলাইন দোকান প্ল্যাটফর্ম জানুন।",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "দোকানের সুবিধা",
+            "body": "প্রস্তুত অনলাইন দোকান, পণ্য ও অর্ডার ব্যবস্থাপনা, বাংলা ও ইংরেজি দোকান এবং মুঠোফোনে কেনাকাটার উপযোগী নকশা।",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "পেমেন্ট পদ্ধতি",
+            "body": "উল্লিখিত পদ্ধতিগুলো হলো বিকাশ, নগদ, এসএসএলকমার্স এবং পণ্য হাতে পেয়ে মূল্য পরিশোধ। আপনার দোকানের সেটআপ নিয়ে আলোচনা করতে যোগাযোগ করুন।",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      }
+    },
+    {
+      "page_key": "custom-development",
+      "kind": "service",
+      "category": "development",
+      "en": {
+        "title": "Custom Website and Web App Development",
+        "slug": "custom-development",
+        "description": "Business websites and custom web applications tailored to your requirements.",
+        "seoTitle": "Website and web app development | OnSkillIT",
+        "seoDescription": "Discuss business websites, WordPress sites and Laravel web apps with OnSkillIT.",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "What we build",
+            "body": "Business websites, WordPress websites and Laravel web applications. We review your requirements and provide a quotation for custom work.",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      },
+      "bn": {
+        "title": "নিজস্ব ওয়েবসাইট ও ওয়েব অ্যাপ উন্নয়ন",
+        "slug": "custom-development",
+        "description": "আপনার প্রয়োজন অনুযায়ী ব্যবসায়িক ওয়েবসাইট ও নিজস্ব ওয়েব অ্যাপ তৈরি।",
+        "seoTitle": "ওয়েবসাইট ও ওয়েব অ্যাপ উন্নয়ন | অনস্কিলআইটি",
+        "seoDescription": "অনস্কিলআইটির সঙ্গে ব্যবসায়িক ওয়েবসাইট এবং নিজস্ব ওয়েব অ্যাপ নিয়ে আলোচনা করুন।",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "যা তৈরি করি",
+            "body": "ব্যবসায়িক ওয়েবসাইট, ওয়ার্ডপ্রেস ওয়েবসাইট এবং লারাভেল ওয়েব অ্যাপ। আপনার প্রয়োজন পর্যালোচনার পর নিজস্ব কাজের মূল্যপ্রস্তাব দিই।",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      }
+    },
+    {
+      "page_key": "it-training",
+      "kind": "service",
+      "category": "training",
+      "en": {
+        "title": "IT Training in Bangla",
+        "slug": "it-training",
+        "description": "Practical Bangla courses for teachers, website builders and aspiring app developers.",
+        "seoTitle": "Bangla IT training | OnSkillIT",
+        "seoDescription": "Explore OnSkillIT's practical IT training in Bangla.",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "Courses",
+            "body": "Digital Teacher's Training and WordPress Website Development are described in the owner brief. Android App Development is in progress. Contact us for course details and current availability.",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      },
+      "bn": {
+        "title": "বাংলায় তথ্যপ্রযুক্তি প্রশিক্ষণ",
+        "slug": "it-training",
+        "description": "শিক্ষক, ওয়েবসাইট নির্মাতা ও নতুন অ্যাপ নির্মাতাদের জন্য বাংলায় ব্যবহারিক কোর্স।",
+        "seoTitle": "বাংলায় তথ্যপ্রযুক্তি প্রশিক্ষণ | অনস্কিলআইটি",
+        "seoDescription": "অনস্কিলআইটির ব্যবহারিক বাংলা তথ্যপ্রযুক্তি প্রশিক্ষণ সম্পর্কে জানুন।",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "কোর্সসমূহ",
+            "body": "ডিজিটাল শিক্ষক প্রশিক্ষণ ও ওয়ার্ডপ্রেস ওয়েবসাইট উন্নয়নের কথা মালিকের বিবরণে রয়েছে। অ্যান্ড্রয়েড অ্যাপ উন্নয়ন কোর্সটি তৈরির কাজ চলছে। বর্তমান প্রাপ্যতা জানতে যোগাযোগ করুন।",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      }
+    },
+    {
+      "page_key": "contact",
+      "kind": "page",
+      "en": {
+        "title": "Contact OnSkillIT",
+        "slug": "contact",
+        "description": "Contact OnSkillIT by email, phone or WhatsApp to discuss software and training services.",
+        "seoTitle": "Contact OnSkillIT",
+        "seoDescription": "Find OnSkillIT's confirmed contact details and discuss your requirements.",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "Start a conversation",
+            "body": "Tell us what you need by email or WhatsApp. We can discuss your requirements, arrange a demo and provide a quotation before setup. We offer online support across Bangladesh.",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      },
+      "bn": {
+        "title": "অনস্কিলআইটির সঙ্গে যোগাযোগ",
+        "slug": "contact",
+        "description": "সফটওয়্যার ও প্রশিক্ষণ নিয়ে আলোচনা করতে ইমেইল, ফোন বা হোয়াটসঅ্যাপে যোগাযোগ করুন।",
+        "seoTitle": "অনস্কিলআইটির সঙ্গে যোগাযোগ",
+        "seoDescription": "অনস্কিলআইটির নিশ্চিত যোগাযোগের তথ্য দেখুন এবং আপনার প্রয়োজন জানান।",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "আলোচনা শুরু করুন",
+            "body": "ইমেইল বা হোয়াটসঅ্যাপে আপনার প্রয়োজন জানান। আমরা আলোচনা, প্রদর্শন ও সেটআপের আগে মূল্যপ্রস্তাব দিতে পারি। সারা বাংলাদেশে অনলাইন সহায়তা দিই।",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      }
+    },
+    {
+      "page_key": "faq",
+      "kind": "page",
+      "en": {
+        "title": "Frequently Asked Questions",
+        "slug": "faq",
+        "description": "Answers to common questions about OnSkillIT software, language, demos, hosting and training.",
+        "seoTitle": "Frequently asked questions | OnSkillIT",
+        "seoDescription": "Read answers about OnSkillIT software and training services.",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "Which payment options do you support?",
+            "body": "The described software options include bKash, Nagad and SSLCommerz. The e-commerce platform also describes cash on delivery. Confirm the configuration for your service with us.",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "Is the software available in Bangla?",
+            "body": "Our product descriptions include Bangla and English support.",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "Do I need my own server?",
+            "body": "It depends on your requirements. We can discuss hosting for you or installation on your own server or hosting.",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "Can I request a demo?",
+            "body": "Yes. Contact us on WhatsApp to request a free demo.",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "Is staff training included?",
+            "body": "Basic staff training is included with setup.",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      },
+      "bn": {
+        "title": "সাধারণ জিজ্ঞাসা",
+        "slug": "faq",
+        "description": "অনস্কিলআইটির সফটওয়্যার, ভাষা, প্রদর্শন, হোস্টিং ও প্রশিক্ষণ নিয়ে সাধারণ প্রশ্নের উত্তর।",
+        "seoTitle": "সাধারণ জিজ্ঞাসা | অনস্কিলআইটি",
+        "seoDescription": "অনস্কিলআইটির সফটওয়্যার ও প্রশিক্ষণ সেবা সম্পর্কে উত্তর পড়ুন।",
+        "sections": [
+          {
+            "type": "text",
+            "heading": "কোন পেমেন্ট পদ্ধতি সমর্থন করেন?",
+            "body": "বর্ণিত সফটওয়্যারে বিকাশ, নগদ ও এসএসএলকমার্সের কথা রয়েছে। অনলাইন দোকানে পণ্য হাতে পেয়ে মূল্য পরিশোধের কথাও রয়েছে। আপনার সেবার জন্য সংযোগের বিষয়টি আমাদের সঙ্গে নিশ্চিত করুন।",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "সফটওয়্যার কি বাংলায় পাওয়া যায়?",
+            "body": "আমাদের পণ্যের বিবরণে বাংলা ও ইংরেজি সমর্থনের কথা রয়েছে।",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "নিজস্ব সার্ভার কি দরকার?",
+            "body": "এটি আপনার প্রয়োজনের ওপর নির্ভর করে। আপনার জন্য হোস্টিং বা নিজস্ব সার্ভারে স্থাপনের বিষয়ে আলোচনা করতে পারি।",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "প্রদর্শন দেখতে পারি?",
+            "body": "হ্যাঁ। বিনামূল্যে প্রদর্শনের জন্য হোয়াটসঅ্যাপে যোগাযোগ করুন।",
+            "source": "owner-brief-2026-09-29"
+          },
+          {
+            "type": "text",
+            "heading": "কর্মী প্রশিক্ষণ কি অন্তর্ভুক্ত?",
+            "body": "সেটআপের সঙ্গে প্রাথমিক কর্মী প্রশিক্ষণ অন্তর্ভুক্ত।",
+            "source": "owner-brief-2026-09-29"
+          }
+        ]
+      }
+    }
+  ]
+}

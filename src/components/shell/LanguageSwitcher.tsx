@@ -16,9 +16,10 @@ export function LanguageSwitcher({
   const otherLocale: Locale = locale === "en" ? "bn" : "en";
   const pathname = usePathname();
   const suffix = pathname.replace(/^\/(en|bn)(?=\/|$)/, "");
+  const target = /^\/services\/[^/]+$/.test(suffix) ? "/services" : suffix;
   return (
     <Link
-      href={`/${otherLocale}${suffix}`}
+      href={`/${otherLocale}${target}`}
       lang={otherLocale}
       aria-label={dictionary.language.switchToLabel}
       style={{

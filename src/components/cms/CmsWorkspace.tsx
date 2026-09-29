@@ -19,6 +19,7 @@ export function CmsWorkspace({locale,section,id,t,title}:{locale:string;section:
   const [busy,setBusy]=useState(false); const [message,setMessage]=useState("");
   const [en,setEn]=useState<LocaleContent>(blank); const [bn,setBn]=useState<LocaleContent>(blank);
   const [kind,setKind]=useState("page");
+  const [category,setCategory]=useState("");
   const [note,setNote]=useState(""); const [preview,setPreview]=useState<Record<string,unknown>|null>(null);
   const [form,setForm]=useState<Record<string,string>>({});
   const endpoint=section==="editor"?`pages/${id}`:section;
@@ -66,8 +67,9 @@ export function CmsWorkspace({locale,section,id,t,title}:{locale:string;section:
     {section==="editor"&&<Link href={`/${locale}/staff/content/pages`}>{t.back}</Link>}</header>
     {message&&<p role="status" className="cms-message">{message}</p>}
     {section==="pages"&&<div className="cms-grid"><section className="cms-card"><h2>{t.pages}</h2><ul className="cms-list">{((data.pages??[]) as Page[]).map(p=><li key={p.id}><Link href={`/${locale}/staff/content/pages/${p.id}`}>{p.page_key}</Link><span className="cms-badge">{t[p.state]}</span><small>{t.latest}: {p.latest_revision}</small></li>)}</ul>{!(data.pages as Page[]|undefined)?.length&&<p>{t.empty}</p>}</section>
-      <section className="cms-card"><h2>{t.newPage}</h2>{field("page_key",t.pageKey)}<label className="cms-field"><span>{t.kind}</span><select value={kind} onChange={e=>setKind(e.target.value)}><option value="page">{t.pages}</option><option value="landing">{t.hero}</option></select></label>
-      {localeEditor(en,setEn,t.english)}{localeEditor(bn,setBn,t.bangla)}<button disabled={busy} onClick={()=>void action("pages",{page_key:form.page_key,kind,en,bn})}>{t.newPage}</button></section></div>}
+      <section className="cms-card"><h2>{t.newPage}</h2>{field("page_key",t.pageKey)}<label className="cms-field"><span>{t.kind}</span><select value={kind} onChange={e=>setKind(e.target.value)}><option value="page">{t.pages}</option><option value="landing">{t.hero}</option><option value="service">{t.service}</option></select></label>
+      {kind === "service" && <Field label={t.category} value={category} onChange={setCategory}/>}
+      {localeEditor(en,setEn,t.english)}{localeEditor(bn,setBn,t.bangla)}<button disabled={busy} onClick={()=>void action("pages",{page_key:form.page_key,kind,...(kind === "service" ? {category} : {}),en,bn})}>{t.newPage}</button></section></div>}
     {section==="editor"&&<div className="cms-grid"><section className="cms-card"><h2>{(data.page as Page|undefined)?.page_key??t.editor}</h2><p className="cms-badge">{t[(data.page as Page|undefined)?.state??"draft"]}</p>
       {localeEditor(en,setEn,t.english)}{localeEditor(bn,setBn,t.bangla)}
       <div className="cms-actions"><button disabled={busy||!revisions.length} onClick={()=>void action(`pages/${id}/revisions`,{base_revision_id:revisions[0].id,en,bn})}>{t.saveRevision}</button>

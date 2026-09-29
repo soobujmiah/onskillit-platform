@@ -27,4 +27,5 @@ __pycache__/
 *.tsbuildinfo
 playwright-report/
 test-results/
+pages-preview-output/
 .DS_Store

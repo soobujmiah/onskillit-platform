@@ -1,0 +1,43 @@
+name: Phase 5 GitHub Pages preview
+on:
+  push:
+    branches: [phase-05/public-core]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: phase-05-pages-preview
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - name: Validate owner-confirmed editorial copy
+        run: node scripts/check_public_copy.mjs
+      - name: Build bilingual noindex preview
+        run: python3 scripts/build_pages_preview.py
+      - name: Check generated pages and publication boundaries
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root = Path('pages-preview-output')
+          pages = list(root.glob('*/**/index.html'))
+          assert len(pages) == 20, len(pages)
+          for page in pages:
+              text = page.read_text(encoding='utf-8')
+              assert 'name="robots" content="noindex, nofollow"' in text, page
+              assert '<form' not in text and '৳' not in text, page
+              assert 'Privacy Policy' not in text and 'Terms of Service' not in text, page
+          PY
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
+        with:
+          path: pages-preview-output
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

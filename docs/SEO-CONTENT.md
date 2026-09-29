@@ -1,5 +1,9 @@
 # SEO, content and current-site transition plan
 
+The Phase 5 GitHub Pages editorial preview is excluded from search with page-level `noindex` and a disallowing `robots.txt`. It is separate from the CMS-backed public sitemap and does not establish production canonical URLs or legal-policy publication.
+
+PHASE-05 source contract (CI review in progress): `src/lib/public-seo.ts` emits locale metadata from the current published CMS revision. `src/app/sitemap.ts` lists only complete published page/service routes, and `src/app/robots.ts` disallows crawling until an HTTPS `PUBLIC_SITE_URL`, `PUBLIC_INDEXING_ENABLED=true` and approved CMS `robots_enabled=true` are all present. The unpublished route state is always `noindex`; confirmed contact details can be displayed there without making unapproved service or legal claims indexable. Reciprocal alternate links are emitted only for paired published translations. The 2026-09-29 owner content intake is classified in [PHASE-05-CONTENT-DRAFT](PHASE-05-CONTENT-DRAFT.md); business/legal copy remains unapproved.
+
 Status: **accepted architecture under ADR 0009; content and redirect release evidence remain pending**. Search visibility and current index state must be checked with Search Console and a complete URL export before launch.
 
 ## Content model and quality gates

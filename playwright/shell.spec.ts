@@ -6,13 +6,13 @@ test.describe("locale routing", () => {
     await page.goto("/");
     await expect(page).toHaveURL(/\/en$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("OnSkillIT platform foundation");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Home");
   });
 
   test("/bn renders Bangla content with lang=bn", async ({ page }) => {
     await page.goto("/bn");
     await expect(page.locator("html")).toHaveAttribute("lang", "bn");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("অনস্কিলআইটি প্ল্যাটফর্ম ভিত্তি");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("প্রচ্ছদ");
   });
 
   test("language switcher moves between locales", async ({ page }) => {
@@ -47,10 +47,12 @@ test.describe("theme — no first-paint flash", () => {
 });
 
 test.describe("keyboard and focus", () => {
-  test("tab order reaches skip link, account, language switcher, then theme toggle", async ({ page }) => {
+  test("tab order reaches skip link, brand, account, language switcher, then theme toggle", async ({ page }) => {
     await page.goto("/en");
     await page.keyboard.press("Tab");
     await expect(page.locator(".skip-link")).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(page.getByRole("link", { name: "OnSkillIT" })).toBeFocused();
     await page.keyboard.press("Tab");
     await expect(page.getByRole("link", { name: "Account" })).toBeFocused();
     await page.keyboard.press("Tab");

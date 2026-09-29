@@ -1,0 +1,76 @@
+name: Public Core
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  public-core:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: onskillit
+          POSTGRES_PASSWORD: onskillit
+          POSTGRES_DB: onskillit
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://onskillit:onskillit@localhost:5432/onskillit
+      PUBLIC_SITE_URL: https://example.test
+      PUBLIC_INDEXING_ENABLED: 'true'
+      INQUIRY_RATE_SECRET: synthetic-ci-only-secret-with-thirty-two-characters
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - name: Validate owner-confirmed editorial drafts
+        run: node scripts/check_public_copy.mjs
+      - run: npm run check:api
+      - name: Apply reviewed migrations
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0001_foundation_probe/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0002_identity/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0003_cms/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0004_public_core/up.sql
+      - name: Verify Phase 5 migration reversal and reapply
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0004_public_core/down.sql
+          if psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'select 1 from public_inquiry limit 0' > /dev/null 2>&1; then
+            echo 'public_inquiry survived down migration' >&2
+            exit 1
+          fi
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0004_public_core/up.sql
+      - run: npm run typecheck
+      - run: npm run build
+      - name: Start synthetic public web process
+        run: |
+          npm start > /tmp/onskillit-public.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://localhost:3000/api/v1/health > /dev/null; then break; fi
+            sleep 1
+          done
+      - name: Exercise publication and inquiry boundaries
+        run: node scripts/public_ci.mjs
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Exercise bilingual public pages in browser
+        run: npx playwright test playwright/public.spec.ts
+      - name: Upload synthetic public page previews
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: public-page-previews
+          path: test-results/**/*.png
+          if-no-files-found: ignore
+          retention-days: 14

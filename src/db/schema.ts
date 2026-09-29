@@ -159,3 +159,21 @@ export const cmsRedirect = pgTable("cms_redirect", {
   updatedBy: uuid("updated_by").notNull().references(() => identityUser.id),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
+
+// PHASE-05 public core. Reviewed SQL migration 0004 is authoritative.
+export const catalogService = pgTable("catalog_service", {
+  pageId: uuid("page_id").primaryKey().references(() => cmsPage.id),
+  category: text("category").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+});
+export const publicInquiry = pgTable("public_inquiry", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: text("name"), email: text("email"), phone: text("phone"), message: text("message"),
+  locale: text("locale").notNull(), servicePageId: uuid("service_page_id").references(() => catalogService.pageId),
+  consentVersion: text("consent_version").notNull(), sourcePath: text("source_path").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  redactedAt: timestamp("redacted_at", { withTimezone: true }),
+  redactedBy: text("redacted_by"),
+  redactionRequestReference: text("redaction_request_reference"),
+  redactionReviewReference: text("redaction_review_reference"),
+});
