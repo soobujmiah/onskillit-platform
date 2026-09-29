@@ -35,9 +35,9 @@ jobs:
               assert '<form' not in text and '৳' not in text, page
               assert 'Privacy Policy' not in text and 'Terms of Service' not in text, page
           PY
-      - uses: actions/configure-pages@983d7736d9b0ae1e491c7fe8440f4c0a479194a3 # v5
-      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27db7d5416 # v3
+      - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
+      - uses: actions/upload-pages-artifact@7b1f4a764d45c48632c6b24a0339c27f5614fb0b # v4
         with:
           path: pages-preview-output
       - id: deployment
-        uses: actions/deploy-pages@d6dbf1f0d6547a28ad993615d3d2f83e98dc42bb # v4
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4
