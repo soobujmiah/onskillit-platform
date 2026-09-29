@@ -1,6 +1,6 @@
 # Documentation map
 
-Phase 0 is complete; its DOCUMENTATION READY gate passed under founding-partner architectural delegation. The documentation is a living specification, with explicit evidence states. No application behavior is implemented yet.
+PHASE-00, PHASE-01 and PHASE-02 are complete. PHASE-03 is in progress with its gate open; see `PHASE-03-PLAN.md`, `PHASE-03-WORKLOG.md` and `openapi/identity.json`. The documentation is a living specification with explicit evidence states. Branch implementation does not imply production verification.
 
 | Question | Document |
 |---|---|

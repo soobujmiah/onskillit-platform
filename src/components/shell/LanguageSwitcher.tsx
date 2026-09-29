@@ -1,13 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { Locale } from "@/i18n/locales";
 import type { Dictionary } from "@/i18n/get-dictionary";
 
-/**
- * Links to the other locale's root. PHASE-02 has exactly one page
- * per locale, so there is no deeper path to preserve yet; once real
- * routes exist under [locale], this should map to the equivalent
- * path in the target locale rather than always going to its root.
- */
+/** Preserve the current route when switching locale, including reset tokens. */
 export function LanguageSwitcher({
   locale,
   dictionary,
@@ -16,9 +14,11 @@ export function LanguageSwitcher({
   dictionary: Dictionary;
 }) {
   const otherLocale: Locale = locale === "en" ? "bn" : "en";
+  const pathname = usePathname();
+  const suffix = pathname.replace(/^\/(en|bn)(?=\/|$)/, "");
   return (
     <Link
-      href={`/${otherLocale}`}
+      href={`/${otherLocale}${suffix}`}
       lang={otherLocale}
       aria-label={dictionary.language.switchToLabel}
       style={{

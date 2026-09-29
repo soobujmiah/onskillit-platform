@@ -2,6 +2,7 @@ import type { Locale } from "@/i18n/locales";
 import type { Dictionary } from "@/i18n/get-dictionary";
 import { LanguageSwitcher } from "@/components/shell/LanguageSwitcher";
 import { ThemeToggle } from "@/components/shell/ThemeToggle";
+import Link from "next/link";
 
 export function SiteHeader({
   locale,
@@ -24,8 +25,9 @@ export function SiteHeader({
         borderBottom: "1px solid var(--border-default)",
       }}
     >
-      <span style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-primary)" }}>OnSkillIT</span>
+      <span style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-primary)" }}>{dictionary.brand}</span>
       <div style={{ display: "flex", gap: "var(--space-sm)", alignItems: "center" }}>
+        <Link href={`/${locale}/learn/profile`} style={{ color: "var(--text-primary)" }}>{dictionary.identity.account}</Link>
         <LanguageSwitcher locale={locale} dictionary={dictionary} />
         <ThemeToggle dictionary={dictionary} initialTheme={initialTheme} />
       </div>

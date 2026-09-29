@@ -1,6 +1,6 @@
 # Execution roadmap
 
-[PHASES.md](PHASES.md) is the sole canonical phase register, dependency graph and gate definition. This page is a human-readable projection; changing it alone cannot change project scope. Phase 0 gate is passed under READINESS.md; PHASE-01 is in progress with its gate open. See [PHASE-01-WORKLOG](PHASE-01-WORKLOG.md).
+[PHASES.md](PHASES.md) is the sole canonical phase register, dependency graph and gate definition. This page is a human-readable projection; changing it alone cannot change project scope. PHASE-00 through PHASE-02 gates passed. PHASE-03 is in progress with its IDENTITY VERIFIED gate open; see [PHASE-03-WORKLOG](PHASE-03-WORKLOG.md).
 
 ```mermaid
 flowchart LR
@@ -40,4 +40,4 @@ Milestone handoff: record owner role, requirement/page IDs, ADRs, changed source
 
 ## Immediate work
 
-Use the accepted Phase 0 evidence and architecture in [READINESS.md](READINESS.md). The first authorized implementation slice after that gate is PHASE-01 repository/CI/runtime foundation, then PHASE-02 shared visual/localization shell and PHASE-03 identity/RBAC/audit. Do not begin a homepage or production deployment merely because its design seems clear.
+Complete PHASE-03 identity/RBAC/audit source, synthetic GitHub CI, browser checks and review; reconcile the deferred mobile-only recovery boundary. Keep the gate open until evidence and founding-partner sign-off. PHASE-04 CMS follows the PHASE-03 gate. Production deployment remains a later phase.

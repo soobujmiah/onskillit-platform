@@ -27,7 +27,7 @@ jobs:
             sleep 1
           done
       - name: Run shell E2E suite (locale, theme, keyboard, viewport, axe)
-        run: npm run test:e2e
+        run: npx playwright test playwright/shell.spec.ts
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

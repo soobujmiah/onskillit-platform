@@ -2,7 +2,9 @@
   "name": "onskillit-platform",
   "version": "0.1.0",
   "private": true,
-  "engines": { "node": ">=24 <25" },
+  "engines": {
+    "node": ">=24 <25"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -12,20 +14,25 @@
     "lint": "eslint .",
     "check:docs": "python3 scripts/check_docs_architecture.py",
     "check:locale": "python3 scripts/check_locale_purity.py",
+    "check:api": "node scripts/check_openapi.mjs",
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@types/nodemailer": "^7.0.12",
+    "argon2": "^0.45.1",
+    "drizzle-orm": "^0.45.3",
     "next": "16.3.6",
+    "nodemailer": "^10.0.12",
+    "postgres": "^3.4.5",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "drizzle-orm": "^0.45.3",
-    "postgres": "^3.4.5",
     "server-only": "^0.0.1"
   },
   "overrides": {
     "esbuild": "^0.25.0"
   },
   "devDependencies": {
+    "@apidevtools/swagger-parser": "^13.1.0",
     "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "^1.63.0",
     "@types/node": "^24.0.0",
@@ -34,6 +41,7 @@
     "drizzle-kit": "^0.31.11",
     "eslint": "^9.0.0",
     "eslint-config-next": "16.3.6",
+    "smtp-server": "^3.19.15",
     "tsx": "^4.19.2",
     "typescript": "6.0.3"
   }

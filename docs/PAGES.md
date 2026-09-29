@@ -2,6 +2,8 @@
 
 Status: **canonical baseline accepted by founding-partner instruction, 2026-09-24**. This file alone assigns permanent page IDs, routes and implementation phases. A record marked NOT STARTED does not claim implementation. V1 has **74 page templates**: **19 public** (including **6 dynamic public detail templates**), **4 authentication**, **13 student/user**, **6 client**, **29 admin**, **3 system**. **5 future/reserved** templates are outside V1 and require a later approval. Dynamic public is a subset of public, not an extra category. A URL for each record is not counted as another template. Localized `/en` and `/bn` variants use the same template and are not counted twice. Actual locale URL strategy remains an ADR decision; routes below are canonical locale-neutral patterns.
 
+The nine PHASE-03 pages are IN PROGRESS on draft PR #12. AUTH-RESET also hosts the email-verification token state through a token-purpose prefix, and USER-PROFILE hosts the verification-request form; neither adds a V1 page template. Mobile-only recovery remains disabled. A page reaches CI-VERIFIED only after its final GitHub checks and review.
+
 A page is a route-level responsibility with its own loading, access, error and navigation behavior. Modal, drawer, tab, reusable form, section and editor component are not pages unless they have a distinct route-level task. `/unmatched-state` and `/error-boundary-state` denote framework states, not literal public paths. `conditional` future indexability needs approval. Staff, account and portals are always noindex. Staff permission strings are proposed capabilities, subject to RBAC ADR. All page IDs are permanent even if a later ADR retires a route.
 
 ## Master table
@@ -27,11 +29,11 @@ A page is a route-level responsibility with its own loading, access, error and n
 | PAGE-TEAM | Team | /team | Public | Show consented people | root | Publishing | none | public | index | listing | PAGE-TEAM | P1 | PHASE-11 | NOT STARTED | TeamMember, consent |
 | PAGE-BLOG | Blog | /blog | Public | Browse approved articles | root | Publishing | none | public | index | listing | PAGE-BLOG | P1 | PHASE-11 | NOT STARTED | Article |
 | PAGE-ARTICLE | Article | /blog/{slug} | Public | Read one article | PAGE-BLOG | Publishing | none | public | index | dynamic | PAGE-ARTICLE | P1 | PHASE-11 | NOT STARTED | Article, Media, SEO |
-| AUTH-SIGN-IN | Sign in | /account/sign-in | Authentication | Start session | account | Identity | guest | public | noindex | static | AUTH-SIGN-IN | P0 | PHASE-03 | NOT STARTED | User, Session |
-| AUTH-REGISTER | Register | /account/register | Authentication | Create account | account | Identity | guest | public | noindex | static | AUTH-REGISTER | P0 | PHASE-03 | NOT STARTED | User, Contact |
-| AUTH-RECOVERY | Request reset | /account/recovery | Authentication | Start recovery | account | Identity | guest | public | noindex | static | AUTH-RECOVERY | P0 | PHASE-03 | NOT STARTED | Recovery policy |
-| AUTH-RESET | Reset password | /account/reset/{token} | Authentication | Finish email reset | account | Identity | token | token holder | noindex | dynamic | AUTH-RESET | P0 | PHASE-03 | NOT STARTED | Reset token |
-| USER-PROFILE | Profile and security | /learn/profile | Student | Manage own identity | learn | Identity | user | self | noindex | static | USER-PROFILE | P0 | PHASE-03 | NOT STARTED | User, Contact |
+| AUTH-SIGN-IN | Sign in | /account/sign-in | Authentication | Start session | account | Identity | guest | public | noindex | static | AUTH-SIGN-IN | P0 | PHASE-03 | IN PROGRESS | User, Session |
+| AUTH-REGISTER | Register | /account/register | Authentication | Create account | account | Identity | guest | public | noindex | static | AUTH-REGISTER | P0 | PHASE-03 | IN PROGRESS | User, Contact |
+| AUTH-RECOVERY | Request reset | /account/recovery | Authentication | Start recovery | account | Identity | guest | public | noindex | static | AUTH-RECOVERY | P0 | PHASE-03 | IN PROGRESS | Recovery policy |
+| AUTH-RESET | Reset password | /account/reset/{token} | Authentication | Finish email reset | account | Identity | token | token holder | noindex | dynamic | AUTH-RESET | P0 | PHASE-03 | IN PROGRESS | Reset token |
+| USER-PROFILE | Profile and security | /learn/profile | Student | Manage own identity | learn | Identity | user | self | noindex | static | USER-PROFILE | P0 | PHASE-03 | IN PROGRESS | User, Contact |
 | USER-LEARNING | Learning library | /learn/learning | Student | Access assigned content | learn | LMS | user | own LearningAccess | noindex | listing | USER-LEARNING | P0 | PHASE-06 | NOT STARTED | CourseEdition, LearningAccess |
 | USER-LESSON | Lesson player | /learn/courses/{courseId}/lessons/{lessonId} | Student | Study one lesson | USER-LEARNING | LMS | user | own LearningAccess | noindex | dynamic | USER-LESSON | P0 | PHASE-06 | NOT STARTED | Lesson, Progress, Media, LearningAccess |
 | USER-ASSESSMENTS | Assessments | /learn/assessments | Student | Submit learning work | learn | LMS | user | own LearningAccess | noindex | listing | USER-ASSESSMENTS | P0 | PHASE-06 | NOT STARTED | Assessment, Submission, LearningAccess |
@@ -50,9 +52,9 @@ A page is a route-level responsibility with its own loading, access, error and n
 | CLIENT-PROJECT-DETAIL | Project detail | /client/projects/{id} | Client | Review one project | CLIENT-PROJECTS | Portals | client | own account | noindex | dynamic | CLIENT-PROJECT-DETAIL | P1 | PHASE-10 | NOT STARTED | Project, Activity |
 | CLIENT-REQUESTS | Service requests | /client/requests | Client | Submit and track requests | client | Portals | client | own account | noindex | listing | CLIENT-REQUESTS | P1 | PHASE-10 | NOT STARTED | ServiceRequest |
 | CLIENT-BILLING | Client billing | /client/billing | Client | View own invoices | client | Portals | client | own account | noindex | listing | CLIENT-BILLING | P1 | PHASE-10 | NOT STARTED | Invoice, Payment |
-| ADMIN-USERS | Users | /staff/users | Admin | Manage accounts | staff | Identity | staff | users.read | noindex | listing | ADMIN-USERS | P0 | PHASE-03 | NOT STARTED | User, RBAC |
-| ADMIN-ROLES | Roles and permissions | /staff/roles | Admin | Manage scoped grants | staff | RBAC | staff | roles.manage | noindex | listing | ADMIN-ROLES | P0 | PHASE-03 | NOT STARTED | Role, Permission |
-| ADMIN-AUDIT | Audit log | /staff/audit | Admin | Review sensitive actions | staff | Audit | staff | audit.read | noindex | listing | ADMIN-AUDIT | P0 | PHASE-03 | NOT STARTED | AuditEvent |
+| ADMIN-USERS | Users | /staff/users | Admin | Manage accounts | staff | Identity | staff | users.read | noindex | listing | ADMIN-USERS | P0 | PHASE-03 | IN PROGRESS | User, RBAC |
+| ADMIN-ROLES | Roles and permissions | /staff/roles | Admin | Manage scoped grants | staff | RBAC | staff | roles.manage | noindex | listing | ADMIN-ROLES | P0 | PHASE-03 | IN PROGRESS | Role, Permission |
+| ADMIN-AUDIT | Audit log | /staff/audit | Admin | Review sensitive actions | staff | Audit | staff | audit.read | noindex | listing | ADMIN-AUDIT | P0 | PHASE-03 | IN PROGRESS | AuditEvent |
 | ADMIN-CMS-PAGES | CMS pages | /staff/content/pages | Admin | List and review pages | staff | CMS | staff | pages.read | noindex | listing | ADMIN-CMS-PAGES | P0 | PHASE-04 | NOT STARTED | Page, Revision |
 | ADMIN-CMS-EDITOR | Page editor | /staff/content/pages/{id} | Admin | Edit and publish page | ADMIN-CMS-PAGES | CMS | staff | pages.write | noindex | dynamic | ADMIN-CMS-EDITOR | P0 | PHASE-04 | NOT STARTED | Page, Section, Revision |
 | ADMIN-NAVIGATION | Navigation | /staff/content/navigation | Admin | Manage menus/footer | staff | CMS | staff | navigation.write | noindex | static | ADMIN-NAVIGATION | P0 | PHASE-04 | NOT STARTED | NavItem, SiteSetting |
@@ -81,7 +83,7 @@ A page is a route-level responsibility with its own loading, access, error and n
 | ADMIN-NOTIFICATIONS | Notifications | /staff/notifications | Admin | Manage notices | staff | Notifications | staff | notifications.manage | noindex | listing | ADMIN-NOTIFICATIONS | P1 | PHASE-11 | NOT STARTED | Notification |
 | SYS-NOT-FOUND | Not found | /{unmatched} | System | Explain missing route | system | Platform | none | public | noindex | dynamic | SYS-NOT-FOUND | P0 | PHASE-01 | IN PROGRESS | Router |
 | SYS-ERROR | Error | /{error-boundary} | System | Recover from error | system | Platform | any | public | noindex | dynamic | SYS-ERROR | P0 | PHASE-01 | IN PROGRESS | Error boundary |
-| SYS-FORBIDDEN | Access denied | /forbidden | System | Explain denied access | system | Identity | any | public | noindex | static | SYS-FORBIDDEN | P0 | PHASE-03 | NOT STARTED | RBAC |
+| SYS-FORBIDDEN | Access denied | /forbidden | System | Explain denied access | system | Identity | any | public | noindex | static | SYS-FORBIDDEN | P0 | PHASE-03 | IN PROGRESS | RBAC |
 | FUT-CAREERS | Careers | /careers | Future | Recruit with real process | root | Publishing | none | public | conditional | static | FUT-CAREERS | P2 | PHASE-15 | NOT STARTED | Hiring policy |
 | FUT-INSTRUCTOR-DETAIL | Instructor profile | /instructors/{slug} | Future | Show consented trainer | PAGE-TEAM | Publishing | none | public | conditional | dynamic | FUT-INSTRUCTOR-DETAIL | P2 | PHASE-15 | NOT STARTED | Consent, Instructor |
 | FUT-CLIENT-DOCUMENTS | Client documents | /client/documents | Future | Exchange scoped files | client | Portals | client | own account | noindex | listing | FUT-CLIENT-DOCUMENTS | P2 | PHASE-15 | NOT STARTED | Rights, storage |
