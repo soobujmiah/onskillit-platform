@@ -139,8 +139,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         const inserted = await db`INSERT INTO identity_token(user_id,contact_id,purpose,token_hash,expires_at)
           VALUES (${row.user_id},${row.contact_id},${purpose},${digest(token)},now()+${minutes}*interval '1 minute') RETURNING id`;
         try {
-          const route = verify ? "verify-email" : "reset";
-          const sent = await sendIdentityLink(contact.normalized, `/en/account/${route}/${token}`, verify ? "Verify your email" : "Reset your password");
+          const sent = await sendIdentityLink(contact.normalized, `/en/account/reset/${token}${verify ? "?purpose=verify" : ""}`, verify ? "Verify your email" : "Reset your password");
           if (!sent) await db`DELETE FROM identity_token WHERE id=${inserted[0].id}`;
         } catch {
           await db`DELETE FROM identity_token WHERE id=${inserted[0].id}`;

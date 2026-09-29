@@ -25,6 +25,9 @@ jobs:
     env:
       DATABASE_URL: postgres://onskillit:onskillit@localhost:5432/onskillit
       PUBLIC_BASE_URL: http://localhost:3000
+      SMTP_HOST: 127.0.0.1
+      SMTP_PORT: '2525'
+      SMTP_FROM: identity@example.test
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -54,5 +57,5 @@ jobs:
             if curl --fail --silent http://localhost:3000/api/v1/health > /dev/null; then break; fi
             sleep 1
           done
-      - name: Exercise identity, recovery, RBAC and audit
+      - name: Exercise identity, mail delivery, recovery, RBAC and audit
         run: node scripts/identity_ci.mjs

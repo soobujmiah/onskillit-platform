@@ -145,3 +145,6 @@ body {
 .identity-links { margin-top: var(--space-lg); }
 .identity-links a { color: var(--text-primary); }
 .identity-record { padding: var(--space-sm); overflow-wrap: anywhere; }
+.staff-shell { width: min(100%, 72rem); margin: 0 auto; }
+.staff-nav { display: flex; flex-wrap: wrap; gap: var(--space-md); padding: var(--space-md); }
+.staff-nav a { color: var(--text-primary); min-height: 44px; display: inline-flex; align-items: center; }

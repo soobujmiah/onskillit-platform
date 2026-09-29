@@ -14,7 +14,7 @@
     "body": "The public experience is under development."
   },
   "identity": {
-    "signIn": "Sign in", "register": "Create account", "recovery": "Recover account",
+    "account": "Account", "signIn": "Sign in", "register": "Create account", "recovery": "Recover account",
     "reset": "Set a new password", "verify": "Verify email", "profile": "Profile and security",
     "users": "Users", "roles": "Roles and permissions", "audit": "Audit log", "forbidden": "Access denied",
     "contact": "Email or international mobile number", "email": "Email address", "password": "Password",

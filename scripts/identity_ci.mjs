@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
-import { createHash } from "node:crypto";
 import { execFileSync } from "node:child_process";
 import postgres from "postgres";
+import { SMTPServer } from "smtp-server";
 
 const db = postgres(process.env.DATABASE_URL, { max: 1 });
 const base = "http://localhost:3000";
@@ -9,7 +9,30 @@ const email = "member@example.test";
 const ownerEmail = "owner@example.test";
 const password = "A secure sample password 123";
 const newPassword = "A changed sample password 456";
-const hash = (value) => createHash("sha256").update(value).digest("hex");
+const delivered = [];
+const smtp = new SMTPServer({ authOptional: true, disabledCommands: ["AUTH", "STARTTLS"],
+  onData(stream, _session, callback) {
+    const chunks = [];
+    stream.on("data", (chunk) => chunks.push(chunk));
+    stream.on("end", () => { delivered.push(Buffer.concat(chunks).toString("utf8")); callback(); });
+    stream.on("error", callback);
+  },
+});
+await new Promise((resolve, reject) => { smtp.once("error", reject); smtp.listen(2525, "127.0.0.1", resolve); });
+async function nextMail() {
+  for (let attempt = 0; attempt < 100; attempt++) {
+    if (delivered.length) return delivered.shift();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+  }
+  throw new Error("Synthetic SMTP message not delivered");
+}
+function tokenFromMail(message, verify) {
+  const normalized = message.replace(/=\r?\n/g, "");
+  const match = /\/account\/reset\/([A-Za-z0-9_-]+)/.exec(normalized);
+  assert.ok(match, "Missing reset route in synthetic mail");
+  assert.equal(normalized.includes("purpose=3Dverify") || normalized.includes("purpose=verify"), verify);
+  return match[1];
+}
 
 async function call(path, body, cookie = "", csrf = "") {
   const response = await fetch(`${base}/api/v1/identity/${path}`, {
@@ -40,14 +63,12 @@ try {
   assert.equal((await call("mobile-recovery", { contact: "+8801700000000" })).response.status, 404);
 
   const user = (await db`SELECT u.id,c.id AS contact_id FROM identity_user u JOIN identity_contact c ON c.user_id=u.id WHERE c.normalized=${email}`)[0];
-  const verifyToken = "verification-synthetic-token-01234567890123456789";
-  await db`INSERT INTO identity_token(user_id,contact_id,purpose,token_hash,expires_at)
-    VALUES (${user.id},${user.contact_id},'verify_email',${hash(verifyToken)},now()+interval '5 minutes')`;
+  assert.equal((await call("email-verification-requests", { email })).response.status, 202);
+  const verifyToken = tokenFromMail(await nextMail(), true);
   assert.equal((await call("email-verifications", { token: verifyToken })).response.status, 200);
   assert.equal((await call("email-verifications", { token: verifyToken })).response.status, 400);
-  const resetToken = "password-reset-synthetic-token-0123456789012345";
-  await db`INSERT INTO identity_token(user_id,contact_id,purpose,token_hash,expires_at)
-    VALUES (${user.id},${user.contact_id},'reset_password',${hash(resetToken)},now()+interval '5 minutes')`;
+  assert.equal((await call("password-reset-requests", { email })).response.status, 202);
+  const resetToken = tokenFromMail(await nextMail(), false);
   assert.equal((await call("password-resets", { token: resetToken, password: newPassword })).response.status, 200);
   assert.equal((await call("password-resets", { token: resetToken, password: newPassword })).response.status, 400);
   assert.equal((await fetch(`${base}/api/v1/identity/profile`, { headers: { Cookie: member.cookie } })).status, 401);
@@ -76,4 +97,7 @@ try {
   assert.equal(audit[0].operator_identity, "ci-operator");
   assert.equal(audit[0].target_user_id, owner.id);
   console.log("Identity integration checks passed");
-} finally { await db.end(); }
+} finally {
+  await db.end();
+  await new Promise((resolve) => smtp.close(resolve));
+}

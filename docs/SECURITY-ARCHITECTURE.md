@@ -1,5 +1,7 @@
 # Security, privacy and content integrity architecture
 
+PHASE-03 branch status: the founding partner deferred and disabled mobile-only recovery; unverified email may register/sign in but cannot reset until email verification establishes mailbox control; the first owner grant is an audited operator action only. Source and synthetic CI details are in [PHASE-03-WORKLOG](PHASE-03-WORKLOG.md). No deployed security control or external mail delivery is claimed.
+
 Status: **accepted implementation-ready security architecture under ADRs 0007–0009; deployed controls still require phase tests and release review**. This is not evidence that the controls exist. OnSkillIT will process identity, learning, client and possibly payment data, so release requires threat-model and permission review.
 
 ## Trust boundaries
