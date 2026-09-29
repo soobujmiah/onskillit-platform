@@ -1,6 +1,6 @@
 # Phase 4 CMS publishing contract
 
-Status: implementation on `phase-04/cms-core`; PUBLISHING CORE VERIFIED gate open. The physical contract is reviewed SQL migration `0003_cms`, matching Drizzle definitions, `/api/v1/cms` and [CMS OpenAPI](openapi/cms.json). Public business pages and published-content rendering belong to Phase 5.
+Status: implementation CI-verified on `phase-04/cms-core`; PUBLISHING CORE VERIFIED gate passed on synthetic GitHub evidence. The physical contract is reviewed SQL migration `0003_cms`, matching Drizzle definitions, `/api/v1/cms` and [CMS OpenAPI](openapi/cms.json). Public business pages and published-content rendering belong to Phase 5.
 
 ## Editorial model
 

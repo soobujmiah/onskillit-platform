@@ -1,6 +1,6 @@
 # Execution roadmap
 
-[PHASES.md](PHASES.md) is the sole canonical phase register, dependency graph and gate definition. This page is a human-readable projection; changing it alone cannot change project scope. PHASE-00 through PHASE-03 gates passed. PHASE-04 is in progress with its PUBLISHING CORE VERIFIED gate open; see [PHASE-03-WORKLOG](PHASE-03-WORKLOG.md).
+[PHASES.md](PHASES.md) is the sole canonical phase register, dependency graph and gate definition. This page is a human-readable projection; changing it alone cannot change project scope. PHASE-00 through PHASE-04 gates passed on GitHub CI evidence; see [PHASE-04-WORKLOG](PHASE-04-WORKLOG.md).
 
 ```mermaid
 flowchart LR
@@ -40,4 +40,4 @@ Milestone handoff: record owner role, requirement/page IDs, ADRs, changed source
 
 ## Immediate work
 
-Implement and verify PHASE-04 typed CMS pages, review/publish/rollback, localized navigation and SEO, private media and staff UI. PHASE-03 passed on synthetic GitHub evidence and the founding partner’s completion instruction. Public business pages belong to PHASE-05; production deployment remains a later phase.
+PHASE-04 typed CMS pages, review/publish/rollback, localized navigation and SEO, private media and staff UI passed synthetic GitHub checks. The next implementation phase is PHASE-05 public business pages, which require verified owner-provided content. Production deployment remains a later phase.
