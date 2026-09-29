@@ -109,8 +109,27 @@ try {
   assert.equal((await call("role-assignments", { user_id: user.id, role_id: "support", scope_type: "global", scope_id: "*", reason: "Synthetic support assignment" }, ownerCookie.cookie, ownerCookie.csrf)).response.status, 201);
   assert.equal((await call("registrations", { contact: "reviewer@example.test", password })).response.status, 201);
   const reviewerId = (await db`SELECT u.id FROM identity_user u JOIN identity_contact c ON c.user_id=u.id WHERE c.normalized='reviewer@example.test'`)[0].id;
-  // Synthetic CI setup only. Real additional-owner provisioning requires a reviewed operator procedure.
-  await db`INSERT INTO identity_assignment(user_id,role_id,scope_type,scope_id) VALUES (${reviewerId},'owner','global','*')`;
+  const reviewerMemberLogin = await call("sessions", { contact: "reviewer@example.test", password });
+  assert.equal(reviewerMemberLogin.response.status, 200);
+  const reviewerMemberCookie = cookies(reviewerMemberLogin.response);
+  const secondOwnerEnv = { ...process.env, OPERATOR_IDENTITY: "ci-operator",
+    OWNER_APPROVAL_REFERENCE: "synthetic-owner-approval", OPERATOR_REASON: "Synthetic second-owner integration test",
+    OWNER_APPROVER_ID: owner.id, TARGET_USER_ID: reviewerId, SECOND_OWNER_BOOTSTRAP_APPROVED: "yes" };
+  assert.throws(() => execFileSync("./node_modules/.bin/tsx", ["scripts/bootstrap_second_owner.ts"],
+    { env: { ...secondOwnerEnv, SECOND_OWNER_BOOTSTRAP_APPROVED: "no" }, stdio: "pipe" }));
+  assert.throws(() => execFileSync("./node_modules/.bin/tsx", ["scripts/bootstrap_second_owner.ts"],
+    { env: { ...secondOwnerEnv, TARGET_USER_ID: owner.id }, stdio: "pipe" }));
+  execFileSync("./node_modules/.bin/tsx", ["scripts/bootstrap_second_owner.ts"], { env: secondOwnerEnv });
+  assert.equal((await fetch(`${base}/api/v1/identity/profile`, { headers: { Cookie: reviewerMemberCookie.cookie } })).status, 401);
+  assert.throws(() => execFileSync("./node_modules/.bin/tsx", ["scripts/bootstrap_second_owner.ts"],
+    { env: secondOwnerEnv, stdio: "pipe" }));
+  const secondAudit = await db`SELECT actor_user_id,operator_identity,target_user_id,metadata FROM identity_audit
+    WHERE action='operator.bootstrap_second_owner'`;
+  assert.equal(secondAudit.length, 1);
+  assert.equal(secondAudit[0].actor_user_id, owner.id);
+  assert.equal(secondAudit[0].operator_identity, "ci-operator");
+  assert.equal(secondAudit[0].target_user_id, reviewerId);
+  assert.equal(secondAudit[0].metadata.approval_reference, "synthetic-owner-approval");
   const reviewerLogin = await call("sessions", { contact: "reviewer@example.test", password });
   assert.equal(reviewerLogin.response.status, 200);
   const reviewerCookie = cookies(reviewerLogin.response);
