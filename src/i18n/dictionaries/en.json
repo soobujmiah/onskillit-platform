@@ -17,9 +17,10 @@
     "account": "Account", "signIn": "Sign in", "register": "Create account", "recovery": "Recover account",
     "reset": "Set a new password", "verify": "Verify email", "profile": "Profile and security",
     "users": "Users", "roles": "Roles and permissions", "audit": "Audit log", "forbidden": "Access denied",
-    "contact": "Email or international mobile number", "email": "Email address", "password": "Password",
+    "contact": "Email or international mobile number", "optionalSecondContact": "Second contact, optional", "email": "Email address", "password": "Password",
     "newPassword": "New password", "submit": "Continue", "logout": "Sign out",
     "verificationRequest": "Send email verification link", "recoveryNote": "Mobile-only recovery is currently unavailable. Email reset requires a verified address.",
+    "emailVerifySubject": "Verify your email", "emailResetSubject": "Reset your password", "emailIgnore": "If you did not request this, ignore this message.",
     "genericSent": "If the address is eligible and delivery is configured, a link will be sent.",
     "verified": "Your email is verified.", "resetDone": "Your password has been changed.",
     "invalid": "The request could not be completed. Check the details and try again.",
@@ -30,6 +31,8 @@
     "status": "Account status", "activate": "Activate", "suspend": "Suspend",
     "targetId": "Target user ID", "roleId": "Role", "grant": "Grant role", "reason": "Reason",
     "saved": "Change saved.", "supportRole": "Support", "memberRole": "Member",
+    "ownerRole": "Owner", "securityRole": "Security administrator", "pendingGrants": "Pending privileged grants",
+    "approveGrant": "Approve grant", "requestGrant": "Request independent approval",
     "activeStatus": "Active", "suspendedStatus": "Suspended", "inactiveStatus": "Inactive", "pendingStatus": "Deletion pending"
   }
 }

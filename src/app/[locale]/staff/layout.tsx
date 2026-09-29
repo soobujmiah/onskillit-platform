@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDictionary } from "@/i18n/get-dictionary";
 import { isLocale } from "@/i18n/locales";
-import { hasPermission } from "@/lib/identity";
+import { hasAnyPermission } from "@/lib/identity";
 import { privateIdentity } from "@/lib/identity-page";
 
 export default async function StaffLayout({ children, params }: {
@@ -19,7 +19,7 @@ export default async function StaffLayout({ children, params }: {
       { path: "audit", label: t.audit, permission: "audit.read" },
     ];
     const allowed = [];
-    for (const link of links) if (await hasPermission(db, session.userId, link.permission)) allowed.push(link);
+    for (const link of links) if (await hasAnyPermission(db, session.userId, link.permission)) allowed.push(link);
     return <div className="staff-shell"><nav aria-label={t.roles} className="staff-nav">
       {allowed.map((link) => <Link key={link.path} href={`/${locale}/staff/${link.path}`}>{link.label}</Link>)}
     </nav>{children}</div>;

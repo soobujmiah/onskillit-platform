@@ -51,6 +51,9 @@ function cookies(response) {
 try {
   assert.equal((await call("registrations", { contact: email, password })).response.status, 201);
   assert.equal((await call("registrations", { contact: email.toUpperCase(), password })).response.status, 409);
+  assert.equal((await call("registrations", { contact: "both@example.test", secondary_contact: "+8801700000000", password })).response.status, 201);
+  assert.equal((await call("sessions", { contact: "+8801700000000", password })).response.status, 200);
+  assert.equal((await call("registrations", { contact: "+8801700000000", password })).response.status, 409);
   const login = await call("sessions", { contact: email, password });
   assert.equal(login.response.status, 200);
   const member = cookies(login.response);
@@ -87,15 +90,50 @@ try {
   assert.equal((await fetch(`${base}/api/v1/identity/audit`, { headers: { Cookie: ownerCookie.cookie } })).status, 200);
   assert.equal((await call("role-assignments", { user_id: user.id, role_id: "owner", scope_type: "global", scope_id: "*" }, ownerCookie.cookie, ownerCookie.csrf)).response.status, 403);
   assert.equal((await call("role-assignments", { user_id: user.id, role_id: "support", scope_type: "global", scope_id: "*" }, ownerCookie.cookie, ownerCookie.csrf)).response.status, 201);
+  assert.equal((await call("registrations", { contact: "reviewer@example.test", password })).response.status, 201);
+  const reviewerId = (await db`SELECT u.id FROM identity_user u JOIN identity_contact c ON c.user_id=u.id WHERE c.normalized='reviewer@example.test'`)[0].id;
+  // Synthetic CI setup only. Real additional-owner provisioning requires a reviewed operator procedure.
+  await db`INSERT INTO identity_assignment(user_id,role_id,scope_type,scope_id) VALUES (${reviewerId},'owner','global','*')`;
+  const reviewerLogin = await call("sessions", { contact: "reviewer@example.test", password });
+  assert.equal(reviewerLogin.response.status, 200);
+  const reviewerCookie = cookies(reviewerLogin.response);
+  assert.equal((await call("registrations", { contact: "scoped@example.test", password })).response.status, 201);
+  const scopedId = (await db`SELECT u.id FROM identity_user u JOIN identity_contact c ON c.user_id=u.id WHERE c.normalized='scoped@example.test'`)[0].id;
+  assert.equal((await call("role-assignments", { user_id: scopedId, role_id: "support", scope_type: "resource", scope_id: user.id }, ownerCookie.cookie, ownerCookie.csrf)).response.status, 201);
+  const scopedLogin = await call("sessions", { contact: "scoped@example.test", password });
+  assert.equal(scopedLogin.response.status, 200);
+  const scopedCookie = cookies(scopedLogin.response);
+  const scopedUsersResponse = await fetch(`${base}/api/v1/identity/users`, { headers: { Cookie: scopedCookie.cookie } });
+  assert.equal(scopedUsersResponse.status, 200);
+  const scopedUsers = (await scopedUsersResponse.json()).users;
+  assert.ok(scopedUsers.length > 0);
+  assert.ok(scopedUsers.every((item) => item.id === user.id));
+  assert.equal((await call("role-assignments", { user_id: user.id, role_id: "support", scope_type: "global", scope_id: "*" }, scopedCookie.cookie, scopedCookie.csrf)).response.status, 403);
+  const requested = await call("grant-requests", { user_id: scopedId, role_id: "security_admin", scope_type: "global", scope_id: "*", reason: "Synthetic two-person review" }, ownerCookie.cookie, ownerCookie.csrf);
+  assert.equal(requested.response.status, 201);
+  const approvalPath = `grant-requests/${requested.value.request_id}/approve`;
+  assert.equal((await call(approvalPath, {}, ownerCookie.cookie, ownerCookie.csrf)).response.status, 403);
+  assert.equal((await call(approvalPath, {}, reviewerCookie.cookie, reviewerCookie.csrf)).response.status, 200);
+  assert.equal((await call(approvalPath, {}, reviewerCookie.cookie, reviewerCookie.csrf)).response.status, 404);
   const suspended = await fetch(`${base}/api/v1/identity/users/${user.id}`, { method: "PATCH",
     headers: { "Content-Type": "application/json", Origin: base, Cookie: ownerCookie.cookie, "x-csrf-token": ownerCookie.csrf },
     body: JSON.stringify({ status: "suspended" }) });
   assert.equal(suspended.status, 200);
   assert.equal((await call("sessions", { contact: email, password: newPassword })).response.status, 401);
+  let blocked = false;
+  for (let attempt = 0; attempt < 11; attempt++) {
+    const result = await call("sessions", { contact: "unknown@example.test", password: "Incorrect sample password" });
+    if (attempt === 10) blocked = result.response.status === 429;
+  }
+  assert.ok(blocked, "Login rate limit did not block the eleventh attempt");
   const audit = await db`SELECT action,operator_identity,target_user_id FROM identity_audit WHERE action='operator.bootstrap_owner'`;
   assert.equal(audit.length, 1);
   assert.equal(audit[0].operator_identity, "ci-operator");
   assert.equal(audit[0].target_user_id, owner.id);
+  let immutable = false;
+  try { await db`UPDATE identity_audit SET reason='tampered' WHERE action='operator.bootstrap_owner'`; }
+  catch { immutable = true; }
+  assert.ok(immutable, "Audit table allowed mutation");
   console.log("Identity integration checks passed");
 } finally {
   await db.end();

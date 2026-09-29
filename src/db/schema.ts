@@ -73,6 +73,19 @@ export const identityAssignment = pgTable("identity_assignment", {
   grantedAt: timestamp("granted_at", { withTimezone: true }).notNull().defaultNow(),
   revokedAt: timestamp("revoked_at", { withTimezone: true }),
 });
+export const identityGrantRequest = pgTable("identity_grant_request", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  requestedBy: uuid("requested_by").notNull().references(() => identityUser.id),
+  targetUserId: uuid("target_user_id").notNull().references(() => identityUser.id),
+  roleId: text("role_id").notNull().references(() => identityRole.id),
+  scopeType: text("scope_type").notNull(),
+  scopeId: text("scope_id").notNull(),
+  reason: text("reason").notNull(),
+  status: text("status").notNull().default("pending"),
+  approvedBy: uuid("approved_by").references(() => identityUser.id),
+  requestedAt: timestamp("requested_at", { withTimezone: true }).notNull().defaultNow(),
+  decidedAt: timestamp("decided_at", { withTimezone: true }),
+});
 export const identityAudit = pgTable("identity_audit", {
   id: uuid("id").primaryKey().defaultRandom(),
   actorUserId: uuid("actor_user_id").references(() => identityUser.id),

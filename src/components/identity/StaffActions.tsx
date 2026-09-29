@@ -32,10 +32,12 @@ export function GrantRoleAction({ dictionary }: { dictionary: Dictionary }) {
     event.preventDefault();
     const form = new FormData(event.currentTarget);
     try {
-      const response = await fetch("/api/v1/identity/role-assignments", {
+      const role = String(form.get("role_id") ?? "");
+      const privileged = role === "owner" || role === "security_admin";
+      const response = await fetch(`/api/v1/identity/${privileged ? "grant-requests" : "role-assignments"}`, {
         method: "POST", credentials: "same-origin",
         headers: { "Content-Type": "application/json", "x-csrf-token": csrfCookie() },
-        body: JSON.stringify({ user_id: form.get("user_id"), role_id: form.get("role_id"),
+        body: JSON.stringify({ user_id: form.get("user_id"), role_id: role,
           scope_type: "global", scope_id: "*", reason: form.get("reason") }),
       });
       setMessage(response.ok ? t.saved : t.invalid);
@@ -45,9 +47,25 @@ export function GrantRoleAction({ dictionary }: { dictionary: Dictionary }) {
   return <form onSubmit={submit} className="identity-form">
     <h2>{t.grant}</h2>
     <label>{t.targetId}<input name="user_id" required /></label>
-    <label>{t.roleId}<select name="role_id" required><option value="support">{t.supportRole}</option><option value="member">{t.memberRole}</option></select></label>
+    <label>{t.roleId}<select name="role_id" required><option value="support">{t.supportRole}</option><option value="member">{t.memberRole}</option><option value="security_admin">{t.securityRole}</option><option value="owner">{t.ownerRole}</option></select></label>
     <label>{t.reason}<input name="reason" required maxLength={300} /></label>
     <button type="submit">{t.grant}</button>
     {message && <p role="status">{message}</p>}
   </form>;
+}
+
+export function ApproveGrantAction({ requestId, dictionary }: { requestId: string; dictionary: Dictionary }) {
+  const [message, setMessage] = useState("");
+  const t = dictionary.identity;
+  async function approve() {
+    try {
+      const response = await fetch(`/api/v1/identity/grant-requests/${requestId}/approve`, {
+        method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json", "x-csrf-token": csrfCookie() },
+        body: "{}",
+      });
+      setMessage(response.ok ? t.saved : t.invalid);
+      if (response.ok) window.location.reload();
+    } catch { setMessage(t.invalid); }
+  }
+  return <span><button type="button" onClick={approve}>{t.approveGrant}</button>{message && <span role="status">{message}</span>}</span>;
 }

@@ -4,7 +4,7 @@ PHASE-01 implementation note: `GET /api/v1/health` is an unauthenticated livenes
 
 Status: **accepted V1 API architecture**, not implemented. Exact OpenAPI schemas are authored with each owning phase under ADRs 0006/0007/0009. API-first means each domain command/query has an explicit contract; server-rendered pages may call application services directly without making an HTTP loopback request.
 
-PHASE-03 branch implementation: [identity OpenAPI](openapi/identity.json) specifies the `/api/v1/identity` endpoints, request shapes, session-cookie scheme and safe error codes. The identity route handler is in `src/app/api/v1/identity/[...path]/route.ts`; the GitHub `Identity` workflow validates the contract and exercises synthetic integration. Mobile-only recovery is disabled, and privileged role grants are denied pending independent approval. This branch source is not production evidence; see [PHASE-03-WORKLOG](PHASE-03-WORKLOG.md).
+PHASE-03 branch implementation: [identity OpenAPI](openapi/identity.json) specifies the `/api/v1/identity` endpoints, request shapes, session-cookie scheme and safe error codes. The identity route handler is in `src/app/api/v1/identity/[...path]/route.ts`; the GitHub `Identity` workflow validates the contract and exercises synthetic integration. Mobile-only recovery is disabled. Direct privileged role grants are denied; a separate requester and approver with sufficient effective grants are required for that action. This branch source is not production evidence; see [PHASE-03-WORKLOG](PHASE-03-WORKLOG.md).
 
 ## Global conventions
 

@@ -1,7 +1,7 @@
 import "server-only";
 import nodemailer from "nodemailer";
 
-export async function sendIdentityLink(to: string, path: string, subject: string): Promise<boolean> {
+export async function sendIdentityLink(to: string, path: string, subject: string, ignoreText: string): Promise<boolean> {
   const host = process.env.SMTP_HOST;
   const from = process.env.SMTP_FROM;
   const base = process.env.PUBLIC_BASE_URL;
@@ -16,6 +16,6 @@ export async function sendIdentityLink(to: string, path: string, subject: string
     disableFileAccess: true,
     disableUrlAccess: true,
   });
-  await transport.sendMail({ from, to, subject, text: `${subject}\n\n${url}\n\nIf you did not request this, ignore this message.` });
+  await transport.sendMail({ from, to, subject, text: `${subject}\n\n${url}\n\n${ignoreText}` });
   return true;
 }

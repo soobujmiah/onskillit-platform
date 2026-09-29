@@ -7,6 +7,7 @@
     "schemas": {
       "Error": { "type": "object", "required": ["code"], "properties": { "code": { "type": "string" } } },
       "ContactPassword": { "type": "object", "additionalProperties": false, "required": ["contact", "password"], "properties": { "contact": { "type": "string", "maxLength": 254 }, "password": { "type": "string", "minLength": 12, "maxLength": 128 } } },
+      "Registration": { "type": "object", "additionalProperties": false, "required": ["contact", "password"], "properties": { "contact": { "type": "string", "maxLength": 254 }, "secondary_contact": { "type": "string", "maxLength": 254, "description": "Optional contact of the other kind" }, "password": { "type": "string", "minLength": 12, "maxLength": 128 } } },
       "Email": { "type": "object", "additionalProperties": false, "required": ["email"], "properties": { "email": { "type": "string", "format": "email" } } },
       "Token": { "type": "object", "additionalProperties": false, "required": ["token"], "properties": { "token": { "type": "string" } } },
       "Reset": { "type": "object", "additionalProperties": false, "required": ["token", "password"], "properties": { "token": { "type": "string" }, "password": { "type": "string", "minLength": 12, "maxLength": 128 } } },
@@ -17,7 +18,7 @@
     "responses": { "Error": { "description": "Safe error code; no account-existence disclosure on recovery.", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } } } }
   },
   "paths": {
-    "/registrations": { "post": { "operationId": "register", "summary": "Register an unverified email or mobile account", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ContactPassword" } } } }, "responses": { "201": { "description": "Created" }, "400": { "$ref": "#/components/responses/Error" }, "409": { "$ref": "#/components/responses/Error" }, "429": { "$ref": "#/components/responses/Error" } } } },
+    "/registrations": { "post": { "operationId": "register", "summary": "Register an unverified email or mobile account", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Registration" } } } }, "responses": { "201": { "description": "Created" }, "400": { "$ref": "#/components/responses/Error" }, "409": { "$ref": "#/components/responses/Error" }, "429": { "$ref": "#/components/responses/Error" } } } },
     "/sessions": { "post": { "operationId": "login", "summary": "Create revocable cookie session", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ContactPassword" } } } }, "responses": { "200": { "description": "Session cookies set" }, "401": { "$ref": "#/components/responses/Error" }, "429": { "$ref": "#/components/responses/Error" } } } },
     "/session": { "get": { "operationId": "getSession", "security": [{ "session": [] }], "responses": { "200": { "description": "Current session" }, "401": { "$ref": "#/components/responses/Error" } } } },
     "/profile": { "get": { "operationId": "getProfile", "security": [{ "session": [] }], "responses": { "200": { "description": "Own account contacts" }, "401": { "$ref": "#/components/responses/Error" } } } },
@@ -32,6 +33,11 @@
     "/roles": { "get": { "operationId": "listRoles", "security": [{ "session": [] }], "responses": { "200": { "description": "Role list" }, "403": { "$ref": "#/components/responses/Error" } } } },
     "/role-assignments": { "post": { "operationId": "grantRole", "security": [{ "session": [] }], "description": "Privileged roles are denied pending independent approval workflow.", "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Grant" } } } }, "responses": { "201": { "description": "Grant recorded and target sessions revoked" }, "403": { "$ref": "#/components/responses/Error" } } } },
     "/role-assignments/{id}": { "delete": { "operationId": "revokeRole", "security": [{ "session": [] }], "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }], "responses": { "200": { "description": "Grant revoked" }, "403": { "$ref": "#/components/responses/Error" } } } },
+    "/grant-requests": {
+      "get": { "operationId": "listPrivilegedGrants", "security": [{ "session": [] }], "responses": { "200": { "description": "Pending privileged grant requests" }, "403": { "$ref": "#/components/responses/Error" } } },
+      "post": { "operationId": "requestPrivilegedGrant", "security": [{ "session": [] }], "requestBody": { "required": true, "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Grant" } } } }, "responses": { "201": { "description": "Pending request; no role granted" }, "403": { "$ref": "#/components/responses/Error" } } }
+    },
+    "/grant-requests/{id}/approve": { "post": { "operationId": "approvePrivilegedGrant", "security": [{ "session": [] }], "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }], "responses": { "200": { "description": "Second independent administrator approved and role granted" }, "403": { "$ref": "#/components/responses/Error" }, "404": { "$ref": "#/components/responses/Error" } } } },
     "/audit": { "get": { "operationId": "listAudit", "security": [{ "session": [] }], "responses": { "200": { "description": "Redacted audit list" }, "403": { "$ref": "#/components/responses/Error" } } } }
   }
 }

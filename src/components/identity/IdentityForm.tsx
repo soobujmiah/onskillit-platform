@@ -27,6 +27,7 @@ export function IdentityForm({ mode, locale, dictionary, token }: {
     const form = new FormData(event.currentTarget);
     const payload: Record<string, string> = {};
     if (needsContact) payload.contact = String(form.get("contact") ?? "");
+    if (mode === "register" && form.get("secondary_contact")) payload.secondary_contact = String(form.get("secondary_contact"));
     if (needsEmail) payload.email = String(form.get("email") ?? "");
     if (needsPassword) payload.password = String(form.get("password") ?? "");
     if (token) payload.token = token;
@@ -46,6 +47,7 @@ export function IdentityForm({ mode, locale, dictionary, token }: {
   return (
     <form onSubmit={submit} className="identity-form">
       {needsContact && <label>{t.contact}<input name="contact" autoComplete="username" required maxLength={254} /></label>}
+      {mode === "register" && <label>{t.optionalSecondContact}<input name="secondary_contact" maxLength={254} /></label>}
       {needsEmail && <label>{t.email}<input name="email" type="email" autoComplete="email" required maxLength={254} /></label>}
       {needsPassword && <label>{mode === "reset" ? t.newPassword : t.password}
         <input name="password" type="password" autoComplete={mode === "sign-in" ? "current-password" : "new-password"}

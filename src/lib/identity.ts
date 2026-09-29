@@ -105,6 +105,13 @@ export async function hasPermission(db: Db, userId: string, permission: string, 
   return rows.length > 0;
 }
 
+export async function hasAnyPermission(db: Db, userId: string, permission: string): Promise<boolean> {
+  const rows = await db`SELECT 1 FROM identity_assignment a
+    JOIN identity_role_permission rp ON rp.role_id=a.role_id
+    WHERE a.user_id=${userId} AND a.revoked_at IS NULL AND rp.permission_id=${permission} LIMIT 1`;
+  return rows.length > 0;
+}
+
 export async function writeAudit(db: Db, input: {
   actor?: string; operator?: string; target?: string; action: string;
   outcome: "success" | "denied" | "failure"; reason?: string; requestId?: string;
@@ -113,16 +120,4 @@ export async function writeAudit(db: Db, input: {
   await db`INSERT INTO identity_audit(actor_user_id,operator_identity,target_user_id,action,outcome,reason,request_id,metadata)
     VALUES (${input.actor ?? null},${input.operator ?? null},${input.target ?? null},${input.action},
       ${input.outcome},${input.reason ?? null},${input.requestId ?? randomUUID()},${db.json(input.metadata ?? {})})`;
-}
-
-export async function issueSession(db: Db, userId: string): Promise<{ token: string; csrf: string; staff: boolean; maxAge: number }> {
-  const staffRows = await db`SELECT 1 FROM identity_assignment a JOIN identity_role r ON r.id=a.role_id
-    WHERE a.user_id=${userId} AND a.revoked_at IS NULL AND r.staff=true LIMIT 1`;
-  const staff = staffRows.length > 0;
-  const maxAge = staff ? 12 * 3600 : 30 * 24 * 3600;
-  const token = secret();
-  const csrf = secret();
-  await db`INSERT INTO identity_session(user_id,token_hash,csrf_hash,staff,expires_at)
-    VALUES (${userId},${digest(token)},${digest(csrf)},${staff},now() + ${maxAge} * interval '1 second')`;
-  return { token, csrf, staff, maxAge };
 }
