@@ -112,10 +112,13 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const body=await bodyOf(request); if (!body) return bad("INVALID_BODY");
     if (part === "pages") {
       if (!await allowed("pages.write")) return bad("FORBIDDEN",403);
-      if (!only(body,["page_key","kind","en","bn"]) || typeof body.page_key !== "string" || !KEY.test(body.page_key) || !["page","landing"].includes(String(body.kind)) || !content(body.en,false,"en") || !content(body.bn,false,"bn")) return bad("INVALID_PAGE");
+      if (!only(body,["page_key","kind","category","en","bn"]) || typeof body.page_key !== "string" || !KEY.test(body.page_key) || !["page","landing","service"].includes(String(body.kind)) ||
+        (body.kind === "service" && (typeof body.category !== "string" || !KEY.test(body.category))) ||
+        (body.kind !== "service" && body.category !== undefined) || !content(body.en,false,"en") || !content(body.bn,false,"bn")) return bad("INVALID_PAGE");
       const en=body.en as LocaleContent, bn=body.bn as LocaleContent;
       try { const id=await db.begin(async tx=>{ const pages=await tx`INSERT INTO cms_page(page_key,kind,created_by) VALUES (${body.page_key as string},${body.kind as string},${session.userId}) RETURNING id`;
         await tx`INSERT INTO cms_revision(page_id,revision_no,en,bn,created_by) VALUES (${pages[0].id},1,${tx.json(en)},${tx.json(bn)},${session.userId})`;
+        if (body.kind === "service") await tx`INSERT INTO catalog_service(page_id,category) VALUES (${pages[0].id},${body.category as string})`;
         await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.page_create','success',${requestId},${tx.json({ page_id: pages[0].id })})`;
         return pages[0].id as string; }); return json({id},201);
       } catch (error) { if (typeof error === "object" && error && "code" in error && error.code === "23505") return bad("PAGE_KEY_IN_USE",409); throw error; }

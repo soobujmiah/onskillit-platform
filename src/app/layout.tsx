@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { cookies, headers } from "next/headers";
-import { Inter, Noto_Sans_Bengali } from "next/font/google";
+import { Inter, Hind_Siliguri } from "next/font/google";
 import "@/styles/tokens.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-en", display: "swap" });
-const notoSansBengali = Noto_Sans_Bengali({
+const hindSiliguri = Hind_Siliguri({
   subsets: ["bengali"],
   weight: ["400", "500", "600", "700"],
   variable: "--font-bn",
@@ -32,7 +32,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const locale = headerStore.get("x-locale") ?? "en";
 
   return (
-    <html lang={locale} data-theme={theme} className={`${inter.variable} ${notoSansBengali.variable}`}>
+      <html lang={locale} data-theme={theme} className={`${inter.variable} ${hindSiliguri.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: NO_FLASH_THEME_SCRIPT }} />
       </head>

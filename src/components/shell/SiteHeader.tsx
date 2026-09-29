@@ -3,15 +3,18 @@ import type { Dictionary } from "@/i18n/get-dictionary";
 import { LanguageSwitcher } from "@/components/shell/LanguageSwitcher";
 import { ThemeToggle } from "@/components/shell/ThemeToggle";
 import Link from "next/link";
+import type { PublicNavItem } from "@/lib/public-content";
 
 export function SiteHeader({
   locale,
   dictionary,
   initialTheme,
+  navigation,
 }: {
   locale: Locale;
   dictionary: Dictionary;
   initialTheme: "light" | "dark";
+  navigation: PublicNavItem[];
 }) {
   return (
     <header
@@ -25,7 +28,10 @@ export function SiteHeader({
         borderBottom: "1px solid var(--border-default)",
       }}
     >
-      <span style={{ fontSize: "16px", fontWeight: 700, color: "var(--text-primary)" }}>{dictionary.brand}</span>
+      <Link href={`/${locale}`} className="site-brand">{dictionary.brand}</Link>
+      <nav className="site-nav" aria-label={dictionary.public.footer}>
+        {navigation.filter((item) => item.slot === "header").map((item) => <Link key={item.id} href={item.href}>{item.label}</Link>)}
+      </nav>
       <div style={{ display: "flex", gap: "var(--space-sm)", alignItems: "center" }}>
         <Link href={`/${locale}/learn/profile`} style={{ color: "var(--text-primary)" }}>{dictionary.identity.account}</Link>
         <LanguageSwitcher locale={locale} dictionary={dictionary} />
