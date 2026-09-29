@@ -22,7 +22,7 @@ The owner confirmed the unmarked brief content: the tagline “Software and skil
 
 Prices, office hours, a one-working-day response promise, subscription cancellation, course refunds, hotel SaaS status, and ecommerce SaaS status were explicitly tagged `[CONFIRM]`; omit them from any publishable copy until I resolve each one. I prohibited testimonials, client logos, user counts and statistics. I requested **Hind Siliguri** for Bangla UI text.
 
-I said there is **no approved Privacy, Terms, or Accessibility policy**. Any later drafts require legal/operational review. The inquiry form collects name, email, optional phone and message only after a published privacy notice is available; it retains the notice revision as consent evidence. No payment or card-data policy claim is published from this draft.
+I said there is **no approved Privacy, Terms, or Accessibility policy**. [Bilingual policy proposals](PHASE-05-POLICY-REVIEW.md) are now prepared outside the CMS for legal/operational review; they are not approved or publishable. The inquiry form collects name, email, optional phone and message only after a published privacy notice is available; it retains the notice revision as consent evidence. No payment or card-data policy claim is published from this draft.
 
 ## Editorial next step
 
