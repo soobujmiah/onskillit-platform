@@ -1,0 +1,8 @@
+event_id: commit-bef8eb26d60c-10b61e3cffb029d4
+repository: soobujmiah/onskillit-platform
+commit: bef8eb26d60c94058925c0a6ceea7fd237caebef
+kind: commit
+occurred_at: '2026-09-29T22:37:11Z'
+status: completed
+summary: Declare the repository's canonical type and add the documentation scaffold
+  (migration waves 2/3)
