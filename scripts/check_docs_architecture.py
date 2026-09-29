@@ -106,6 +106,22 @@ else:
         declared_ids = [item.get("name") for item in declared_items]
         if declared_ids != phase_ids:
             errors.append(f".repo/phases.yaml sequence mismatch: {declared_ids}")
+        expected_phases = {
+            fields[0]: (fields[1], fields[5], {
+                "COMPLETE": "completed",
+                "IN PROGRESS": "in_progress",
+                "NOT STARTED": "not_started",
+            }.get(fields[6]))
+            for fields in (
+                [part.strip() for part in line.strip("|").split("|")]
+                for line in phase_lines
+            )
+        }
+        for item in declared_items:
+            phase_id = item.get("name")
+            expected = expected_phases.get(phase_id)
+            if expected and (item.get("title"), item.get("gate"), item.get("status")) != expected:
+                errors.append(f"{phase_id}: .repo/phases.yaml title, gate or state differs from docs/PHASES.md")
         doc_completed = [
             line.split("|")[1].strip()
             for line in phase_lines

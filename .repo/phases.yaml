@@ -2,7 +2,7 @@
 # Kept in lockstep with docs/PHASES.md (enforced by scripts/check_docs_architecture.py).
 phases:
   - name: PHASE-00
-    title: Foundational Discovery & Specification
+    title: Discovery and documentation
     gate: DOCUMENTATION READY
     status: completed
     completed_at: '2026-09-25'
@@ -10,7 +10,7 @@ phases:
     run_id: '36045402016'
     evidence_path: docs/READINESS.md
   - name: PHASE-01
-    title: Repository, Architecture, and Delivery Foundation
+    title: GitHub foundation
     gate: FOUNDATION VERIFIED
     status: completed
     completed_at: '2026-09-28'
@@ -18,15 +18,15 @@ phases:
     run_id: '36446181731'
     evidence_path: docs/PHASE-01-WORKLOG.md
   - name: PHASE-02
-    title: Design System, Tokens, Theme, and App Shell
-    gate: SHELL VERIFIED
+    title: Design and localization shell
+    gate: EXPERIENCE FOUNDATION VERIFIED
     status: completed
     completed_at: '2026-09-28'
     commit: 627ce274011ff7f62c915058fd2fc8c9ac965f8d
     run_id: '36461586655'
     evidence_path: docs/PHASE-02-WORKLOG.md
   - name: PHASE-03
-    title: Authentication, Authorization, and User Core
+    title: Identity, RBAC and audit
     gate: IDENTITY VERIFIED
     status: completed
     completed_at: '2026-09-29'
@@ -34,7 +34,7 @@ phases:
     run_id: '36562919856'
     evidence_path: docs/PHASE-03-WORKLOG.md
   - name: PHASE-04
-    title: Public Site, CMS, Editorial, Media, and SEO Core
+    title: CMS and publishing core
     gate: PUBLISHING CORE VERIFIED
     status: completed
     completed_at: '2026-09-29'
@@ -42,46 +42,46 @@ phases:
     run_id: '36571645321'
     evidence_path: docs/PHASE-04-WORKLOG.md
   - name: PHASE-05
-    title: Core Domain Workflows — Public Core
+    title: Public business site
     gate: PUBLIC CORE VERIFIED
-    status: not_started
+    status: in_progress
   - name: PHASE-06
-    title: Core Domain Workflows — Agency & Commercial
-    gate: AGENCY CORE VERIFIED
+    title: LMS and course catalog
+    gate: LEARNING VERIFIED
     status: not_started
   - name: PHASE-07
-    title: Payments, Orders, Invoicing, and Entitlements
-    gate: COMMERCE VERIFIED
+    title: TMS and training catalog
+    gate: TRAINING VERIFIED
     status: not_started
   - name: PHASE-08
-    title: Learning Delivery, Enrollments, Progress, Certificates, and Verification
-    gate: LEARNING DELIVERY VERIFIED
+    title: Enrollment and finance
+    gate: COMMERCE VERIFIED
     status: not_started
   - name: PHASE-09
-    title: Dashboards, Admin Console, Operations, and Support
-    gate: OPERATIONS VERIFIED
+    title: CRM and client operations
+    gate: CLIENT OPERATIONS VERIFIED
     status: not_started
   - name: PHASE-10
-    title: Notifications, Search, Exports, and Background Jobs
-    gate: ASYNC & DISCOVERY VERIFIED
+    title: Student and client portals
+    gate: PORTALS VERIFIED
     status: not_started
   - name: PHASE-11
-    title: Security Hardening, Abuse Controls, Privacy, and Audit
-    gate: SECURITY VERIFIED
+    title: Content and business operations
+    gate: OPERATIONS VERIFIED
     status: not_started
   - name: PHASE-12
-    title: Accessibility, Responsive UX, Localization, and Content Polish
-    gate: UX & ACCESSIBILITY VERIFIED
+    title: Cross-system hardening
+    gate: HARDENING VERIFIED
     status: not_started
   - name: PHASE-13
-    title: Performance, Observability, Backup/Restore, and Release Readiness
-    gate: RELEASE CANDIDATE VERIFIED
+    title: Integrated QA and staging
+    gate: RELEASE CANDIDATE APPROVED
     status: not_started
   - name: PHASE-14
-    title: Staging Verification, Production Cutover, and Post-Launch Runbooks
+    title: Production launch and stabilization
     gate: PRODUCTION ACCEPTED
     status: not_started
   - name: PHASE-15
-    title: Post-V1 Controlled Evolution
-    gate: V1.x CHANGE GOVERNED
+    title: Governed evolution
+    gate: CHANGE-SPECIFIC GATE
     status: not_started
