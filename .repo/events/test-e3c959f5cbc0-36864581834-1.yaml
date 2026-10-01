@@ -1,0 +1,14 @@
+event_id: test-e3c959f5cbc0-36864581834-1
+repository: soobujmiah/onskillit-platform
+commit: e3c959f5cbc0f65a178b68c6a7f72c415e10d99d
+kind: test
+occurred_at: '2026-10-01T12:51:47Z'
+run_id: '36864581834'
+run_attempt: '1'
+status: passed
+summary: check_locale_purity.py (en/bn script purity and key parity)
+conclusion: success
+workflow_name: Repo Knowledge Sync
+event_type: push
+actor: soobujmiah
+run_url: https://github.com/soobujmiah/onskillit-platform/actions/runs/36864581834
