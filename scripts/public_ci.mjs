@@ -129,6 +129,51 @@ try {
     AND metadata->>'inquiry_id'=${intake.id}`;
   assert.equal(audits.length, 1);
   await assert.rejects(db`DELETE FROM public_inquiry WHERE id=${intake.id}`);
+  // CMS-managed site content (ADR 0013): settings, text overrides and section images render, bad values are ignored.
+  const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==", "base64");
+  const [media] = await db`INSERT INTO cms_media(filename,mime_type,bytes,byte_length,sha256,rights_reference,alt_en,alt_bn,uploaded_by,public)
+    VALUES ('synthetic.png','image/png',${png},${png.length},${"0".repeat(64)},'synthetic-rights','Synthetic image','কৃত্রিম ছবি',${author.id},true) RETURNING id`;
+  const faqSection = (heading, body) => ({ type: "text", heading, body, source: "ci-fixture", mediaId: media.id });
+  await page("faq", "page", author.id, true, null, {
+    en: { ...fixture("faq", "en"), sections: [faqSection("Sample section", "Synthetic CI content only")] },
+    bn: { ...fixture("faq", "bn"), sections: [faqSection("নমুনা অংশ", "শুধু পরীক্ষার বিষয়বস্তু")] } });
+  const faqHtml = await (await get("/en/faq")).text();
+  assert.match(faqHtml, new RegExp(`/api/v1/cms/media/${media.id}/content`));
+  assert.match(faqHtml, /alt="Synthetic image"/);
+  assert.match(await (await get("/bn/faq")).text(), /alt="কৃত্রিম ছবি"/);
+  const served = await fetch(`${base}/api/v1/cms/media/${media.id}/content`);
+  assert.equal(served.status, 200);
+  assert.equal(served.headers.get("content-type"), "image/png");
+  const year = String(new Date().getFullYear());
+  const setting = (key, value) => db`INSERT INTO cms_setting(key,value,updated_by) VALUES (${key},${value},${author.id})
+    ON CONFLICT(key) DO UPDATE SET value=EXCLUDED.value`;
+  await setting("contact_phone", "+8801700000000"); await setting("contact_email", "synthetic@example.test");
+  await setting("footer_text_en", "Synthetic footer {year}"); await setting("site_name_en", "Synthetic Brand");
+  await setting("site_logo_media_id", media.id); await setting("facebook_url", "http://insecure.example.test/fb");
+  const contactHtml = await (await get("/en/contact")).text();
+  assert.match(contactHtml, /tel:\+8801700000000/);
+  assert.match(contactHtml, /mailto:synthetic@example\.test/);
+  assert.doesNotMatch(contactHtml, /\+8801617301184|insecure\.example\.test/, "defaults replaced; non-https link ignored");
+  assert.match(contactHtml, /https:\/\/www\.facebook\.com\/onskillit/, "invalid stored link falls back to the default");
+  const homeHtml = await (await get("/en")).text();
+  assert.match(homeHtml, new RegExp(`Synthetic footer ${year}`));
+  assert.match(homeHtml, /Synthetic Brand/);
+  assert.match(homeHtml, /class="site-logo"/);
+  assert.match(homeHtml, /alt="Synthetic image"/);
+  const text = (locale, key, value) => db`INSERT INTO cms_text(locale,key,value,updated_by) VALUES (${locale},${key},${value},${author.id})`;
+  await text("en", "public.unpublished", "Synthetic custom unpublished message");
+  await text("bn", "public.unpublished", "Latin letters are not allowed here");
+  const bnDefault = JSON.parse(readFileSync(new URL("../src/i18n/dictionaries/bn.json", import.meta.url), "utf8")).public.unpublished;
+  const customHome = await (await get("/en")).text();
+  assert.match(customHome, /Synthetic custom unpublished message/);
+  assert.doesNotMatch(customHome, /Approved information is being prepared/);
+  const bnHome = await (await get("/bn")).text();
+  assert.match(bnHome, new RegExp(bnDefault), "an invalid stored override is ignored");
+  assert.doesNotMatch(bnHome, /Latin letters are not allowed here/);
+  await db`DELETE FROM cms_text`;
+  await db`DELETE FROM cms_setting WHERE key IN ('contact_phone','contact_email','footer_text_en','site_name_en','site_logo_media_id','facebook_url')`;
+  assert.match(await (await get("/en")).text(), /Approved information is being prepared/, "clearing restores the default");
+
   // Render owner-supplied editorial drafts only inside this disposable CI database.
   // No policy draft is included or published by this fixture.
   await db`UPDATE cms_page SET state='archived',published_revision_id=NULL WHERE id=${service.id}`;

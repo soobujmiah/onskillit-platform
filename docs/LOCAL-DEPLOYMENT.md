@@ -79,10 +79,10 @@ Mail links are only issued when `PUBLIC_BASE_URL` is `https`, or `http` on `loca
 
 ## 4. Apply the database migrations
 
-Apply in order. Each directory also has a reviewed `down.sql`. Migration `0005` adds the inquiry staff permissions; without it the staff inquiry view is unreachable.
+Apply in order. Each directory also has a reviewed `down.sql`. Migration `0005` adds the inquiry staff permissions (without it the staff inquiry view is unreachable) and `0006` adds CMS-managed site content (without it the Site settings screen cannot save contact, footer, logo or text changes).
 
 ```sh
-for m in 0001_foundation_probe 0002_identity 0003_cms 0004_public_core 0005_inquiry_operations; do
+for m in 0001_foundation_probe 0002_identity 0003_cms 0004_public_core 0005_inquiry_operations 0006_site_content; do
   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "src/db/migrations/$m/up.sql"
 done
 ```

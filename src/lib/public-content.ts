@@ -2,7 +2,7 @@ import "server-only";
 import { createDbClient, getDatabaseUrl } from "@/db/client";
 import { content, type LocaleContent } from "@/lib/cms";
 import type { Locale } from "@/i18n/locales";
-import { getDictionary } from "@/i18n/get-dictionary";
+import { getSiteDictionary } from "@/lib/site-text";
 import { publicPath, type StaticPageKey } from "@/lib/public-routes";
 
 export type PublicPage = {
@@ -147,7 +147,7 @@ export async function publishedNavigation(locale: Locale): Promise<PublicNavItem
       WHERE p.state='published' AND p.page_key IN
         ('home','about','team','services','contact','faq','privacy','terms','accessibility')`;
     const pages = new Map(published.map((row) => [row.page_key, record(row, locale)]));
-    const labels = getDictionary(locale).public;
+    const labels = (await getSiteDictionary(locale)).public;
     const linked = new Set(navigation.map((item) => item.href));
     for (const { key, slot } of defaultNavigation) {
       const page = pages.get(key);

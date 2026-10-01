@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getDictionary } from "@/i18n/get-dictionary";
+import { getSiteDictionary } from "@/lib/site-text";
 import { isLocale } from "@/i18n/locales";
 import { publishedPage } from "@/lib/public-content";
 import { publicMetadata } from "@/lib/public-seo";
@@ -18,6 +18,6 @@ export default async function LocaleHomePage({ params }: { params: Promise<{ loc
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const page = await publishedPage("home", locale);
-  const t = getDictionary(locale).public;
+  const t = (await getSiteDictionary(locale)).public;
   return page ? <PublicContent page={page} locale={locale} /> : <UnpublishedPage title={t.home} message={t.unpublished} locale={locale} />;
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { Locale } from "@/i18n/locales";
 import type { PublicPage } from "@/lib/public-content";
 import { indexingEnabled } from "@/lib/public-content";
+import { brandName } from "@/lib/site-settings";
 
 function siteUrl(): URL | null {
   try {
@@ -11,7 +12,7 @@ function siteUrl(): URL | null {
 }
 
 export async function publicMetadata(page: PublicPage | null, locale: Locale, path: string, alternatePath?: string): Promise<Metadata> {
-  if (!page) return { title: "OnSkillIT", robots: { index: false, follow: false } };
+  if (!page) return { title: await brandName(locale), robots: { index: false, follow: false } };
   const c = page.content;
   const base = siteUrl();
   const index = !!base && await indexingEnabled();

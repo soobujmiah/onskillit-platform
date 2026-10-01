@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { isLocale, type Locale } from "@/i18n/locales";
-import { getDictionary } from "@/i18n/get-dictionary";
+import { getSiteDictionary } from "@/lib/site-text";
+import { siteChrome } from "@/lib/site-settings";
 import { SkipLink } from "@/components/shell/SkipLink";
 import { SiteHeader } from "@/components/shell/SiteHeader";
 import { HtmlLangSync } from "@/components/shell/HtmlLangSync";
@@ -19,7 +20,8 @@ export default async function LocaleLayout({
   if (!isLocale(rawLocale)) notFound();
   const locale: Locale = rawLocale;
 
-  const dictionary = getDictionary(locale);
+  const dictionary = await getSiteDictionary(locale);
+  const chrome = await siteChrome(locale);
   const cookieStore = await cookies();
   const themeCookie = cookieStore.get("theme")?.value;
   const initialTheme: "light" | "dark" = themeCookie === "dark" ? "dark" : "light";
@@ -29,11 +31,11 @@ export default async function LocaleLayout({
     <>
       <HtmlLangSync locale={locale} />
       <SkipLink label={dictionary.skipLink} />
-      <SiteHeader locale={locale} dictionary={dictionary} initialTheme={initialTheme} navigation={navigation} />
+      <SiteHeader locale={locale} dictionary={dictionary} initialTheme={initialTheme} navigation={navigation} brand={chrome.brand ?? dictionary.brand} logo={chrome.logoId ? { id: chrome.logoId, alt: chrome.logoAlt ?? "" } : null} />
       <main id="content" style={{ padding: "var(--space-xl) var(--space-lg)" }}>
         {children}
       </main>
-      <footer className="site-footer"><small>© {new Date().getFullYear()} OnSkillIT</small>{navigation.some((item) => item.slot === "footer") && <nav aria-label={dictionary.public.footerNav}>
+      <footer className="site-footer"><small>{chrome.footer}</small>{navigation.some((item) => item.slot === "footer") && <nav aria-label={dictionary.public.footerNav}>
         {navigation.filter((item) => item.slot === "footer").map((item) => <Link key={item.id} href={item.href}>{item.label}</Link>)}
       </nav>}</footer>
     </>

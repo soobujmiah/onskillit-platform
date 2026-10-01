@@ -74,6 +74,35 @@ try {
   assert.equal((await cms(`media/${mediaId}/publish`,{},author)).response.status,409);
   assert.equal((await cms(`media/${mediaId}/publish`,{},reviewer)).response.status,200);
   assert.equal((await get(`media/${mediaId}/content`,member)).status,200);
+  // CMS-managed site settings and visible text (ADR 0013)
+  const logoForm=()=>{const f=new FormData();f.set("file",new File([Buffer.from([137,80,78,71,13,10,26,10,0,0,0,0])],"logo.png",{type:"image/png"}));f.set("rights_reference","synthetic-ci-rights");f.set("alt_en","Synthetic logo");f.set("alt_bn","কৃত্রিম লোগো");return f;};
+  const privateLogo=await cms("media",logoForm(),author);assert.equal(privateLogo.response.status,201);
+  assert.equal((await cms("settings",{key:"site_logo_media_id",value:privateLogo.value.id},author)).response.status,400);
+  assert.equal((await cms("settings",{key:"site_logo_media_id",value:mediaId},author)).response.status,200);
+  assert.equal((await cms("settings",{key:"site_logo_media_id",value:""},author)).response.status,200);
+  for (const [key,value,status] of [["contact_phone","+8801700000001",200],["contact_phone","not a phone",400],["contact_whatsapp","8801700000001",200],["contact_whatsapp","+88017",400],
+    ["facebook_url","https://example.test/fb",200],["facebook_url","http://example.test/fb",400],["facebook_url","javascript:alert(1)",400],["footer_text_en","Synthetic footer {year}",200],
+    ["footer_text_en","বাংলা",400],["footer_text_bn","কৃত্রিম ফুটার {বছর}",200],["footer_text_bn","Latin",400],["contact_address_bn","কৃত্রিম ঠিকানা",200],
+    ["contact_address_en","কৃত্রিম",400],["unknown_key","x",400],["robots_enabled","",400]])
+    assert.equal((await cms("settings",{key,value},author)).response.status,status,`${key}=${value}`);
+  assert.equal((await cms("settings",{key:"contact_phone",value:"+8801700000001"},member)).response.status,403);
+  for (const key of ["contact_phone","contact_whatsapp","facebook_url","footer_text_en","footer_text_bn","contact_address_bn"]) assert.equal((await cms("settings",{key,value:""},author)).response.status,200);
+  const text=(locale,key,value,session=author)=>cms("site-texts",{locale,key,value},session);
+  assert.equal((await text("en","public.submit","Send it now")).response.status,200);
+  assert.equal((await text("bn","public.submit","এখনই পাঠান")).response.status,200);
+  assert.equal((await text("bn","public.submit","Latin only")).response.status,400);
+  assert.equal((await text("en","public.submit","বাংলা")).response.status,400);
+  assert.equal((await text("en","cms.save","Staff text")).response.status,400);
+  assert.equal((await text("en","public.nope","x")).response.status,400);
+  assert.equal((await text("en","language.switchTo","বাংলা")).response.status,200);
+  assert.equal((await text("en","public.submit","Send it now",member)).response.status,403);
+  const listed=await (await get("site-texts",author)).json();
+  assert(listed.keys.includes("public.submit")&&!listed.keys.includes("cms.save"));
+  assert.equal(listed.texts.filter(row=>row.key==="public.submit").length,2);
+  assert.equal((await get("site-texts",member)).status,403);
+  for (const [l,k] of [["en","public.submit"],["bn","public.submit"],["en","language.switchTo"]]) assert.equal((await text(l,k,"")).response.status,200);
+  assert.equal((await (await get("site-texts",author)).json()).texts.length,0);
+  assert.equal((await db`SELECT count(*)::int AS n FROM identity_audit WHERE action IN ('cms.text_set','cms.text_reset')`)[0].n,6);
   const fake=new FormData();fake.set("file",new File(["not an image"],"fake.png",{type:"image/png"}));fake.set("rights_reference","synthetic");fake.set("alt_en","Sample");fake.set("alt_bn","নমুনা");
   assert.equal((await cms("media",fake,author)).response.status,400);
   assert.equal((await cms("navigation",{slot:"header",position:1,page_id:pageId,label_en:"Sample",label_bn:"নমুনা"},author)).response.status,201);

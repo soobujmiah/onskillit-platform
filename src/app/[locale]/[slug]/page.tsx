@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PublicContent, UnpublishedPage } from "@/components/public/PublicContent";
-import { getDictionary } from "@/i18n/get-dictionary";
+import { getSiteDictionary } from "@/lib/site-text";
 import { isLocale } from "@/i18n/locales";
-import { publicMediaAlts, publishedPage } from "@/lib/public-content";
+import { publishedPage } from "@/lib/public-content";
 import { publicMetadata } from "@/lib/public-seo";
 import { ContactForm } from "@/components/public/ContactForm";
 import { ContactDetails } from "@/components/public/ContactDetails";
@@ -23,12 +23,10 @@ export default async function PublicStaticPage({ params }: { params: Promise<{ l
   const { locale, slug } = await params;
   if (!isLocale(locale) || !isKey(slug)) notFound();
   const [page, privacy] = await Promise.all([publishedPage(slug, locale), slug === "contact" ? publishedPage("privacy", locale) : Promise.resolve(null)]);
-  const t = getDictionary(locale).public;
-  const media = slug === "team" && page
-    ? await publicMediaAlts(page.content.sections.flatMap((section) => section.type === "profile" && section.mediaId ? [section.mediaId] : []), locale) : {};
+  const t = (await getSiteDictionary(locale)).public;
   return <>
-    {page ? <PublicContent page={page} locale={locale} media={media} /> : <UnpublishedPage title={t[slug]} message={t.unpublished} locale={locale} />}
-    {slug === "contact" && <ContactDetails labels={t} />}
+    {page ? <PublicContent page={page} locale={locale} /> : <UnpublishedPage title={t[slug]} message={t.unpublished} locale={locale} />}
+    {slug === "contact" && <ContactDetails labels={t} locale={locale} />}
     {slug === "contact" && page && (privacy && (process.env.INQUIRY_RATE_SECRET?.length ?? 0) >= 32
       ? <ContactForm locale={locale} consentVersion={privacy.revisionId} copy={{ ...t, privacy: t.privacy }} />
       : <p className="public-empty-note">{t.unavailable}</p>)}

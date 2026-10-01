@@ -27,3 +27,7 @@ The statements above about a different reviewer and a different publisher descri
 ## Team profile sections
 
 A `profile` section carries a name, role and biography and may carry skills (up to 12), public links (up to 6, `https` only, per-language label), a relationship to OnSkillIT, a visibility of `active` or `hidden`, and an optional public photo reference. Profiles appear in section order, and hidden profiles remain in revision history but are not rendered. Names, roles, skills, labels and relationships obey the same per-language script rules as other prose. A photo shows publicly only when its media record has been approved public and carries alt text. A real person's profile needs that person's explicit approval, recorded privately outside the repository; the approval reference field holds only a non-sensitive reference.
+
+## Site settings, visible text and images (ADR 0013)
+
+Beyond pages, staff with `settings.site` manage brand names, footer text, the logo, contact details and social links as site settings, and any visitor-facing label or message as a per-language text override (Site settings screen). An empty value restores the built-in default. These edits are validated and audited but are not revisioned or reviewed like page content. Images attached to any section render publicly only when the media is approved public with alt text in both languages. Staff-only screens, the client error boundary and email text are not CMS-managed.

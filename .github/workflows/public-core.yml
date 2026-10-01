@@ -65,6 +65,15 @@ jobs:
             exit 1
           fi
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0005_inquiry_operations/up.sql
+      - name: Apply site content migration and verify its reversal
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0006_site_content/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0006_site_content/down.sql
+          if psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'select 1 from cms_text limit 0' > /dev/null 2>&1; then
+            echo 'cms_text survived down migration' >&2
+            exit 1
+          fi
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0006_site_content/up.sql
       - run: npm run typecheck
       - run: npm run build
       - name: Start synthetic public web process

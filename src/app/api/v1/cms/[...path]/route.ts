@@ -1,12 +1,13 @@
 import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { database, hasPermission, readSession, sameOrigin, validCsrf } from "@/lib/identity";
-import { content, hash, mimeOf, UUID, localeProse, workflowMode, type LocaleContent } from "@/lib/cms";
+import { content, hash, mimeOf, UUID, localeProse, settingValid, SETTING_KEYS, workflowMode, type LocaleContent } from "@/lib/cms";
+import { defaultTexts, editableKeys, textValid } from "@/lib/site-text";
 
 export const runtime = "nodejs";
 type Body = Record<string, unknown>;
 const KEY = /^[a-z0-9][a-z0-9-]{1,79}$/;
-const settingKeys = ["site_name_en","site_name_bn","contact_email","robots_enabled"];
+const settingKeys: readonly string[] = SETTING_KEYS;
 function json(data: object, status = 200) { return NextResponse.json(data, { status, headers: { "Cache-Control": "no-store", "X-Robots-Tag": "noindex, nofollow" } }); }
 function bad(code: string, status = 400) { return json({ code }, status); }
 async function bounded(request: NextRequest, limit: number): Promise<Buffer | null> {
@@ -73,6 +74,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     if (part === "media" && await allowed("media.read")) return json({ assets: await db`SELECT id,filename,mime_type,byte_length,sha256,public,rights_reference,alt_en,alt_bn,created_at FROM cms_media ORDER BY created_at DESC LIMIT 100` });
     if (part === "seo" && await allowed("pages.read")) return json({ pages: await db`SELECT p.id,p.page_key,p.state,r.en->>'seoTitle' AS seo_title_en,r.bn->>'seoTitle' AS seo_title_bn,r.en->>'slug' AS slug_en,r.bn->>'slug' AS slug_bn FROM cms_page p LEFT JOIN cms_revision r ON r.id=p.published_revision_id ORDER BY p.page_key`, redirects: await db`SELECT id,locale,source_path,target_page_id FROM cms_redirect ORDER BY locale,source_path` });
     if (part === "settings" && await allowed("settings.site")) return json({ settings: await db`SELECT key,value,updated_at FROM cms_setting ORDER BY key` });
+    if (part === "site-texts" && await allowed("settings.site")) return json({
+      keys: editableKeys(), defaults: { en: defaultTexts("en"), bn: defaultTexts("bn") },
+      texts: await db`SELECT locale,key,value,updated_at FROM cms_text ORDER BY key,locale` });
     return bad("FORBIDDEN",403);
   } finally { await db.end(); }
 }
@@ -215,13 +219,25 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       const rows=await db.begin(async tx=>{ const item=await tx`INSERT INTO cms_redirect(locale,source_path,target_page_id,updated_by) VALUES (${body.locale as string},${body.source_path as string},${body.target_page_id as string},${session.userId}) ON CONFLICT(locale,source_path) DO UPDATE SET target_page_id=EXCLUDED.target_page_id,updated_by=EXCLUDED.updated_by,updated_at=now() RETURNING id`;
         await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.redirect_set','success',${requestId},${tx.json({redirect_id:item[0].id})})`; return item[0]; }); return json(rows);
     }
+    if (part==="site-texts") {
+      if (!await allowed("settings.site")) return bad("FORBIDDEN",403);
+      if (!only(body,["locale","key","value"]) || (body.locale!=="en" && body.locale!=="bn") || typeof body.key!=="string" || typeof body.value!=="string" || !editableKeys().includes(body.key)) return bad("INVALID_TEXT");
+      const locale=body.locale as "en"|"bn", key=body.key, value=body.value.trim();
+      if (value!=="" && !textValid(locale,key,value)) return bad("INVALID_TEXT");
+      const outcome=await db.begin(async tx=>{
+        if (value==="") await tx`DELETE FROM cms_text WHERE locale=${locale} AND key=${key}`;
+        else await tx`INSERT INTO cms_text(locale,key,value,updated_by) VALUES (${locale},${key},${value},${session.userId}) ON CONFLICT(locale,key) DO UPDATE SET value=EXCLUDED.value,updated_by=EXCLUDED.updated_by,updated_at=now()`;
+        await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},${value===""?'cms.text_reset':'cms.text_set'},'success',${requestId},${tx.json({locale,key})})`;
+        return value===""?"reset":"saved"; });
+      return json({ status: outcome });
+    }
     if (part==="settings") {
       if (!await allowed("settings.site")) return bad("FORBIDDEN",403);
-      if (!only(body,["key","value"]) || !settingKeys.includes(String(body.key)) || typeof body.value!=="string" || body.value.length>200) return bad("INVALID_SETTING");
-      if (body.key==="robots_enabled" && !["true","false"].includes(body.value)) return bad("INVALID_SETTING");
-      if (body.key==="contact_email" && body.value!=="" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.value)) return bad("INVALID_SETTING");
-      if (body.key==="site_name_en" && !localeProse(body.value,"en")) return bad("INVALID_SETTING");
-      if (body.key==="site_name_bn" && !localeProse(body.value,"bn")) return bad("INVALID_SETTING");
+      if (!only(body,["key","value"]) || !settingKeys.includes(String(body.key)) || typeof body.value!=="string" || !settingValid(body.key as string,body.value)) return bad("INVALID_SETTING");
+      if (body.key==="site_logo_media_id" && body.value!=="") {
+        const asset=await db`SELECT 1 FROM cms_media WHERE id=${body.value} AND public=true AND mime_type IN ('image/png','image/jpeg','image/webp') AND alt_en<>'' AND alt_bn<>''`;
+        if (!asset.length) return bad("LOGO_MEDIA_NOT_PUBLIC");
+      }
       const rows=await db.begin(async tx=>{ const item=await tx`INSERT INTO cms_setting(key,value,updated_by) VALUES (${body.key as string},${body.value as string},${session.userId}) ON CONFLICT(key) DO UPDATE SET value=EXCLUDED.value,updated_by=EXCLUDED.updated_by,updated_at=now() RETURNING key`;
         await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.setting_set','success',${requestId},${tx.json({key:item[0].key})})`; return item[0]; }); return json(rows);
     }

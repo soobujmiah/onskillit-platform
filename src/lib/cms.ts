@@ -73,6 +73,23 @@ export function content(value: unknown, complete: boolean, locale: "en"|"bn"): v
   return !complete || !!(String(v.title).trim() && String(v.slug).trim() && String(v.description).trim() &&
     String(v.seoTitle).trim() && String(v.seoDescription).trim() && v.sections.length);
 }
+/** Site setting keys and their validators (ADR 0013). An empty value clears the setting so the built-in default applies. */
+export const SETTING_KEYS = ["site_name_en","site_name_bn","contact_email","robots_enabled","contact_phone","contact_whatsapp",
+  "contact_address_en","contact_address_bn","facebook_url","youtube_url","footer_text_en","footer_text_bn","site_logo_media_id"] as const;
+export function settingValid(key: string, value: string): boolean {
+  if (value.length > 200 || /[\u0000-\u001f]/.test(value)) return false;
+  if (key === "robots_enabled") return value === "true" || value === "false";
+  if (value === "") return key !== "robots_enabled";
+  switch (key) {
+    case "contact_email": return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    case "contact_phone": return /^\+?[0-9][0-9 ()-]{5,23}$/.test(value);
+    case "contact_whatsapp": return /^[0-9]{8,15}$/.test(value);
+    case "facebook_url": case "youtube_url":
+      try { return new URL(value).protocol === "https:"; } catch { return false; }
+    case "site_logo_media_id": return UUID.test(value);
+    default: return localeProse(value, key.endsWith("_bn") ? "bn" : "en");
+  }
+}
 export function mimeOf(bytes: Buffer): string | null {
   if (bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))) return "image/png";
   if (bytes.length > 3 && bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255) return "image/jpeg";

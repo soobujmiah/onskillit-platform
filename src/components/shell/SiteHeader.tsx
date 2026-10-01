@@ -5,16 +5,26 @@ import { ThemeToggle } from "@/components/shell/ThemeToggle";
 import Link from "next/link";
 import type { PublicNavItem } from "@/lib/public-content";
 
+function SiteLogo({ id, alt }: { id: string; alt: string }) {
+  // Approved public CMS media is served by the CMS media route, so next/image optimization does not apply.
+  // eslint-disable-next-line @next/next/no-img-element
+  return <img className="site-logo" src={`/api/v1/cms/media/${id}/content`} alt={alt} height={32} />;
+}
+
 export function SiteHeader({
   locale,
   dictionary,
   initialTheme,
   navigation,
+  brand,
+  logo,
 }: {
   locale: Locale;
   dictionary: Dictionary;
   initialTheme: "light" | "dark";
   navigation: PublicNavItem[];
+  brand: string;
+  logo: { id: string; alt: string } | null;
 }) {
   return (
     <header
@@ -28,7 +38,7 @@ export function SiteHeader({
         borderBottom: "1px solid var(--border-default)",
       }}
     >
-      <Link href={`/${locale}`} className="site-brand">{dictionary.brand}</Link>
+      <Link href={`/${locale}`} className="site-brand">{logo && <SiteLogo id={logo.id} alt={logo.alt} />}{brand}</Link>
       {navigation.some((item) => item.slot === "header") && <nav className="site-nav" aria-label={dictionary.public.primaryNav}>
         {navigation.filter((item) => item.slot === "header").map((item) => <Link key={item.id} href={item.href}>{item.label}</Link>)}
       </nav>}
