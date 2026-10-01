@@ -30,8 +30,8 @@ for (const locale of ["en", "bn"] as const) {
       await expect(page.getByText(locale === "bn" ? "নমুনা কর্মীর ভূমিকা" : "Sample Staff Role")).toBeVisible();
       await page.goto(`/${locale}`);
       await expect(page.getByRole("heading", { level: 1 })).toHaveText(locale === "bn"
-        ? "বাংলাদেশের ব্যবসার জন্য সফটওয়্যার ও দক্ষতা"
-        : "Software and skills for growing Bangladeshi businesses");
+        ? "বিশ্বজুড়ে ব্যবসা ও প্রতিষ্ঠানের জন্য প্রযুক্তি, ডিজিটাল সমাধান ও তথ্যপ্রযুক্তি সেবা।"
+        : "Technology, digital solutions and IT services for businesses and organizations worldwide.");
     });
   }
 }
