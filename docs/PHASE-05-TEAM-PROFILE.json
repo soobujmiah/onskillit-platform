@@ -1,0 +1,56 @@
+{
+  "status": "editorial_draft",
+  "source": "Owner instruction of 2026-10-01; facts taken only from the owner's portfolio (soobujmiah.github.io, app/content.ts) and the public GitHub profile soobujmiah",
+  "publication": "Import through the staff CMS as the draft Team page, then use the review and publish workflow. Not a production seed. Publication needs the person's explicit approval, recorded privately outside this repository. No photo is included.",
+  "excluded_on_purpose": ["personal email address", "Telegram handle", "education, employment, certification or award claims", "client or customer claims", "any job title other than the founding-partner relationship already recorded in docs/OWNER-DECISIONS.md and docs/LEGAL-IDENTITY.md"],
+  "pages": [
+    {
+      "page_key": "team",
+      "kind": "page",
+      "en": {
+        "title": "Team",
+        "slug": "team",
+        "description": "The people behind OnSkillIT.",
+        "seoTitle": "Team — OnSkillIT",
+        "seoDescription": "Meet the people behind OnSkillIT.",
+        "sections": [
+          {
+            "type": "profile",
+            "heading": "Sobuj Miah",
+            "role": "Founding Partner",
+            "body": "Sobuj Miah is a self-taught software and technology builder based in Dhaka, Bangladesh. The work spans on-device AI, Android, ARM64 Linux, native tooling and automation, with evidence from real hardware and CI. Alongside engineering work, Sobuj also provides practical technology help such as websites, software, computer and Android support, and digital workflows.",
+            "skills": ["On-Device AI", "Android Systems", "ARM64 Linux & Tooling", "GPU & Graphics", "Mobile & Web", "Delivery & Verification"],
+            "links": [
+              { "label": "GitHub", "url": "https://github.com/soobujmiah" },
+              { "label": "Portfolio", "url": "https://soobujmiah.github.io" },
+              { "label": "LinkedIn", "url": "https://linkedin.com/in/soobujmiah" }
+            ],
+            "source": "Owner instruction 2026-10-01; soobujmiah.github.io app/content.ts; GitHub profile soobujmiah. Founding-partner relationship per docs/OWNER-DECISIONS.md. Consent reference to be recorded privately before publication."
+          }
+        ]
+      },
+      "bn": {
+        "title": "দল",
+        "slug": "team",
+        "description": "অনস্কিলআইটির পেছনের মানুষ।",
+        "seoTitle": "দল — অনস্কিলআইটি",
+        "seoDescription": "অনস্কিলআইটির পেছনের মানুষদের সঙ্গে পরিচিত হোন।",
+        "sections": [
+          {
+            "type": "profile",
+            "heading": "সবুজ মিয়া",
+            "role": "প্রতিষ্ঠাতা অংশীদার",
+            "body": "সবুজ মিয়া ঢাকা, বাংলাদেশের একজন স্ব-শিক্ষিত সফটওয়্যার ও প্রযুক্তি নির্মাতা। কাজের পরিসর অন-ডিভাইস এআই, অ্যান্ড্রয়েড, এআরএম ৬৪ লিনাক্স, নেটিভ টুলিং ও অটোমেশন, যার সঙ্গে থাকে বাস্তব ডিভাইস ও সিআই-ভিত্তিক প্রমাণ। ইঞ্জিনিয়ারিং কাজের পাশাপাশি সবুজ ওয়েবসাইট, সফটওয়্যার, কম্পিউটার ও অ্যান্ড্রয়েড সহায়তা এবং ডিজিটাল কর্মপ্রবাহের মতো ব্যবহারিক প্রযুক্তি সহায়তাও দেন।",
+            "skills": ["অন-ডিভাইস এআই", "অ্যান্ড্রয়েড সিস্টেম", "এআরএম ৬৪ লিনাক্স ও টুলিং", "জিপিইউ ও গ্রাফিক্স", "মোবাইল ও ওয়েব", "রিলিজ ও যাচাই"],
+            "links": [
+              { "label": "গিটহাব", "url": "https://github.com/soobujmiah" },
+              { "label": "পোর্টফোলিও", "url": "https://soobujmiah.github.io" },
+              { "label": "লিংকডইন", "url": "https://linkedin.com/in/soobujmiah" }
+            ],
+            "source": "Owner instruction 2026-10-01; soobujmiah.github.io app/content.ts; GitHub profile soobujmiah. Founding-partner relationship per docs/OWNER-DECISIONS.md. Consent reference to be recorded privately before publication."
+          }
+        ]
+      }
+    }
+  ]
+}

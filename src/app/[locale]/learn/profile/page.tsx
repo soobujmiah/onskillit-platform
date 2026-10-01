@@ -1,14 +1,15 @@
 import { notFound } from "next/navigation";
-import { getDictionary } from "@/i18n/get-dictionary";
+import { getSiteDictionary } from "@/lib/site-text";
 import { isLocale } from "@/i18n/locales";
 import { privateIdentity } from "@/lib/identity-page";
 import { LogoutButton } from "@/components/identity/LogoutButton";
 import { ChangePassword } from "@/components/identity/ChangePassword";
 import { IdentityForm } from "@/components/identity/IdentityForm";
+import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  return { title: isLocale(locale) ? getDictionary(locale).identity.profile : undefined,
+  return { title: isLocale(locale) ? (await getSiteDictionary(locale)).identity.profile : undefined,
     robots: { index: false, follow: false } };
 }
 export default async function ProfilePage({ params }: { params: Promise<{ locale: string }> }) {
@@ -17,7 +18,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ locale
   const { db, session } = await privateIdentity(locale);
   try {
     const contacts = await db`SELECT kind,normalized,verified_at FROM identity_contact WHERE user_id=${session.userId} ORDER BY kind`;
-    const dictionary = getDictionary(locale);
+    const dictionary = (await getSiteDictionary(locale));
     const t = dictionary.identity;
     return <section className="identity-panel"><h1>{t.profile}</h1>
       <ul>{contacts.map((contact) => <li key={contact.normalized}>
@@ -25,6 +26,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ locale
       </li>)}</ul>
       {contacts.some((contact) => contact.kind === "email" && !contact.verified_at) &&
         <><h2>{t.verify}</h2><IdentityForm mode="verify-request" locale={locale} dictionary={dictionary} /></>}
+      {session.staff && <Link href={`/${locale}/staff`}>{t.staffWorkspace}</Link>}
       <ChangePassword dictionary={dictionary} />
       <LogoutButton label={t.logout} locale={locale} />
     </section>;

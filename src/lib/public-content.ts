@@ -2,7 +2,8 @@ import "server-only";
 import { createDbClient, getDatabaseUrl } from "@/db/client";
 import { content, type LocaleContent } from "@/lib/cms";
 import type { Locale } from "@/i18n/locales";
-import { publicPath } from "@/lib/public-routes";
+import { getSiteDictionary } from "@/lib/site-text";
+import { publicPath, type StaticPageKey } from "@/lib/public-routes";
 
 export type PublicPage = {
   key: string;
@@ -43,6 +44,19 @@ export async function publishedPage(key: string, locale: Locale): Promise<Public
   } finally {
     await db.end();
   }
+}
+
+/** Alt text for public media referenced by profile sections; non-public or unknown IDs are omitted. */
+export async function publicMediaAlts(ids: string[], locale: Locale): Promise<Record<string, string>> {
+  const unique = [...new Set(ids)].filter((id) => /^[0-9a-f-]{36}$/i.test(id)).slice(0, 40);
+  const databaseUrl = getDatabaseUrl();
+  if (!unique.length || !databaseUrl) return {};
+  const db = createDbClient(databaseUrl);
+  try {
+    const rows = await db<{ id: string; alt: string }[]>`SELECT id,${db(locale === "en" ? "alt_en" : "alt_bn")} AS alt
+      FROM cms_media WHERE public=true AND mime_type IN ('image/png','image/jpeg','image/webp') AND id IN ${db(unique)}`;
+    return Object.fromEntries(rows.filter((row) => row.alt?.trim()).map((row) => [row.id, row.alt]));
+  } finally { await db.end(); }
 }
 
 export async function publishedServices(locale: Locale): Promise<PublicPage[]> {
@@ -96,6 +110,18 @@ export async function indexingEnabled(): Promise<boolean> {
 
 export type PublicNavItem = { id: string; label: string; href: string; slot: "header" | "footer" };
 
+const defaultNavigation: { key: StaticPageKey; slot: PublicNavItem["slot"] }[] = [
+  { key: "home", slot: "header" },
+  { key: "about", slot: "header" },
+  { key: "team", slot: "header" },
+  { key: "services", slot: "header" },
+  { key: "contact", slot: "header" },
+  { key: "faq", slot: "header" },
+  { key: "privacy", slot: "footer" },
+  { key: "terms", slot: "footer" },
+  { key: "accessibility", slot: "footer" },
+];
+
 export async function publishedNavigation(locale: Locale): Promise<PublicNavItem[]> {
   const databaseUrl = getDatabaseUrl();
   if (!databaseUrl) return [];
@@ -107,12 +133,29 @@ export async function publishedNavigation(locale: Locale): Promise<PublicNavItem
       JOIN cms_revision r ON r.id=p.published_revision_id
       LEFT JOIN catalog_service s ON s.page_id=p.id
       WHERE p.state='published' ORDER BY n.slot,n.position`;
-    return rows.flatMap((row) => {
+    const navigation = rows.flatMap((row) => {
       const page = record(row, locale);
       const href = page && publicPath(page, locale);
       if (!href || (row.slot !== "header" && row.slot !== "footer")) return [];
       return [{ id: row.id, label: locale === "en" ? row.label_en : row.label_bn, href,
         slot: row.slot as "header" | "footer" }];
     });
+    const published = await db<PageRow[]>`
+      SELECT p.page_key,p.kind,r.id AS revision_id,r.en,r.bn,s.category
+      FROM cms_page p JOIN cms_revision r ON r.id=p.published_revision_id
+      LEFT JOIN catalog_service s ON s.page_id=p.id
+      WHERE p.state='published' AND p.page_key IN
+        ('home','about','team','services','contact','faq','privacy','terms','accessibility')`;
+    const pages = new Map(published.map((row) => [row.page_key, record(row, locale)]));
+    const labels = (await getSiteDictionary(locale)).public;
+    const linked = new Set(navigation.map((item) => item.href));
+    for (const { key, slot } of defaultNavigation) {
+      const page = pages.get(key);
+      const href = page && publicPath(page, locale);
+      if (!href || linked.has(href)) continue;
+      navigation.push({ id: `default-${key}`, label: labels[key], href, slot });
+      linked.add(href);
+    }
+    return navigation;
   } finally { await db.end(); }
 }

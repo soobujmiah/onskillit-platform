@@ -709,7 +709,7 @@
         }
       },
       "post": {
-        "summary": "Set allowlisted site setting",
+        "summary": "Set or clear one allowlisted site setting (empty value restores the built-in default)",
         "security": [
           {
             "sessionCookie": [],
@@ -738,9 +738,118 @@
           "content": {
             "application/json": {
               "schema": {
-                "type": "object"
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "key",
+                  "value"
+                ],
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "enum": [
+                      "site_name_en",
+                      "site_name_bn",
+                      "contact_email",
+                      "robots_enabled",
+                      "contact_phone",
+                      "contact_whatsapp",
+                      "contact_address_en",
+                      "contact_address_bn",
+                      "facebook_url",
+                      "youtube_url",
+                      "footer_text_en",
+                      "footer_text_bn",
+                      "site_logo_media_id"
+                    ]
+                  },
+                  "value": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                }
               }
             }
+          }
+        }
+      }
+    },
+    "/site-texts": {
+      "get": {
+        "summary": "List editable visitor-facing text keys, built-in defaults and stored overrides",
+        "security": [
+          {
+            "sessionCookie": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        }
+      },
+      "post": {
+        "summary": "Set or reset one per-language visible-text override (empty value resets to the default)",
+        "security": [
+          {
+            "sessionCookie": [],
+            "csrfHeader": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "locale",
+                  "key",
+                  "value"
+                ],
+                "properties": {
+                  "locale": {
+                    "type": "string",
+                    "enum": [
+                      "en",
+                      "bn"
+                    ]
+                  },
+                  "key": {
+                    "type": "string",
+                    "description": "Dotted dictionary key in the brand, skipLink, theme, language, public or identity groups."
+                  },
+                  "value": {
+                    "type": "string",
+                    "maxLength": 600
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthenticated"
+          },
+          "403": {
+            "description": "Forbidden"
           }
         }
       }

@@ -27,6 +27,11 @@ jobs:
       PUBLIC_SITE_URL: https://example.test
       PUBLIC_INDEXING_ENABLED: 'true'
       INQUIRY_RATE_SECRET: synthetic-ci-only-secret-with-thirty-two-characters
+      PUBLIC_BASE_URL: http://localhost:3000
+      SMTP_HOST: 127.0.0.1
+      SMTP_PORT: '2525'
+      SMTP_FROM: inquiries@example.test
+      INQUIRY_NOTIFY_TO: inbox@example.test
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -51,6 +56,31 @@ jobs:
             exit 1
           fi
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0004_public_core/up.sql
+      - name: Apply inquiry operations migration and verify its reversal
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0005_inquiry_operations/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0005_inquiry_operations/down.sql
+          if psql "$DATABASE_URL" -tA -c "select 1 from identity_role where id='inquiry_staff'" | grep -q 1; then
+            echo 'inquiry_staff survived down migration' >&2
+            exit 1
+          fi
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0005_inquiry_operations/up.sql
+      - name: Apply site content migration and verify its reversal
+        run: |
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0006_site_content/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0006_site_content/down.sql
+          if psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'select 1 from cms_text limit 0' > /dev/null 2>&1; then
+            echo 'cms_text survived down migration' >&2
+            exit 1
+          fi
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0006_site_content/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0007_site_change_review/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0007_site_change_review/down.sql
+          if psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'select 1 from cms_site_change limit 0' > /dev/null 2>&1; then
+            echo 'cms_site_change survived down migration' >&2
+            exit 1
+          fi
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0007_site_change_review/up.sql
       - run: npm run typecheck
       - run: npm run build
       - name: Start synthetic public web process
@@ -62,6 +92,8 @@ jobs:
           done
       - name: Exercise publication and inquiry boundaries
         run: node scripts/public_ci.mjs
+      - name: Exercise staff inquiry operations and retention
+        run: node scripts/inquiry_ops_ci.mjs
       - name: Install Playwright Chromium
         run: npx playwright install --with-deps chromium
       - name: Exercise bilingual public pages in browser

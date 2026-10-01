@@ -69,6 +69,7 @@ test.describe("Phase 3 public account pages", () => {
     await expect(page).toHaveURL(/\/en\/staff\/users$/);
     await expect(page.getByRole("heading", { name: "Users" })).toBeVisible();
     await page.screenshot({ path: testInfo.outputPath("staff-users-en.png"), fullPage: true });
+    await page.locator(".staff-mobile-menu summary").click();
     await expect(page.getByRole("link", { name: "Audit log" })).toBeVisible();
     await page.goto("/en/staff/roles");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

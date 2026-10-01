@@ -5,8 +5,53 @@ import type { Db } from "@/lib/identity";
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export type LocaleContent = {
   title: string; slug: string; description: string; seoTitle: string; seoDescription: string;
-  sections: Array<{ type: "hero" | "text" | "cta"; heading: string; body: string; href?: string; mediaId?: string; source: string }>;
+  sections: Array<{ type: "hero" | "text" | "cta" | "profile"; heading: string; body: string; role?: string; href?: string; mediaId?: string; source: string;
+    skills?: string[]; links?: Array<{ label: string; url: string }>; relationship?: string; status?: "active" | "hidden" }>;
 };
+/**
+ * A real person's profile may be approved or published only when its approval-reference field carries a recorded
+ * consent token such as `consent:ref-1234` (the reference itself, not the evidence, which stays private).
+ */
+const CONSENT_REFERENCE = /(^|\s)consent:[A-Za-z0-9][A-Za-z0-9._-]{3,79}(?=$|[\s.,;])/;
+export function missingConsent(value: unknown): boolean {
+  const sections = (value as { sections?: unknown })?.sections;
+  return Array.isArray(sections) && sections.some((item) => {
+    const s = item as { type?: unknown; source?: unknown };
+    return s?.type === "profile" && !(typeof s.source === "string" && CONSENT_REFERENCE.test(s.source));
+  });
+}
+const PROFILE_ONLY = ["skills","links","relationship","status"] as const;
+function profileExtras(s: Record<string, unknown>, locale: "en"|"bn"): boolean {
+  if (s.type !== "profile") return PROFILE_ONLY.every((key) => s[key] === undefined);
+  if (s.skills !== undefined) {
+    if (!Array.isArray(s.skills) || s.skills.length > 12) return false;
+    for (const skill of s.skills) if (typeof skill !== "string" || !skill.trim() || skill.length > 80 || !localeProse(skill,locale)) return false;
+  }
+  if (s.links !== undefined) {
+    if (!Array.isArray(s.links) || s.links.length > 6) return false;
+    for (const link of s.links) {
+      if (!link || typeof link !== "object" || Array.isArray(link)) return false;
+      const l = link as Record<string, unknown>;
+      if (Object.keys(l).some((key) => key !== "label" && key !== "url")) return false;
+      if (typeof l.label !== "string" || !l.label.trim() || l.label.length > 60 || !localeProse(l.label,locale)) return false;
+      if (typeof l.url !== "string" || l.url.length > 300 || /\s/.test(l.url)) return false;
+      try { if (new URL(l.url).protocol !== "https:") return false; } catch { return false; }
+    }
+  }
+  if (s.relationship !== undefined && (typeof s.relationship !== "string" || s.relationship.length > 200 || !localeProse(s.relationship,locale))) return false;
+  if (s.status !== undefined && s.status !== "active" && s.status !== "hidden") return false;
+  return true;
+}
+/**
+ * Deployment-level CMS workflow (ADR 0012). `separated` (default, fail-closed) requires a reviewer different from
+ * the author and a publisher different from both. `single_operator` lets one authorized person hold the author,
+ * reviewer and publisher steps; the explicit approved-review step, permissions and audit trail still apply.
+ * It is environment configuration, so staff cannot weaken it through the web interface.
+ */
+export type WorkflowMode = "separated" | "single_operator";
+export function workflowMode(): WorkflowMode {
+  return process.env.CMS_WORKFLOW_MODE === "single_operator" ? "single_operator" : "separated";
+}
 export function localeProse(value: string, locale: "en"|"bn") {
   if (!value.trim()) return true;
   return locale === "en" ? !/[\u0980-\u09ff]/u.test(value) && /[A-Za-z]/.test(value)
@@ -26,17 +71,37 @@ export function content(value: unknown, complete: boolean, locale: "en"|"bn"): v
   for (const item of v.sections) {
     if (!item || typeof item !== "object" || Array.isArray(item)) return false;
     const s = item as Record<string, unknown>;
-    if (Object.keys(s).some((key) => !["type","heading","body","href","mediaId","source"].includes(key))) return false;
-    if (!["hero","text","cta"].includes(String(s.type)) || typeof s.heading !== "string" ||
+    if (Object.keys(s).some((key) => !["type","heading","body","role","href","mediaId","source",...PROFILE_ONLY].includes(key))) return false;
+    if (!["hero","text","cta","profile"].includes(String(s.type)) || typeof s.heading !== "string" ||
       typeof s.body !== "string" || typeof s.source !== "string" ||
       s.heading.length > 160 || s.body.length > 4000 || s.source.length > 500) return false;
+    if (s.type === "profile" ? typeof s.role !== "string" || s.role.length > 160 || !localeProse(s.role,locale) || (complete && !s.role.trim()) : s.role !== undefined) return false;
+    if (!profileExtras(s,locale)) return false;
     if (s.href !== undefined && (s.type !== "cta" || typeof s.href !== "string" || !/^\/(?!\/)[a-z0-9/-]{0,200}$/.test(s.href))) return false;
     if (s.mediaId !== undefined && (s.type === "cta" || typeof s.mediaId !== "string" || !UUID.test(s.mediaId))) return false;
     if (!localeProse(s.heading,locale) || !localeProse(s.body,locale)) return false;
+    if (complete && s.type === "profile" && missingConsent({ sections: [s] })) return false;
     if (complete && (!s.heading.trim() || !s.body.trim() || !s.source.trim() || (s.type === "cta" && !s.href))) return false;
   }
   return !complete || !!(String(v.title).trim() && String(v.slug).trim() && String(v.description).trim() &&
     String(v.seoTitle).trim() && String(v.seoDescription).trim() && v.sections.length);
+}
+/** Site setting keys and their validators (ADR 0013). An empty value clears the setting so the built-in default applies. */
+export const SETTING_KEYS = ["site_name_en","site_name_bn","contact_email","robots_enabled","contact_phone","contact_whatsapp",
+  "contact_address_en","contact_address_bn","facebook_url","youtube_url","footer_text_en","footer_text_bn","site_logo_media_id"] as const;
+export function settingValid(key: string, value: string): boolean {
+  if (value.length > 200 || /[\u0000-\u001f]/.test(value)) return false;
+  if (key === "robots_enabled") return value === "true" || value === "false";
+  if (value === "") return key !== "robots_enabled";
+  switch (key) {
+    case "contact_email": return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    case "contact_phone": return /^\+?[0-9][0-9 ()-]{5,23}$/.test(value);
+    case "contact_whatsapp": return /^[0-9]{8,15}$/.test(value);
+    case "facebook_url": case "youtube_url":
+      try { return new URL(value).protocol === "https:"; } catch { return false; }
+    case "site_logo_media_id": return UUID.test(value);
+    default: return localeProse(value, key.endsWith("_bn") ? "bn" : "en");
+  }
 }
 export function mimeOf(bytes: Buffer): string | null {
   if (bytes.subarray(0,8).equals(Buffer.from([137,80,78,71,13,10,26,10]))) return "image/png";

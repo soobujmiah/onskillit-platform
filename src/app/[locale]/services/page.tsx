@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getDictionary } from "@/i18n/get-dictionary";
+import { getSiteDictionary } from "@/lib/site-text";
+import { brandName } from "@/lib/site-settings";
 import { isLocale } from "@/i18n/locales";
 import { publishedPage, publishedServices } from "@/lib/public-content";
 import { publicMetadata } from "@/lib/public-seo";
@@ -18,9 +19,10 @@ export default async function ServicesPage({ params }: { params: Promise<{ local
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   const [page, services] = await Promise.all([publishedPage("services", locale), publishedServices(locale)]);
-  const t = getDictionary(locale).public;
+  const t = (await getSiteDictionary(locale)).public;
+  const brand = await brandName(locale);
   return <div className="public-article">
-    <header className="public-hero"><p className="public-kicker">{locale === "bn" ? "অনস্কিলআইটি" : "OnSkillIT"}</p><h1>{page?.content.title ?? t.services}</h1>
+    <header className="public-hero"><p className="public-kicker">{brand}</p><h1>{page?.content.title ?? t.services}</h1>
       {page && <p className="public-lead">{page.content.description}</p>}</header>
     {services.length ? <ul className="public-card-grid">{services.map((service) => <li key={service.key} className="public-card">
       <h2>{service.content.title}</h2><p>{service.content.description}</p>

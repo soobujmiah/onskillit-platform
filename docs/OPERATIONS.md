@@ -53,3 +53,36 @@ was added and note below for what still needs doing to this sync tooling once me
 All four PHASE-01 CI workflows (`docs-architecture.yml`, `foundation.yml`, `database.yml`, `container.yml`) declare `permissions: contents: read` and nothing broader. None references a GitHub Actions secret: `database.yml`'s PostgreSQL service container uses a fixed synthetic username/password that exists only for the life of the job and touches no real data; `container.yml`'s containers run with no credentials at all. There is currently no `DATABASE_URL`, object-storage, email or payment-provider secret stored in this repository's Actions configuration, so there is nothing yet to over-scope. This review's finding is that the current zero-secret state already satisfies least privilege by having no privilege to misuse.
 
 Forward-looking rule for whoever adds the first real secret (a preview/staging `DATABASE_URL`, an object-storage key, and so on): it must be scoped to a specific GitHub Environment with required reviewers, never a repository- or organization-wide secret, and never referenced by a workflow that also runs on unreviewed forked-repository pull requests. This is a rule for that later change, not a claim that such a secret exists today.
+
+## Phase 5 inquiry operations and deployment configuration (2026-10-01)
+
+Deployment-specific services are **configuration**, not a fixed provider list (owner decision 2026-10-01): hosting, database, email, storage, analytics and payment are chosen per deployment through protected environment variables, and the privacy notice refers to the services configured for the deployment. Inquiry-related settings: `INQUIRY_RATE_SECRET` (32+ characters; form stays disabled without it), `INQUIRY_NOTIFY_TO` (comma-separated recipients, at most five; without it, or without `SMTP_HOST`, `SMTP_FROM` and `PUBLIC_BASE_URL`, no notice is sent and the inquiry is still stored and visible to staff), the existing `SMTP_*` settings, and `CMS_WORKFLOW_MODE` (`separated` default or `single_operator`, ADR 0012). No credential belongs in this repository.
+
+The notification contains only a reference, language, source page and a sign-in link; it never carries the visitor's name, email, phone or message. Authorized staff read inquiries at `/staff/crm/leads` (`inquiries.read`; `inquiries.redact` to redact). Redaction from the view needs a privacy request reference and a different review reference and records `staff:<user id>` in the append-only audit trail.
+
+**Retention (owner decision, up to 12 months or earlier on request).** Run `scripts/purge_expired_inquiries.ts` on a regular schedule chosen by the operator, with `DATABASE_URL`, `OPERATOR_IDENTITY` and `OPERATOR_REVIEW_REFERENCE` set; it is a dry run unless `INQUIRY_PURGE_APPLY=yes`. It redacts personal fields of inquiries older than 12 months through the same audited path (audit reason "Retention period elapsed"). The application does not schedule it, and this repository does not claim it is scheduled anywhere. The lifecycle of redaction receipts, application records, logs and backups is **not yet defined**; the privacy draft therefore makes no instant-deletion claim for backups, and the owner must approve the real cycle once it is known.
+
+## CMS-managed site content (2026-10-01)
+
+Apply migrations `0006_site_content` and `0007_site_change_review` before using the Site settings screen. Contact details, brand, footer, logo and visitor-facing text are changed from the CMS through propose, review and publish (ADR 0014); the built-in values are only defaults, and no deployment is needed. Deployment and security configuration is the opposite case: it is protected environment configuration and is never entered through the CMS.
+
+## Inquiry flow and enabling it
+
+The flow is: public form, privacy-notice consent check against the published privacy revision, rate-limit check, database storage, protected staff view, then the email notice. Public capture is enabled only when all of these are true: an approved Privacy page is published through the CMS workflow, the contact page is published, and the protected environment holds `INQUIRY_RATE_SECRET` (32+ characters). For notices, `SMTP_HOST`, `SMTP_FROM`, `PUBLIC_BASE_URL` and `INQUIRY_NOTIFY_TO` must also be set; without them the inquiry is still stored and visible to staff. There is no separate enable switch. Before controlled enablement an operator must also confirm that staff accounts with `inquiries.read` exist and that the retention procedure has an owner and a schedule.
+
+## Technical lifecycle of stored data (as implemented, 2026-10-01)
+
+This records what the code does today. It is not a retention policy. Only the inquiry period is owner-approved.
+
+| Data | Current behavior | Owner decision needed |
+|---|---|---|
+| Inquiry name, email, phone, message | Kept until redacted: at the owner-approved 12 months by `scripts/purge_expired_inquiries.ts` (operator-run, not scheduled by the application) or earlier on a reviewed request. | Who runs the procedure and how often. |
+| Inquiry receipt (id, language, source page, consent revision, time, request and review references) | Kept after redaction. A database trigger forbids deleting a receipt, and no expiry exists. | Whether a limit is wanted and what it is. |
+| Audit events | Append-only. No purge procedure exists. | Whether a limit is wanted and what it is. |
+| Public-form rate-limit counters | Keyed hashes (HMAC with `INQUIRY_RATE_SECRET`), not raw addresses. No purge job exists. | Whether a clean-up period is wanted. |
+| Application and notification logs | Written to process output; retention is set by the deployment platform. Notification failures log an error code only. | The platform's log retention. |
+| Notification email | Carries only a reference, language, page and sign-in link, never visitor details. Mailbox retention is outside this application. | Recipient mailbox practices. |
+| Backups | This repository implements no backup mechanism. Targets in this document are proposals, not capabilities. A deleted or redacted inquiry can remain in any backup taken earlier until that copy expires. | The real backup schedule and expiry, to be recorded here once known. |
+
+The privacy draft therefore makes no instant-deletion claim for backups and states no period for receipts or logs.
+

@@ -13,9 +13,10 @@ PHASE-00 through PHASE-04 are complete. PHASE-05 is in progress with PUBLIC CORE
 | How will design, language and responsiveness work? | `DESIGN-SYSTEM.md`, `UX-CONCEPT-REVIEW.md` |
 | How are content, SEO, security and payments governed? | `SEO-CONTENT.md`, `SECURITY-ARCHITECTURE.md`, `PAYMENTS.md`, `LEGAL-IDENTITY.md` |
 | What will prove readiness to release? | `QUALITY-GATES.md`, `OPERATIONS.md` |
+| How do I run the app locally for review? | `LOCAL-DEPLOYMENT.md` |
 | How does another agent continue? | `HANDOFF.md`, root `AI_ASSISTANT.md` |
 
-Decision hierarchy: founding-partner confirmed direction → approved ADR/requirements → current repository source and GitHub CI evidence (once code exists). Dated observations are evidence for the stated time only. Accepted architecture is recorded in ADRs 0006–0009; factual external inputs remain unverified. Any implementation PR must update affected docs and the traceability row in the same change. Avoid duplicating a fact in multiple places; cross-link its canonical document.
+Decision hierarchy: founding-partner confirmed direction → approved ADR/requirements → current repository source and GitHub CI evidence (once code exists). Dated observations are evidence for the stated time only. Accepted architecture is recorded in ADRs 0006–0009; ADR 0010 moves the public Team page into Phase 5. Factual external inputs remain unverified. Any implementation PR must update affected docs and the traceability row in the same change. Avoid duplicating a fact in multiple places; cross-link its canonical document.
 
 Canonical ownership: `PHASES.md` owns lifecycle/dependencies/gates; `PAGES.md` owns page templates, IDs, routes and their single implementation phase; `SITEMAP.md` projects public URLs; `TRACEABILITY.md` maps requirements to phases/pages/data/API/tests; `ROADMAP.md` is a readable projection. Do not maintain an independent page/phase sequence elsewhere. The architecture consistency check runs in GitHub Actions (`.github/workflows/docs-architecture.yml`), not locally.
 

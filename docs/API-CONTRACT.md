@@ -40,6 +40,8 @@ Enrollment request, checkout creation, refund request and provider callback carr
 
 Public API serves only published localized content, verified metadata and intentionally public team/instructor profiles. Student, client, instructor, staff and finance routes are separate permission surfaces. Do not cache private responses publicly. Prevent ID guessing from revealing whether another account's resource exists. Media routes return only authorized signed access to private assets. Audit/report exports require explicit scope, pagination and redaction.
 
+The Phase 5 Team page uses the existing CMS page and revision endpoints with a typed `profile` section (`heading` name, `role`, `body` bio, `source` non-sensitive approval reference). Public `/en/team` and `/bn/team` render only an approved published page revision. No staff identity or private personnel record is exposed by this projection.
+
 ## Contract verification
 
 GitHub CI will validate schema compatibility, input errors, auth/permission negative cases, pagination/filter bounds, idempotency and cross-account isolation. Payment sandbox tests are in `PAYMENTS.md`. API and UI acceptance evidence maps to `TRACEABILITY.md`. No API check has run yet because no API exists.

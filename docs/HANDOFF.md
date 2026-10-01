@@ -1,5 +1,9 @@
 # OnSkillIT canonical agent handoff
 
+> **2026-10-01 local review update:** The founding partner asked for visible navigation, an OnSkillIT copyright footer, simpler CMS use, a staff profiles page and a corrected Bangla account label. Source work is underway on `phase-05/navigation-footer`; see [Phase 5 work log](PHASE-05-WORKLOG.md) and [ADR 0010](decisions/0010-team-page-in-public-core.md). `PAGE-TEAM` is now Phase 5 in the registers, but real profiles remain unpublished pending consent and review. The Phase 5 gate remains open. The isolated phone-local PostgreSQL site is for testing only and is not a public deployment.
+
+> **PR review state (corrected 2026-10-01):** [Draft PR #18](https://github.com/soobujmiah/onskillit-platform/pull/18) had all eleven checks pass on `a8cf719` (historical). The mobile refinement then failed one Identity browser check on `0f4bd1a`, which was a stale test; all ten checks passed again on `8419e25`. All ten checks then passed on `bf6b5bc` with the owner-decided Phase 5 work; PR #18 was marked ready for review and is **not merged**. Keep the Phase 5 gate open until the owner approvals, legal review and CMS publication listed in [PHASE-05-WORKLOG](PHASE-05-WORKLOG.md) are complete.
+
 Updated: 2026-09-30 (Asia/Dhaka). **This file is the canonical cross-agent handoff in this repository.** Recheck Git, GitHub CI and dated external facts before acting; source and current CI evidence outrank this snapshot.
 
 ## State and source of truth
@@ -19,3 +23,4 @@ Updated: 2026-09-30 (Asia/Dhaka). **This file is the canonical cross-agent hando
 
 1. Continue PHASE-05 after PR #17 source merge. Review the live bilingual static preview and the editorial drafts; the owner confirmed exact contact details and the unmarked business/service brief. Resolve the operational questions and approve complete English/Bangla Privacy, Terms and Accessibility text before CMS publication or enabling inquiries. Keep the Phase 5 gate open until the review and evidence are recorded.
 2. GitHub Pages serves the static editorial preview only. A compatible server, PostgreSQL, worker and protected configuration are still needed to run CMS, sign-in and inquiry endpoints. Keep external mail, production/domain changes and real content publication at their respective gates. Never place credentials or private records in this public repository.
+3. For a local review run with synthetic data, follow `LOCAL-DEPLOYMENT.md`. Local results are non-authoritative; only GitHub CI on a commit counts toward the gate.
