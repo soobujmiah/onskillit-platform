@@ -1,0 +1,7 @@
+event_id: commit-760a2c7469d2-b758b47b9cacb705
+repository: soobujmiah/onskillit-platform
+commit: 760a2c7469d22f8d146755a1bd21359fa8eb13f3
+kind: commit
+occurred_at: '2026-10-01T12:45:21Z'
+status: completed
+summary: Make public pages and CMS easier to navigate; add Team profiles (#18)
