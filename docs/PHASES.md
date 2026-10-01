@@ -101,7 +101,7 @@ Every implementation phase inherits these requirements: GitHub-only builds and t
 
 - **Responsibility/tools/approval:** frontend/content/SEO/backend; GitHub CI and preview; owner approves verified business claims/legal text.
 - **Scope/inputs:** Phases 2,4. Public home, about, consented team profiles, services and contact; privacy/terms/accessibility; SEO baseline, semantic navigation and inquiry capture. **Out:** demo offerings, premature course/portfolio pages or unverified legal entity claims.
-- **Pages/modules/data/API:** PAGE-HOME, PAGE-ABOUT, PAGE-TEAM, PAGE-SERVICES, PAGE-SERVICE-DETAIL, PAGE-CONTACT, PAGE-FAQ, PAGE-PRIVACY, PAGE-TERMS, PAGE-ACCESSIBILITY; Service, Inquiry, localized Page and profile sections; public CMS/service/inquiry contracts. Inquiry is a minimal append-only intake record here and becomes a Lead through an explicit mapping in PHASE-09; no full CRM is required in PHASE-05.
+- **Pages/modules/data/API:** PAGE-HOME, PAGE-ABOUT, PAGE-TEAM, PAGE-SERVICES, PAGE-SERVICE-DETAIL, PAGE-CONTACT, PAGE-FAQ, PAGE-PRIVACY, PAGE-TERMS, PAGE-ACCESSIBILITY, and the first slice of ADMIN-LEADS (staff inquiry view, ADR 0011); Service, Inquiry, localized Page and profile sections; public CMS/service/inquiry contracts. Inquiry is a minimal append-only intake record here and becomes a Lead through an explicit mapping in PHASE-09; no full CRM is required in PHASE-05.
 - **Tests/docs/exit/gate:** both locales/themes/viewports, content and structured-data review, inquiry abuse control, published-only sitemap; update SITEMAP, SEO-CONTENT, SPECIFICATION, TRACEABILITY. **PUBLIC CORE VERIFIED**.
 
 ### PHASE-06 — LMS and course catalog
@@ -129,7 +129,7 @@ Every implementation phase inherits these requirements: GitHub-only builds and t
 
 - **Responsibility/tools/approval:** sales/service product/backend/security; GitHub CI; owner approves client lifecycle and privacy.
 - **Scope/inputs:** Phases 3,4,5. Lead qualification, account/contact, service request, project/engagement, activity/follow-up and staff notes. **Out:** exposing internal notes or speculative project automation.
-- **Pages/modules/data/API:** ADMIN-LEADS, ADMIN-CLIENTS, ADMIN-PROJECTS, ADMIN-CRM-ACTIVITIES, ADMIN-SERVICE-REQUESTS; Lead, Account, Contact, Project, Activity, ServiceRequest; CRM/client/project/activity contracts.
+- **Pages/modules/data/API:** ADMIN-LEADS (extends the PHASE-05 inquiry view with qualification; route unchanged), ADMIN-CLIENTS, ADMIN-PROJECTS, ADMIN-CRM-ACTIVITIES, ADMIN-SERVICE-REQUESTS; Lead, Account, Contact, Project, Activity, ServiceRequest; CRM/client/project/activity contracts.
 - **Tests/docs/exit/gate:** conversion history, cross-account isolation, assignment scope and activity audit; update CRM, CLIENT-MANAGEMENT, DATA-MODEL, API-CONTRACT, TRACEABILITY. **CLIENT OPERATIONS VERIFIED**.
 
 ### PHASE-10 — Student and client portals

@@ -71,16 +71,18 @@ Export these in the shell that runs the app (or keep them in an untracked `.env.
 | `PUBLIC_INDEXING_ENABLED` | indexing switch | leave unset locally |
 | `INQUIRY_RATE_SECRET` | inquiry form; at least 32 characters, otherwise the form stays disabled | any random 32+ character string for local use only |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_FROM` | verification and reset email | see "Email" |
+| `INQUIRY_NOTIFY_TO` | email notice of new inquiries (comma-separated, up to five); needs the `SMTP_*` settings | optional locally |
+| `CMS_WORKFLOW_MODE` | `separated` (default) or `single_operator` (one person may author, review and publish) | leave unset for the default |
 | `SMTP_USER`, `SMTP_PASSWORD` | only if the relay requires authentication | never write real values into the repository |
 
 Mail links are only issued when `PUBLIC_BASE_URL` is `https`, or `http` on `localhost`, `127.0.0.1` or `[::1]` (Observed: `src/lib/identity-mail.ts`).
 
 ## 4. Apply the database migrations
 
-Apply in order. Each directory also has a reviewed `down.sql`.
+Apply in order. Each directory also has a reviewed `down.sql`. Migration `0005` adds the inquiry staff permissions; without it the staff inquiry view is unreachable.
 
 ```sh
-for m in 0001_foundation_probe 0002_identity 0003_cms 0004_public_core; do
+for m in 0001_foundation_probe 0002_identity 0003_cms 0004_public_core 0005_inquiry_operations; do
   psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "src/db/migrations/$m/up.sql"
 done
 ```

@@ -1,0 +1,42 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OnSkillIT staff inquiry operations API",
+    "version": "0.1.0",
+    "description": "PHASE-05 staff-only redaction of one public inquiry (ADR 0011). Listing is a server-rendered staff page at /staff/crm/leads, not a JSON endpoint. Requires a staff session, the inquiries.redact permission and a matching CSRF token."
+  },
+  "servers": [{ "url": "/api/v1/staff" }],
+  "paths": {
+    "/inquiries/{id}/redactions": {
+      "post": {
+        "summary": "Permanently redact the personal fields of one inquiry",
+        "operationId": "redactInquiry",
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string", "format": "uuid" } }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["request_reference", "review_reference"],
+                "properties": {
+                  "request_reference": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{3,99}$" },
+                  "review_reference": { "type": "string", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9._-]{3,99}$", "description": "Must differ from request_reference." }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Name, email, phone and message were removed; an audit event was appended." },
+          "400": { "description": "Invalid body, or equal or malformed references." },
+          "401": { "description": "No staff session." },
+          "403": { "description": "Wrong origin, missing CSRF token, or no inquiries.redact permission." },
+          "404": { "description": "Unknown inquiry." },
+          "409": { "description": "The inquiry was already redacted." }
+        }
+      }
+    }
+  }
+}

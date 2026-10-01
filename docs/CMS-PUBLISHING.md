@@ -19,3 +19,11 @@ Navigation and redirects can target only published pages and are removed on arch
 ## Phase boundary
 
 This implementation supplies six staff pages and a synthetic, authenticated preview. It does not make the public business site visible on a live domain. Phase 5 owns public home/about/services/contact/legal pages, public published-content API, sitemap and verified owner-provided copy; Phase 14 owns production cutover. A preview host can be provisioned separately when the owner selects a provider and supplies protected environment configuration.
+
+## Workflow mode (ADR 0012)
+
+The statements above about a different reviewer and a different publisher describe the default `separated` mode. A deployment may instead set `CMS_WORKFLOW_MODE=single_operator`, which lets one authorized person hold the author, reviewer and publisher steps and approve their own media. An explicit approved review record, locale completeness, public-media and slug checks, and audit logging still apply, and review and publication audit events record the mode in use. The setting is environment configuration only; it cannot be changed through the staff interface.
+
+## Team profile sections
+
+A `profile` section carries a name, role and biography and may carry skills (up to 12), public links (up to 6, `https` only, per-language label), a relationship to OnSkillIT, a visibility of `active` or `hidden`, and an optional public photo reference. Profiles appear in section order, and hidden profiles remain in revision history but are not rendered. Names, roles, skills, labels and relationships obey the same per-language script rules as other prose. A photo shows publicly only when its media record has been approved public and carries alt text. A real person's profile needs that person's explicit approval, recorded privately outside the repository; the approval reference field holds only a non-sensitive reference.
