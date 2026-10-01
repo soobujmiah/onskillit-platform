@@ -22,10 +22,13 @@ export default async function StaffLayout({ children, params }: {
       { path: "content/media", label: getDictionary(locale).cms.media, permission: "media.read" },
       { path: "content/seo", label: getDictionary(locale).cms.seo, permission: "pages.read" },
       { path: "crm/leads", label: getDictionary(locale).inquiries.nav, permission: "inquiries.read" },
-      { path: "settings/site", label: getDictionary(locale).cms.siteSettings, permission: "settings.site" },
+      { path: "settings/site", label: getDictionary(locale).cms.siteSettings, permission: "settings.site", alternate: "pages.read" },
     ];
     const allowed = [];
-    for (const link of links) if (await hasAnyPermission(db, session.userId, link.permission)) allowed.push(link);
+    for (const link of links) {
+      if (await hasAnyPermission(db, session.userId, link.permission)
+        || (link.alternate && await hasAnyPermission(db, session.userId, link.alternate))) allowed.push(link);
+    }
     return <div className="staff-shell">
       <details className="staff-mobile-menu"><summary>{t.staffMenu}</summary><nav aria-label={t.staffNav} className="staff-nav">
         {allowed.map((link) => <Link key={link.path} href={`/${locale}/staff/${link.path}`}>{link.label}</Link>)}

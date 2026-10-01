@@ -8,6 +8,18 @@ export type LocaleContent = {
   sections: Array<{ type: "hero" | "text" | "cta" | "profile"; heading: string; body: string; role?: string; href?: string; mediaId?: string; source: string;
     skills?: string[]; links?: Array<{ label: string; url: string }>; relationship?: string; status?: "active" | "hidden" }>;
 };
+/**
+ * A real person's profile may be approved or published only when its approval-reference field carries a recorded
+ * consent token such as `consent:ref-1234` (the reference itself, not the evidence, which stays private).
+ */
+const CONSENT_REFERENCE = /(^|\s)consent:[A-Za-z0-9][A-Za-z0-9._-]{3,79}(?=$|[\s.,;])/;
+export function missingConsent(value: unknown): boolean {
+  const sections = (value as { sections?: unknown })?.sections;
+  return Array.isArray(sections) && sections.some((item) => {
+    const s = item as { type?: unknown; source?: unknown };
+    return s?.type === "profile" && !(typeof s.source === "string" && CONSENT_REFERENCE.test(s.source));
+  });
+}
 const PROFILE_ONLY = ["skills","links","relationship","status"] as const;
 function profileExtras(s: Record<string, unknown>, locale: "en"|"bn"): boolean {
   if (s.type !== "profile") return PROFILE_ONLY.every((key) => s[key] === undefined);
@@ -68,6 +80,7 @@ export function content(value: unknown, complete: boolean, locale: "en"|"bn"): v
     if (s.href !== undefined && (s.type !== "cta" || typeof s.href !== "string" || !/^\/(?!\/)[a-z0-9/-]{0,200}$/.test(s.href))) return false;
     if (s.mediaId !== undefined && (s.type === "cta" || typeof s.mediaId !== "string" || !UUID.test(s.mediaId))) return false;
     if (!localeProse(s.heading,locale) || !localeProse(s.body,locale)) return false;
+    if (complete && s.type === "profile" && missingConsent({ sections: [s] })) return false;
     if (complete && (!s.heading.trim() || !s.body.trim() || !s.source.trim() || (s.type === "cta" && !s.href))) return false;
   }
   return !complete || !!(String(v.title).trim() && String(v.slug).trim() && String(v.description).trim() &&

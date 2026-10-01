@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { SiteSettingsForm, SiteTextEditor } from "@/components/cms/SiteContentAdmin";
+import { SiteContentAdmin } from "@/components/cms/SiteContentAdmin";
 
 type Text = Record<string,string>;
 type LocaleContent = { title:string; slug:string; description:string; seoTitle:string; seoDescription:string;
@@ -110,7 +110,6 @@ export function CmsWorkspace({locale,section,id,t,title}:{locale:string;section:
     {section==="seo"&&!loading&&!loadFailed&&<div className="cms-grid"><section className="cms-card"><h2>{t.seo}</h2><ul className="cms-list">{((data.pages??[]) as Array<{id:string;page_key:string;state:string;seo_title_en:string|null;seo_title_bn:string|null}>).map(p=><li key={p.id}><strong>{p.page_key}</strong><span className="cms-badge">{t[p.state]}</span><small>{p.seo_title_en??"—"} / {p.seo_title_bn??"—"}</small></li>)}</ul></section><section className="cms-card"><h2>{t.addRedirect}</h2><label className="cms-field"><span>{t.locale}</span><select value={form.locale??"en"} onChange={e=>setForm({...form,locale:e.target.value})}><option value="en">{t.english}</option><option value="bn">{t.bangla}</option></select></label>{field("source_path",t.sourcePath)}
       <label className="cms-field"><span>{t.targetPage}</span><select value={form.target_page_id??""} onChange={e=>setForm({...form,target_page_id:e.target.value})}><option value="">{t.selectPage}</option>{((data.pages??[]) as Page[]).filter(p=>p.state==="published").map(p=><option key={p.id} value={p.id}>{p.page_key}</option>)}</select></label><button disabled={busy} onClick={()=>void action("seo",{...form,locale:form.locale??"en"})}>{t.save}</button></section></div>}
     {section==="settings"&&!loading&&!loadFailed&&<section className="cms-card"><h2>{t.robots_enabled}</h2><p className="cms-help">{t.robotsHelp}</p><label className="cms-field"><span>{t.robots_enabled}</span><select value={settingDraft||"false"} onChange={e=>setForm({value:e.target.value})}><option value="false">{t.disabled}</option><option value="true">{t.enabled}</option></select></label><button disabled={busy} onClick={()=>void action("settings",{key:"robots_enabled",value:settingDraft||"false"})}>{t.save}</button></section>}
-    {section==="settings"&&!loading&&!loadFailed&&<SiteSettingsForm t={t}/>}
-    {section==="settings"&&!loading&&!loadFailed&&<SiteTextEditor t={t}/>}
+    {section==="settings"&&!loading&&!loadFailed&&<SiteContentAdmin t={t}/>}
   </div>;
 }

@@ -12,7 +12,8 @@ export async function cmsPage(locale: string, section: "pages"|"editor"|"navigat
   const {db,session}=await privateIdentity(locale);
   try {
     const permission=section==="media"?"media.read":section==="settings"?"settings.site":"pages.read";
-    if (!await hasPermission(db,session.userId,permission)) redirect(`/${locale}/forbidden`);
+    const allowed=await hasPermission(db,session.userId,permission) || (section==="settings" && await hasPermission(db,session.userId,"pages.read"));
+    if (!allowed) redirect(`/${locale}/forbidden`);
     const t=getDictionary(locale).cms;
     const title=section==="editor"?t.editor:section==="settings"?t.siteSettings:t[section];
     return <CmsWorkspace key={`${section}:${id ?? ""}`} locale={locale} section={section} id={id} t={t} title={title}/>;

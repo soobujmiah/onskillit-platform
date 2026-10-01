@@ -74,6 +74,13 @@ jobs:
             exit 1
           fi
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0006_site_content/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0007_site_change_review/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0007_site_change_review/down.sql
+          if psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -c 'select 1 from cms_site_change limit 0' > /dev/null 2>&1; then
+            echo 'cms_site_change survived down migration' >&2
+            exit 1
+          fi
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0007_site_change_review/up.sql
       - run: npm run typecheck
       - run: npm run build
       - name: Start synthetic public web process

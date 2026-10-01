@@ -49,6 +49,7 @@ jobs:
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0003_cms/up.sql
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0004_public_core/up.sql
           psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0006_site_content/up.sql
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f src/db/migrations/0007_site_change_review/up.sql
       - run: npm run typecheck
       - run: npm run build
       - name: Start synthetic CMS web process

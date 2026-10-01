@@ -65,16 +65,16 @@ try {
   assert.equal((await inquiry(invalid)).status, 503);
   const privacy = await page("privacy", "page", author.id, true);
   const teamEn = { ...fixture("team", "en"), sections: [
-    { type: "profile", heading: "Synthetic Person", role: "Sample Staff Role", body: "Synthetic staff bio for CI only", source: "ci-fixture",
+    { type: "profile", heading: "Synthetic Person", role: "Sample Staff Role", body: "Synthetic staff bio for CI only", source: "ci-fixture consent:synthetic-ci-1",
       relationship: "Synthetic relationship", skills: ["Sample Skill One", "Sample Skill Two"],
       links: [{ label: "Sample Link", url: "https://example.test/profile" }] },
-    { type: "profile", heading: "Hidden Synthetic Person", role: "Hidden Role", body: "Must not be shown", source: "ci-fixture", status: "hidden" },
+    { type: "profile", heading: "Hidden Synthetic Person", role: "Hidden Role", body: "Must not be shown", source: "ci-fixture consent:synthetic-ci-1", status: "hidden" },
   ] };
   const teamBn = { ...fixture("team", "bn"), sections: [
-    { type: "profile", heading: "কৃত্রিম ব্যক্তি", role: "নমুনা কর্মীর ভূমিকা", body: "শুধু পরীক্ষার জন্য কৃত্রিম পরিচিতি", source: "ci-fixture",
+    { type: "profile", heading: "কৃত্রিম ব্যক্তি", role: "নমুনা কর্মীর ভূমিকা", body: "শুধু পরীক্ষার জন্য কৃত্রিম পরিচিতি", source: "ci-fixture consent:synthetic-ci-1",
       relationship: "কৃত্রিম সম্পর্ক", skills: ["নমুনা দক্ষতা এক", "নমুনা দক্ষতা দুই"],
       links: [{ label: "নমুনা সংযোগ", url: "https://example.test/profile" }] },
-    { type: "profile", heading: "লুকানো কৃত্রিম ব্যক্তি", role: "লুকানো ভূমিকা", body: "দেখানো যাবে না", source: "ci-fixture", status: "hidden" },
+    { type: "profile", heading: "লুকানো কৃত্রিম ব্যক্তি", role: "লুকানো ভূমিকা", body: "দেখানো যাবে না", source: "ci-fixture consent:synthetic-ci-1", status: "hidden" },
   ] };
   await page("team", "page", author.id, true, null, { en: teamEn, bn: teamBn });
   const teamHtml = await (await get("/en/team")).text();

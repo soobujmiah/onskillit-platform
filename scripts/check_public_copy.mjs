@@ -41,6 +41,7 @@ assert.deepEqual(seen, expected);
 const serialized = JSON.stringify(pack.pages);
 assert(!/\[CONFIRM\]|৳|30 days|7 days|working day|office hours/i.test(serialized), "unapproved terms in editorial pack");
 assert(!/genarate|code generate/i.test(serialized), "retired brand wording in editorial pack");
+assert(!/Bangladesh|বাংলাদেশ/.test(serialized), "Bangladesh-only positioning in editorial pack; the site is positioned for businesses and organizations worldwide");
 
 // Team profile draft: owner-verified fields only, separated scripts, no personal contact details, no photo.
 const team = JSON.parse(readFileSync(new URL("../docs/PHASE-05-TEAM-PROFILE.json", import.meta.url), "utf8"));
@@ -63,4 +64,5 @@ for (const locale of ["en", "bn"]) {
 }
 const teamText = JSON.stringify(team.pages);
 assert(!/@|mailto:|t\.me|genarate/i.test(teamText), "personal contact or retired brand wording in team draft");
+assert(!/consent:[A-Za-z0-9]/.test(teamText), "the owner draft must not carry a consent token until the owner records consent");
 console.log("Phase 5 editorial draft passed structure, locale and explicit-approval checks");

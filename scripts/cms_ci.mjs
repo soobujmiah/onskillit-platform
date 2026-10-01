@@ -74,35 +74,86 @@ try {
   assert.equal((await cms(`media/${mediaId}/publish`,{},author)).response.status,409);
   assert.equal((await cms(`media/${mediaId}/publish`,{},reviewer)).response.status,200);
   assert.equal((await get(`media/${mediaId}/content`,member)).status,200);
-  // CMS-managed site settings and visible text (ADR 0013)
+  // Reviewed site content (ADR 0013/0014): proposals go through review and publication before anything is live.
   const logoForm=()=>{const f=new FormData();f.set("file",new File([Buffer.from([137,80,78,71,13,10,26,10,0,0,0,0])],"logo.png",{type:"image/png"}));f.set("rights_reference","synthetic-ci-rights");f.set("alt_en","Synthetic logo");f.set("alt_bn","কৃত্রিম লোগো");return f;};
   const privateLogo=await cms("media",logoForm(),author);assert.equal(privateLogo.response.status,201);
-  assert.equal((await cms("settings",{key:"site_logo_media_id",value:privateLogo.value.id},author)).response.status,400);
-  assert.equal((await cms("settings",{key:"site_logo_media_id",value:mediaId},author)).response.status,200);
-  assert.equal((await cms("settings",{key:"site_logo_media_id",value:""},author)).response.status,200);
-  for (const [key,value,status] of [["contact_phone","+8801700000001",200],["contact_phone","not a phone",400],["contact_whatsapp","8801700000001",200],["contact_whatsapp","+88017",400],
-    ["facebook_url","https://example.test/fb",200],["facebook_url","http://example.test/fb",400],["facebook_url","javascript:alert(1)",400],["footer_text_en","Synthetic footer {year}",200],
-    ["footer_text_en","বাংলা",400],["footer_text_bn","কৃত্রিম ফুটার {বছর}",200],["footer_text_bn","Latin",400],["contact_address_bn","কৃত্রিম ঠিকানা",200],
-    ["contact_address_en","কৃত্রিম",400],["unknown_key","x",400],["robots_enabled","",400]])
-    assert.equal((await cms("settings",{key,value},author)).response.status,status,`${key}=${value}`);
-  assert.equal((await cms("settings",{key:"contact_phone",value:"+8801700000001"},member)).response.status,403);
-  for (const key of ["contact_phone","contact_whatsapp","facebook_url","footer_text_en","footer_text_bn","contact_address_bn"]) assert.equal((await cms("settings",{key,value:""},author)).response.status,200);
-  const text=(locale,key,value,session=author)=>cms("site-texts",{locale,key,value},session);
-  assert.equal((await text("en","public.submit","Send it now")).response.status,200);
-  assert.equal((await text("bn","public.submit","এখনই পাঠান")).response.status,200);
-  assert.equal((await text("bn","public.submit","Latin only")).response.status,400);
-  assert.equal((await text("en","public.submit","বাংলা")).response.status,400);
-  assert.equal((await text("en","cms.save","Staff text")).response.status,400);
-  assert.equal((await text("en","public.nope","x")).response.status,400);
-  assert.equal((await text("en","language.switchTo","বাংলা")).response.status,200);
-  assert.equal((await text("en","public.submit","Send it now",member)).response.status,403);
-  const listed=await (await get("site-texts",author)).json();
-  assert(listed.keys.includes("public.submit")&&!listed.keys.includes("cms.save"));
-  assert.equal(listed.texts.filter(row=>row.key==="public.submit").length,2);
-  assert.equal((await get("site-texts",member)).status,403);
-  for (const [l,k] of [["en","public.submit"],["bn","public.submit"],["en","language.switchTo"]]) assert.equal((await text(l,k,"")).response.status,200);
-  assert.equal((await (await get("site-texts",author)).json()).texts.length,0);
-  assert.equal((await db`SELECT count(*)::int AS n FROM identity_audit WHERE action IN ('cms.text_set','cms.text_reset')`)[0].n,6);
+  assert.equal((await cms("settings",{key:"contact_phone",value:"+8801700000001"},author)).value.code,"REVIEW_REQUIRED");
+  assert.equal((await cms("site-texts",{locale:"en",key:"public.submit",value:"Send it now"},author)).value.code,"REVIEW_REQUIRED");
+  assert.equal((await cms("settings",{key:"robots_enabled",value:"false"},author)).response.status,200);
+  assert.equal((await cms("settings",{key:"robots_enabled",value:"maybe"},author)).response.status,400);
+  const propose=(body,session=author)=>cms("site-changes",body,session);
+  for (const [body,status] of [
+    [{kind:"setting",key:"site_logo_media_id",value:privateLogo.value.id},400],[{kind:"setting",key:"contact_phone",value:"not a phone"},400],
+    [{kind:"setting",key:"contact_whatsapp",value:"+88017"},400],[{kind:"setting",key:"facebook_url",value:"http://example.test/fb"},400],
+    [{kind:"setting",key:"facebook_url",value:"javascript:alert(1)"},400],[{kind:"setting",key:"footer_text_en",value:"বাংলা"},400],
+    [{kind:"setting",key:"footer_text_bn",value:"Latin"},400],[{kind:"setting",key:"contact_address_en",value:"কৃত্রিম"},400],
+    [{kind:"setting",key:"unknown_key",value:"x"},400],[{kind:"setting",key:"robots_enabled",value:"true"},400],
+    [{kind:"setting",key:"contact_phone",value:"+8801700000009",locale:"en"},400],[{kind:"text",locale:"bn",key:"public.submit",value:"Latin only"},400],
+    [{kind:"text",locale:"en",key:"public.submit",value:"বাংলা"},400],[{kind:"text",locale:"en",key:"cms.save",value:"Staff text"},400],
+    [{kind:"text",locale:"en",key:"public.nope",value:"x"},400],[{kind:"text",key:"public.submit",value:"No locale"},400],[{kind:"other",key:"x",value:"x"},400],
+    [{kind:"setting",key:"contact_phone",value:"+8801700000001"},403]])
+    assert.equal((await propose(body,body.value==="+8801700000001"?member:author)).response.status,status,JSON.stringify(body));
+  assert.equal((await get("site-changes",member)).status,403);
+  const liveSettings=async()=>Object.fromEntries((await (await get("settings",author)).json()).settings.map(r=>[r.key,r.value]));
+  const liveTexts=async()=>(await (await get("site-texts",author)).json()).texts;
+  const change=(id,action,body,session)=>cms(`site-changes/${id}/${action}`,body,session);
+
+  const phone=await propose({kind:"setting",key:"contact_phone",value:"+8801700000001"});assert.equal(phone.response.status,201);
+  assert.equal((await liveSettings()).contact_phone,undefined,"a proposal is not live");
+  assert.equal((await change(phone.value.id,"reviews",{decision:"approved",note:"Own change"},author)).value.code,"SELF_REVIEW_DENIED");
+  assert.equal((await change(phone.value.id,"publish",{},publisher)).value.code,"APPROVAL_REQUIRED");
+  assert.equal((await change(phone.value.id,"reviews",{decision:"approved",note:"Looks right"},member)).response.status,403);
+  assert.equal((await change(phone.value.id,"reviews",{decision:"approved",note:"Looks right"},reviewer)).response.status,200);
+  assert.equal((await change(phone.value.id,"reviews",{decision:"rejected",note:"Again"},reviewer)).value.code,"ALREADY_DECIDED");
+  assert.equal((await change(phone.value.id,"publish",{},member)).response.status,403);
+  assert.equal((await change(phone.value.id,"publish",{},author)).value.code,"APPROVAL_REQUIRED","proposer cannot publish in separated mode");
+  assert.equal((await change(phone.value.id,"publish",{},reviewer)).value.code,"APPROVAL_REQUIRED","reviewer cannot publish in separated mode");
+  assert.equal((await change(phone.value.id,"publish",{},publisher)).response.status,200);
+  assert.equal((await change(phone.value.id,"publish",{},publisher)).value.code,"ALREADY_PUBLISHED");
+  assert.equal((await liveSettings()).contact_phone,"+8801700000001");
+
+  const rejectedText=await propose({kind:"text",locale:"en",key:"public.submit",value:"Rejected wording"});assert.equal(rejectedText.response.status,201);
+  assert.equal((await change(rejectedText.value.id,"reviews",{decision:"rejected",note:"Not approved"},reviewer)).response.status,200);
+  assert.equal((await change(rejectedText.value.id,"publish",{},publisher)).value.code,"APPROVAL_REQUIRED");
+  assert.equal((await liveTexts()).length,0,"a rejected change never applies");
+
+  const send=await propose({kind:"text",locale:"en",key:"public.submit",value:"Send it now"});assert.equal(send.response.status,201);
+  assert.equal((await change(send.value.id,"reviews",{decision:"approved",note:"Approved wording"},reviewer)).response.status,200);
+  assert.equal((await change(send.value.id,"publish",{},publisher)).response.status,200);
+  assert.deepEqual((await liveTexts()).map(r=>[r.locale,r.key,r.value]),[["en","public.submit","Send it now"]]);
+  const mixed=await propose({kind:"text",locale:"en",key:"language.switchTo",value:"বাংলা"});assert.equal(mixed.response.status,201,"the language switcher label may use either script");
+  const reset=await propose({kind:"text",locale:"en",key:"public.submit",value:""});assert.equal(reset.response.status,201);
+  assert.equal((await change(reset.value.id,"reviews",{decision:"approved",note:"Restore default"},reviewer)).response.status,200);
+  assert.equal((await change(reset.value.id,"publish",{},publisher)).response.status,200);
+  assert.equal((await liveTexts()).length,0,"an approved empty value restores the built-in default");
+
+  const logo=await propose({kind:"setting",key:"site_logo_media_id",value:mediaId});assert.equal(logo.response.status,201);
+  assert.equal((await change(logo.value.id,"reviews",{decision:"approved",note:"Logo approved"},reviewer)).response.status,200);
+  assert.equal((await change(logo.value.id,"publish",{},publisher)).response.status,200);
+  assert.equal((await liveSettings()).site_logo_media_id,mediaId);
+  const clearLogo=await propose({kind:"setting",key:"site_logo_media_id",value:""});
+  assert.equal((await change(clearLogo.value.id,"reviews",{decision:"approved",note:"Remove logo"},reviewer)).response.status,200);
+  assert.equal((await change(clearLogo.value.id,"publish",{},publisher)).response.status,200);
+  assert.equal((await liveSettings()).site_logo_media_id,undefined);
+
+  const listedChanges=await (await get("site-changes",author)).json();
+  assert.equal(listedChanges.mode,"separated");assert(listedChanges.viewer.can_propose&&listedChanges.viewer.can_review);
+  assert((await liveSettings()).contact_phone);
+  assert.equal((await db`SELECT count(*)::int AS n FROM identity_audit WHERE action='cms.site_change_publish' AND metadata->>'workflow_mode'='separated'`)[0].n,5);
+  await assert.rejects(db`UPDATE cms_site_change SET value='tampered' WHERE id=${phone.value.id}`);
+  await assert.rejects(db`UPDATE cms_site_change SET decision='rejected',review_note='x',reviewed_by=${authorId},reviewed_at=now() WHERE id=${rejectedText.value.id}`);
+  await assert.rejects(db`DELETE FROM cms_site_change WHERE id=${phone.value.id}`);
+  await db`DELETE FROM cms_setting WHERE key='contact_phone'`;
+
+  // Team profiles need a recorded consent reference before approval or publication.
+  const profilePage=(await db`SELECT id FROM cms_page WHERE page_key='profile-ok'`)[0].id;
+  const noConsent=(await (await get(`pages/${profilePage}`,author)).json()).revisions[0].id;
+  const refused=await cms(`pages/${profilePage}/reviews`,{revision_id:noConsent,decision:"approved",note:"No consent reference"},reviewer);
+  assert.equal(refused.response.status,409);assert.equal(refused.value.code,"CONSENT_REQUIRED");
+  const withConsent=(lang)=>profile(lang,{...(lang==="en"?okEn:okBn),source:"approved consent:synthetic-ci-1"});
+  const consented=await cms(`pages/${profilePage}/revisions`,{base_revision_id:noConsent,en:withConsent("en"),bn:withConsent("bn")},author);assert.equal(consented.response.status,201);
+  assert.equal((await cms(`pages/${profilePage}/reviews`,{revision_id:consented.value.id,decision:"approved",note:"Consent reference present"},reviewer)).response.status,200);
+  assert.equal((await cms(`pages/${profilePage}/publish`,{revision_id:consented.value.id},publisher)).response.status,200);
   const fake=new FormData();fake.set("file",new File(["not an image"],"fake.png",{type:"image/png"}));fake.set("rights_reference","synthetic");fake.set("alt_en","Sample");fake.set("alt_bn","নমুনা");
   assert.equal((await cms("media",fake,author)).response.status,400);
   assert.equal((await cms("navigation",{slot:"header",position:1,page_id:pageId,label_en:"Sample",label_bn:"নমুনা"},author)).response.status,201);

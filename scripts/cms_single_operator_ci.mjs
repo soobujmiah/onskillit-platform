@@ -53,5 +53,16 @@ try {
   assert.deepEqual(audited.map((row) => [row.action, row.mode]), [["cms.review", "single_operator"], ["cms.publish", "single_operator"]]);
   const [{ state }] = await db`SELECT state FROM cms_page WHERE id=${pageId}`;
   assert.equal(state, "published");
+  // Site content changes follow the same mode: one authorized person may propose, review and publish.
+  const proposed = await cms("site-changes", { kind: "text", locale: "en", key: "public.submit", value: "Solo wording" }, session);
+  assert.equal(proposed.response.status, 201);
+  assert.equal((await cms(`site-changes/${proposed.value.id}/publish`, {}, session)).response.status, 409, "still needs an approved review");
+  assert.equal((await cms(`site-changes/${proposed.value.id}/reviews`, { decision: "approved", note: "Solo review" }, session)).response.status, 200);
+  assert.equal((await cms(`site-changes/${proposed.value.id}/publish`, {}, session)).response.status, 200);
+  const texts = await (await fetch(`${base}/api/v1/cms/site-texts`, { headers: { Cookie: session.cookie } })).json();
+  assert.deepEqual(texts.texts.map((row) => [row.locale, row.key, row.value]), [["en", "public.submit", "Solo wording"]]);
+  const changeAudit = await db`SELECT action,metadata->>'workflow_mode' AS mode FROM identity_audit
+    WHERE actor_user_id=${userId} AND action LIKE 'cms.site_change_%' ORDER BY created_at`;
+  assert.deepEqual(changeAudit.map((row) => [row.action, row.mode]), [["cms.site_change_propose", null], ["cms.site_change_review", "single_operator"], ["cms.site_change_publish", "single_operator"]]);
   console.log("CMS single-operator workflow passed: explicit approval step, audited mode, no separation requirement");
 } finally { await db.end(); }
