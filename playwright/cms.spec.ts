@@ -11,6 +11,8 @@ for (const locale of ["en","bn"] as const) {
     await page.getByRole("button",{name:locale==="bn"?"এগিয়ে যান":"Continue"}).click();
     await expect(page).toHaveURL(new RegExp(`/${locale}/learn/profile$`));
     await page.getByRole("link",{name:locale==="bn"?"কর্মী কার্যক্ষেত্র":"Staff workspace"}).click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/staff/(users|content/pages)$`));
+    await page.getByRole("navigation",{name:locale==="bn"?"কর্মীদের দিকনির্দেশনা":"Staff navigation"}).getByRole("link",{name:locale==="bn"?"পাতাসমূহ":"Pages"}).click();
     await expect(page).toHaveURL(new RegExp(`/${locale}/staff/content/pages$`));
     const routes=[
       ["content/pages",locale==="bn"?"পাতাসমূহ":"Pages","pages"],

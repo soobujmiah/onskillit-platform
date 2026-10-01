@@ -14,11 +14,11 @@ const fixture = (slug, locale) => locale === "en" ? {
   seoTitle: "কৃত্রিম অনুসন্ধান শিরোনাম", seoDescription: "কৃত্রিম অনুসন্ধান বিবরণ",
   sections: [{ type: "text", heading: "নমুনা অংশ", body: "শুধু পরীক্ষার বিষয়বস্তু", source: "ci-fixture" }],
 };
-async function page(key, kind, author, published = false, category = null) {
+async function page(key, kind, author, published = false, category = null, localized = null) {
   const [record] = await db`INSERT INTO cms_page(page_key,kind,created_by) VALUES (${key},${kind},${author}) RETURNING id`;
   const [revision] = await db`INSERT INTO cms_revision(page_id,revision_no,en,bn,created_by)
-    VALUES (${record.id},1,${db.json(fixture(key === "service-sample" ? "sample-service" : key, "en"))},
-      ${db.json(fixture(key === "service-sample" ? "sample-service-bn" : key, "bn"))},${author}) RETURNING id`;
+    VALUES (${record.id},1,${db.json(localized?.en ?? fixture(key === "service-sample" ? "sample-service" : key, "en"))},
+      ${db.json(localized?.bn ?? fixture(key === "service-sample" ? "sample-service-bn" : key, "bn"))},${author}) RETURNING id`;
   if (category) await db`INSERT INTO catalog_service(page_id,category) VALUES (${record.id},${category})`;
   if (published) await db`UPDATE cms_page SET state='published',published_revision_id=${revision.id} WHERE id=${record.id}`;
   return { id: record.id, revisionId: revision.id };
@@ -46,10 +46,9 @@ try {
   assert.match(await (await get("/en/contact")).text(), /Inquiry intake is not available/);
   assert.equal((await inquiry(invalid)).status, 503);
   const privacy = await page("privacy", "page", author.id, true);
-  const team = await page("team", "page", author.id, true);
   const teamEn = { ...fixture("team", "en"), sections: [{ type: "profile", heading: "Synthetic Person", role: "Sample Staff Role", body: "Synthetic staff bio for CI only", source: "ci-fixture" }] };
   const teamBn = { ...fixture("team", "bn"), sections: [{ type: "profile", heading: "কৃত্রিম ব্যক্তি", role: "নমুনা কর্মীর ভূমিকা", body: "শুধু পরীক্ষার জন্য কৃত্রিম পরিচিতি", source: "ci-fixture" }] };
-  await db`UPDATE cms_revision SET en=${db.json(teamEn)},bn=${db.json(teamBn)} WHERE id=${team.revisionId}`;
+  await page("team", "page", author.id, true, null, { en: teamEn, bn: teamBn });
   assert.match(await (await get("/en/team")).text(), /Synthetic Person/);
   const valid = { ...invalid, consentVersion: privacy.revisionId };
   assert.equal((await fetch(`${base}/api/v1/public/inquiries`, { method: "POST", headers: { "content-type": "application/json", Origin: "https://other.example.test" }, body: JSON.stringify(valid) })).status, 403);
