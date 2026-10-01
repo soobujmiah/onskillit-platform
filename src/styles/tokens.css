@@ -175,6 +175,10 @@ html[lang="bn"] body { font-family: var(--font-bn), sans-serif; line-height: 1.7
 .cms-list small { color: var(--text-secondary); }
 .cms-badge { display: inline-block; border: 1px solid var(--border-default); border-radius: var(--radius-pill); padding: var(--space-xs) var(--space-sm); font-size: .85rem; }
 .cms-message { border-left: 4px solid var(--status-info); padding: var(--space-md); background: var(--surface-raised); }
+.cms-help { color: var(--text-secondary); line-height: 1.6; }
+.cms-details { margin: var(--space-md) 0; }
+.cms-details summary { cursor: pointer; font-weight: 700; padding: var(--space-sm) 0; }
+.cms-details summary:focus-visible { outline: 2px solid var(--action-primary-bg); outline-offset: 2px; }
 .cms-preview { margin-top: var(--space-lg); }
 .cms-preview article { border-top: 1px solid var(--border-default); margin-top: var(--space-lg); padding-top: var(--space-lg); }
 .cms-preview p { white-space: pre-wrap; }
@@ -198,6 +202,9 @@ html[lang="bn"] body { font-family: var(--font-bn), sans-serif; line-height: 1.7
 .public-section h2 { margin-top: 0; font-size: clamp(1.5rem, 2.5vw, 2.3rem); }
 .public-section p { max-width: 70ch; white-space: pre-wrap; line-height: 1.7; color: var(--text-secondary); }
 .public-section-cta { border-left: 4px solid var(--action-primary-bg); }
+.public-article-team .public-sections { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+.public-article-team .public-section-profile { border-top: 4px solid var(--action-primary-bg); }
+.public-section .public-profile-role { color: var(--text-primary); font-weight: 700; }
 .public-button, .public-contact-form button { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: var(--space-sm) var(--space-lg); border: 0; border-radius: var(--radius-field); color: var(--action-primary-text); background: var(--action-primary-bg); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
 .public-button:hover, .public-contact-form button:hover { background: var(--action-primary-bg-hover); }
 .public-empty { min-height: 40vh; display: flex; flex-direction: column; justify-content: center; padding: clamp(1.5rem, 5vw, 4rem); border: 1px solid var(--border-default); border-radius: var(--radius-overlay); background: var(--surface-raised); }

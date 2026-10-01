@@ -10,6 +10,8 @@ for (const locale of ["en","bn"] as const) {
     await page.getByLabel(locale==="bn"?"গোপনশব্দ":"Password",{exact:true}).fill("A secure sample password 123");
     await page.getByRole("button",{name:locale==="bn"?"এগিয়ে যান":"Continue"}).click();
     await expect(page).toHaveURL(new RegExp(`/${locale}/learn/profile$`));
+    await page.getByRole("link",{name:locale==="bn"?"কর্মী কার্যক্ষেত্র":"Staff workspace"}).click();
+    await expect(page).toHaveURL(new RegExp(`/${locale}/staff/content/pages$`));
     const routes=[
       ["content/pages",locale==="bn"?"পাতাসমূহ":"Pages","pages"],
       ["content/navigation",locale==="bn"?"দিকনির্দেশনা":"Navigation","navigation"],
@@ -26,7 +28,9 @@ for (const locale of ["en","bn"] as const) {
       const results=await new AxeBuilder({page}).analyze();expect(results.violations).toEqual([]);
     }
     await page.goto(`/${locale}/staff/content/pages`);
-    await page.getByRole("link",{name:"cms-showcase"}).click();
+    await expect(page.getByText(locale==="bn"?"সম্পাদনার জন্য একটি পাতা বাছুন। পাতার অবস্থা দেখে বুঝবেন দর্শক এটি দেখতে পাচ্ছেন কি না।":"Choose a page to edit. Its status shows whether visitors can see it.")).toBeVisible();
+    await expect(page.locator("summary",{hasText:locale==="bn"?"নতুন পাতা":"New page"})).toBeVisible();
+    await page.locator(".cms-list li",{hasText:"cms-showcase"}).getByRole("link").click();
     await expect(page.getByRole("heading",{name:locale==="bn"?"পাতা সম্পাদনা":"Page editor",level:1})).toBeVisible();
     await page.getByRole("button",{name:locale==="bn"?"আগাম দেখুন":"Preview"}).click();
     await expect(page.getByText(locale==="bn"?"শুধু কর্মীদের আগাম দেখা। অপ্রকাশিত বিষয় সবার জন্য নয়।":"Staff preview only. Unpublished content is not public.")).toBeVisible();

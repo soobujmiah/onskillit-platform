@@ -5,7 +5,7 @@ import type { Db } from "@/lib/identity";
 export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export type LocaleContent = {
   title: string; slug: string; description: string; seoTitle: string; seoDescription: string;
-  sections: Array<{ type: "hero" | "text" | "cta"; heading: string; body: string; href?: string; mediaId?: string; source: string }>;
+  sections: Array<{ type: "hero" | "text" | "cta" | "profile"; heading: string; body: string; role?: string; href?: string; mediaId?: string; source: string }>;
 };
 export function localeProse(value: string, locale: "en"|"bn") {
   if (!value.trim()) return true;
@@ -26,10 +26,11 @@ export function content(value: unknown, complete: boolean, locale: "en"|"bn"): v
   for (const item of v.sections) {
     if (!item || typeof item !== "object" || Array.isArray(item)) return false;
     const s = item as Record<string, unknown>;
-    if (Object.keys(s).some((key) => !["type","heading","body","href","mediaId","source"].includes(key))) return false;
-    if (!["hero","text","cta"].includes(String(s.type)) || typeof s.heading !== "string" ||
+    if (Object.keys(s).some((key) => !["type","heading","body","role","href","mediaId","source"].includes(key))) return false;
+    if (!["hero","text","cta","profile"].includes(String(s.type)) || typeof s.heading !== "string" ||
       typeof s.body !== "string" || typeof s.source !== "string" ||
       s.heading.length > 160 || s.body.length > 4000 || s.source.length > 500) return false;
+    if (s.type === "profile" ? typeof s.role !== "string" || s.role.length > 160 || !localeProse(s.role,locale) || (complete && !s.role.trim()) : s.role !== undefined) return false;
     if (s.href !== undefined && (s.type !== "cta" || typeof s.href !== "string" || !/^\/(?!\/)[a-z0-9/-]{0,200}$/.test(s.href))) return false;
     if (s.mediaId !== undefined && (s.type === "cta" || typeof s.mediaId !== "string" || !UUID.test(s.mediaId))) return false;
     if (!localeProse(s.heading,locale) || !localeProse(s.body,locale)) return false;

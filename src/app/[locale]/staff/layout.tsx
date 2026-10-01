@@ -25,7 +25,7 @@ export default async function StaffLayout({ children, params }: {
     ];
     const allowed = [];
     for (const link of links) if (await hasAnyPermission(db, session.userId, link.permission)) allowed.push(link);
-    return <div className="staff-shell"><nav aria-label={t.roles} className="staff-nav">
+    return <div className="staff-shell"><nav aria-label={t.staffNav} className="staff-nav">
       {allowed.map((link) => <Link key={link.path} href={`/${locale}/staff/${link.path}`}>{link.label}</Link>)}
     </nav>{children}</div>;
   } finally { await db.end(); }

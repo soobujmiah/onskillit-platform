@@ -27,6 +27,8 @@ One identity spans learner, client contact, instructor and staff roles; do not c
 | Finance | Invoice 1:N InvoiceLine; Invoice 1:N PaymentIntent; Intent 1:N PaymentTransaction; Transaction 1:N Refund; Invoice 1:N ReconciliationEntry | Issued invoice/transaction history immutable; correction uses credit/adjustment events |
 | Cross-cutting | User 1:N Notification; Notification 1:N DeliveryAttempt; AuditEvent references actor/resource; Redirect, SeoMetadata, SiteSetting | Notification retries idempotent; audit append-only; settings change audited |
 
+Phase 5 `PAGE-TEAM` uses bilingual `profile` sections within an ordinary CMS PageRevision. Each section stores public name, role and bio plus a non-sensitive approval reference; the independent review/publish workflow gates the whole page. No identity account is projected into the public page. Phase 11 TeamMember records may replace this page-level editing model without changing `/team`.
+
 ## Key constraints and indexes
 
 - Unique normalized email and mobile across active identities; define policy for reusing contact after account deletion. Verification state is separate from value. Registration accepts one or both.

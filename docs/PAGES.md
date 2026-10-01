@@ -26,7 +26,7 @@ A page is a route-level responsibility with its own loading, access, error and n
 | PAGE-BATCH-DETAIL | Batch detail | /training/batches/{slug} | Public | Show schedule and capacity | PAGE-PROGRAM-DETAIL | TMS | none | public | index | dynamic | PAGE-BATCH-DETAIL | P0 | PHASE-07 | NOT STARTED | Batch, Session, Instructor |
 | PAGE-PORTFOLIO | Portfolio | /portfolio | Public | Browse approved case work | root | Publishing | none | public | index | listing | PAGE-PORTFOLIO | P1 | PHASE-11 | NOT STARTED | Case, rights |
 | PAGE-PROJECT-DETAIL | Case detail | /portfolio/{slug} | Public | Explain one approved case | PAGE-PORTFOLIO | Publishing | none | public | index | dynamic | PAGE-PROJECT-DETAIL | P1 | PHASE-11 | NOT STARTED | Case, Media, rights |
-| PAGE-TEAM | Team | /team | Public | Show consented people | root | Publishing | none | public | index | listing | PAGE-TEAM | P1 | PHASE-11 | NOT STARTED | TeamMember, consent |
+| PAGE-TEAM | Team | /team | Public | Show consented people | root | CMS | none | public | index | listing | PAGE-TEAM | P1 | PHASE-05 | IN PROGRESS | PageRevision profile sections, consent |
 | PAGE-BLOG | Blog | /blog | Public | Browse approved articles | root | Publishing | none | public | index | listing | PAGE-BLOG | P1 | PHASE-11 | NOT STARTED | Article |
 | PAGE-ARTICLE | Article | /blog/{slug} | Public | Read one article | PAGE-BLOG | Publishing | none | public | index | dynamic | PAGE-ARTICLE | P1 | PHASE-11 | NOT STARTED | Article, Media, SEO |
 | AUTH-SIGN-IN | Sign in | /account/sign-in | Authentication | Start session | account | Identity | guest | public | noindex | static | AUTH-SIGN-IN | P0 | PHASE-03 | CI-VERIFIED | User, Session |

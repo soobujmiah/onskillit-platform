@@ -5,6 +5,7 @@ import { privateIdentity } from "@/lib/identity-page";
 import { LogoutButton } from "@/components/identity/LogoutButton";
 import { ChangePassword } from "@/components/identity/ChangePassword";
 import { IdentityForm } from "@/components/identity/IdentityForm";
+import Link from "next/link";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -25,6 +26,7 @@ export default async function ProfilePage({ params }: { params: Promise<{ locale
       </li>)}</ul>
       {contacts.some((contact) => contact.kind === "email" && !contact.verified_at) &&
         <><h2>{t.verify}</h2><IdentityForm mode="verify-request" locale={locale} dictionary={dictionary} /></>}
+      {session.staff && <Link href={`/${locale}/staff`}>{t.staffWorkspace}</Link>}
       <ChangePassword dictionary={dictionary} />
       <LogoutButton label={t.logout} locale={locale} />
     </section>;

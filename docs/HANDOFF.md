@@ -1,5 +1,7 @@
 # OnSkillIT canonical agent handoff
 
+> **2026-10-01 local review update:** The founding partner asked for visible navigation, an OnSkillIT copyright footer, simpler CMS use, a staff profiles page and a corrected Bangla account label. Source work is underway on `phase-05/navigation-footer`; see [Phase 5 work log](PHASE-05-WORKLOG.md) and [ADR 0010](decisions/0010-team-page-in-public-core.md). `PAGE-TEAM` is now Phase 5 in the registers, but real profiles remain unpublished pending consent and review. The Phase 5 gate remains open. The isolated phone-local PostgreSQL site is for testing only and is not a public deployment.
+
 Updated: 2026-09-30 (Asia/Dhaka). **This file is the canonical cross-agent handoff in this repository.** Recheck Git, GitHub CI and dated external facts before acting; source and current CI evidence outrank this snapshot.
 
 ## State and source of truth

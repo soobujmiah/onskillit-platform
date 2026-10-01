@@ -8,7 +8,7 @@ import { publicMetadata } from "@/lib/public-seo";
 import { ContactForm } from "@/components/public/ContactForm";
 import { ContactDetails } from "@/components/public/ContactDetails";
 
-const keys = ["about", "contact", "faq", "privacy", "terms", "accessibility"] as const;
+const keys = ["about", "team", "contact", "faq", "privacy", "terms", "accessibility"] as const;
 type Key = typeof keys[number];
 function isKey(value: string): value is Key { return keys.includes(value as Key); }
 export const dynamic = "force-dynamic";

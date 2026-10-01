@@ -6,7 +6,7 @@ Reviewed 2026-09-24. This is a verification checklist, not a legal opinion or a 
 |---|---|---|
 | Registered entity and trade name | Registration/trade-license document, legal name in Bangla/English, issuer and jurisdiction, authorized signatory | OWNER DECISION REQUIRED |
 | Business address and contact | Partner-approved address, support phone/email, operating hours, ownership/control proof | OWNER DECISION REQUIRED |
-| Domain and copyright | Confirm domain control, trademark/brand use, source/media authorship or assignment, footer attribution wording | OWNER DECISION REQUIRED |
+| Domain and copyright | Footer attribution wording confirmed as `© <current year> OnSkillIT` on 2026-10-01; domain control, trademark/brand use and source/media authorship or assignment still need evidence | PARTIALLY CONFIRMED |
 | Invoice and receipts | Legal issuer, address/registration/tax fields, numbering, currency, retention and correction rules reviewed by qualified local adviser | OWNER DECISION REQUIRED |
 | Privacy notice | Data categories, purposes, lawful basis/consent where applicable, retention, processors, cross-border handling, rights/contact and breach workflow | OWNER DECISION REQUIRED |
 | Terms and acceptable use | Learning/service terms, eligibility, cancellation, account suspension, intellectual property, disputes and governing jurisdiction | OWNER DECISION REQUIRED |

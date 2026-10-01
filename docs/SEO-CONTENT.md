@@ -34,7 +34,8 @@ References: [Google SEO starter guide](https://developers.google.com/search/docs
 | PAGE-SERVICES and SERVICE-DETAIL | Service only for approved actual scope/provider | Service category → detail → contact |
 | PAGE-COURSES and COURSE-DETAIL | Course only for approved curriculum, instructor and availability | Catalog → detail → program/batch/enrollment when real |
 | PAGE-PROGRAMS/PROGRAM-DETAIL/BATCH-DETAIL | Appropriate Course/Event facts only where schema fits actual offering and schedule | Program → batch → enrollment |
-| PAGE-PORTFOLIO/PROJECT-DETAIL/TEAM | No unsupported client/person claims | Case → relevant service; team → approved case/course |
+| PAGE-TEAM | No person or role claim without consent and review; unpublished state stays noindex | Team → approved public service/contact |
+| PAGE-PORTFOLIO/PROJECT-DETAIL | No unsupported client claims | Case → relevant service |
 | PAGE-BLOG/ARTICLE/FAQ | Article and Breadcrumb where facts match; FAQ markup only when eligible and useful | Article → canonical offer/resource |
 | PAGE-PRIVACY/TERMS/ACCESSIBILITY | Basic metadata; legal content owner-approved | Footer |
 

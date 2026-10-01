@@ -1,5 +1,11 @@
 # PHASE-05 work log — public business site
 
+## Local navigation and CMS review — 2026-10-01
+
+The founding partner reviewed the local site and requested reachable links, an OnSkillIT copyright footer, easier CMS editing, a staff profiles page and a corrected Bangla account label. This work is on `phase-05/navigation-footer`; source review is in progress and the Phase 5 gate remains open. The public header/footer now derive links from published core pages even without manually entered CMS navigation rows. The footer includes `© <year> OnSkillIT`. The signed-in profile links to the staff workspace, and a CMS-only staff role reaches its page list. The CMS shows localized page titles, plain editing and review steps, focused site settings, readable errors and a one-click Team draft. The Bangla account label uses “অ্যাকাউন্ট”.
+
+The public `PAGE-TEAM` template and typed bilingual `profile` sections were moved into Phase 5 by [ADR 0010](decisions/0010-team-page-in-public-core.md). Local/CI sample people are synthetic. Actual people and consented profiles are still absent; `/team` remains unpublished in production until the normal approval workflow is completed. Local build, typecheck, locale/docs checks and lint passed (lint emitted three pre-existing navigation warnings). Direct local HTTP checks passed for English/Bangla navigation, copyright and a synthetic Team profile; final GitHub CI and owner content review are pending. No domain, production or legal-policy publication changed.
+
 Current phase: **IN PROGRESS**. Gate: **PUBLIC CORE VERIFIED OPEN**. Source work starts from `main` at `74a91a3` on branch `phase-05/public-core`. No Phase 5 page, service, inquiry, or legal copy is published on the production domain by creating this branch.
 
 | Field | Value |

@@ -33,7 +33,7 @@ export default async function LocaleLayout({
       <main id="content" style={{ padding: "var(--space-xl) var(--space-lg)" }}>
         {children}
       </main>
-      <footer className="site-footer"><span>{dictionary.brand}</span>{navigation.some((item) => item.slot === "footer") && <nav aria-label={dictionary.public.footerNav}>
+      <footer className="site-footer"><small>© {new Date().getFullYear()} OnSkillIT</small>{navigation.some((item) => item.slot === "footer") && <nav aria-label={dictionary.public.footerNav}>
         {navigation.filter((item) => item.slot === "footer").map((item) => <Link key={item.id} href={item.href}>{item.label}</Link>)}
       </nav>}</footer>
     </>

@@ -11,13 +11,13 @@ Status: **canonical baseline accepted by founding-partner instruction, 2026-09-2
 | PHASE-02 | Design and localization shell | Establish shared accessible bilingual and themed UI | Tokens, shells, language and theme infrastructure | 01 | EXPERIENCE FOUNDATION VERIFIED | COMPLETE |
 | PHASE-03 | Identity, RBAC and audit | Secure all private operations | Accounts, sessions, scoped roles, audit | 01,02 | IDENTITY VERIFIED | COMPLETE |
 | PHASE-04 | CMS and publishing core | Enable controlled content operations | Typed pages, revisions, media, navigation, SEO fields | 03 | PUBLISHING CORE VERIFIED | COMPLETE |
-| PHASE-05 | Public business site | Publish verified business and service content | Public core, services, inquiries, legal and SEO baseline | 02,04 | PUBLIC CORE VERIFIED | IN PROGRESS |
+| PHASE-05 | Public business site | Publish verified business, team and service content | Public core, consented team, services, inquiries, legal and SEO baseline | 02,04 | PUBLIC CORE VERIFIED | IN PROGRESS |
 | PHASE-06 | LMS and course catalog | Deliver real learning workflows | Courses, editions, lessons, assessments, progress | 03,04 | LEARNING VERIFIED | NOT STARTED |
 | PHASE-07 | TMS and training catalog | Manage scheduled delivery | Programs, batches, sessions, attendance, results | 06 | TRAINING VERIFIED | NOT STARTED |
 | PHASE-08 | Enrollment and finance | Connect learning/training to payment | Enrollment, capacity, invoices, provider adapters, refunds | 06,07,03 | COMMERCE VERIFIED | NOT STARTED |
 | PHASE-09 | CRM and client operations | Run lead to client service lifecycle | Leads, accounts, engagements, projects, activities | 03,04,05 | CLIENT OPERATIONS VERIFIED | NOT STARTED |
 | PHASE-10 | Student and client portals | Expose scoped self-service | Learner, instructor and client task views | 06,07,08,09 | PORTALS VERIFIED | NOT STARTED |
-| PHASE-11 | Content and business operations | Complete publication and operational insight | Blog, portfolio, team, search, notices, analytics | 05,09,10 | OPERATIONS VERIFIED | NOT STARTED |
+| PHASE-11 | Content and business operations | Complete publication and operational insight | Blog, portfolio, team collection management, search, notices, analytics | 05,09,10 | OPERATIONS VERIFIED | NOT STARTED |
 | PHASE-12 | Cross-system hardening | Meet whole-product quality targets | Security, SEO, performance, access and recovery fixes | 08,11 | HARDENING VERIFIED | NOT STARTED |
 | PHASE-13 | Integrated QA and staging | Prove V1 with realistic workflows | Full CI, UAT, restore/rollback drill, release candidate | 12 | RELEASE CANDIDATE APPROVED | NOT STARTED |
 | PHASE-14 | Production launch and stabilization | Release only with owner authorization | Production deploy, monitoring, support, incident review | 13 | PRODUCTION ACCEPTED | NOT STARTED |
@@ -100,8 +100,8 @@ Every implementation phase inherits these requirements: GitHub-only builds and t
 ### PHASE-05 — Public business site
 
 - **Responsibility/tools/approval:** frontend/content/SEO/backend; GitHub CI and preview; owner approves verified business claims/legal text.
-- **Scope/inputs:** Phases 2,4. Public home, about, services and contact; privacy/terms/accessibility; SEO baseline, semantic navigation and inquiry capture. **Out:** demo offerings, premature course/portfolio pages or unverified legal entity claims.
-- **Pages/modules/data/API:** PAGE-HOME, PAGE-ABOUT, PAGE-SERVICES, PAGE-SERVICE-DETAIL, PAGE-CONTACT, PAGE-FAQ, PAGE-PRIVACY, PAGE-TERMS, PAGE-ACCESSIBILITY; Service, Inquiry, localized Page; public CMS/service/inquiry contracts. Inquiry is a minimal append-only intake record here and becomes a Lead through an explicit mapping in PHASE-09; no full CRM is required in PHASE-05.
+- **Scope/inputs:** Phases 2,4. Public home, about, consented team profiles, services and contact; privacy/terms/accessibility; SEO baseline, semantic navigation and inquiry capture. **Out:** demo offerings, premature course/portfolio pages or unverified legal entity claims.
+- **Pages/modules/data/API:** PAGE-HOME, PAGE-ABOUT, PAGE-TEAM, PAGE-SERVICES, PAGE-SERVICE-DETAIL, PAGE-CONTACT, PAGE-FAQ, PAGE-PRIVACY, PAGE-TERMS, PAGE-ACCESSIBILITY; Service, Inquiry, localized Page and profile sections; public CMS/service/inquiry contracts. Inquiry is a minimal append-only intake record here and becomes a Lead through an explicit mapping in PHASE-09; no full CRM is required in PHASE-05.
 - **Tests/docs/exit/gate:** both locales/themes/viewports, content and structured-data review, inquiry abuse control, published-only sitemap; update SITEMAP, SEO-CONTENT, SPECIFICATION, TRACEABILITY. **PUBLIC CORE VERIFIED**.
 
 ### PHASE-06 — LMS and course catalog
@@ -142,8 +142,8 @@ Every implementation phase inherits these requirements: GitHub-only builds and t
 ### PHASE-11 — Content and business operations
 
 - **Responsibility/tools/approval:** editorial/SEO/analytics/frontend/backend; GitHub CI; owner approves rights and consent.
-- **Scope/inputs:** Phases 5,9,10. Blog, portfolio, team, on-site search, consented public analytics, business dashboard and notices. **Out:** fake case studies/team claims or invasive tracking.
-- **Pages/modules/data/API:** PAGE-PORTFOLIO, PAGE-PROJECT-DETAIL, PAGE-TEAM, PAGE-BLOG, PAGE-ARTICLE, ADMIN-CONTENT, ADMIN-ANALYTICS, ADMIN-NOTIFICATIONS; Article, Case, TeamMember, SearchDocument, Metric, Notification; content/search/event/notification contracts.
+- **Scope/inputs:** Phases 5,9,10. Blog, portfolio, structured team collection management, on-site search, consented public analytics, business dashboard and notices. **Out:** fake case studies/team claims or invasive tracking.
+- **Pages/modules/data/API:** PAGE-PORTFOLIO, PAGE-PROJECT-DETAIL, PAGE-BLOG, PAGE-ARTICLE, ADMIN-CONTENT, ADMIN-ANALYTICS, ADMIN-NOTIFICATIONS; Article, Case, TeamMember, SearchDocument, Metric, Notification; content/search/event/notification contracts. The public PAGE-TEAM route starts in PHASE-05 with CMS profile sections and can migrate to TeamMember records here without changing its URL.
 - **Tests/docs/exit/gate:** rights/approval, no draft indexing, localized SEO, search scope, consent, event deduplication; update SEO-CONTENT, SPECIFICATION, API-CONTRACT, TRACEABILITY. **OPERATIONS VERIFIED**.
 
 ### PHASE-12 — Cross-system hardening

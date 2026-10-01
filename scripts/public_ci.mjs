@@ -46,6 +46,11 @@ try {
   assert.match(await (await get("/en/contact")).text(), /Inquiry intake is not available/);
   assert.equal((await inquiry(invalid)).status, 503);
   const privacy = await page("privacy", "page", author.id, true);
+  const team = await page("team", "page", author.id, true);
+  const teamEn = { ...fixture("team", "en"), sections: [{ type: "profile", heading: "Synthetic Person", role: "Sample Staff Role", body: "Synthetic staff bio for CI only", source: "ci-fixture" }] };
+  const teamBn = { ...fixture("team", "bn"), sections: [{ type: "profile", heading: "কৃত্রিম ব্যক্তি", role: "নমুনা কর্মীর ভূমিকা", body: "শুধু পরীক্ষার জন্য কৃত্রিম পরিচিতি", source: "ci-fixture" }] };
+  await db`UPDATE cms_revision SET en=${db.json(teamEn)},bn=${db.json(teamBn)} WHERE id=${team.revisionId}`;
+  assert.match(await (await get("/en/team")).text(), /Synthetic Person/);
   const valid = { ...invalid, consentVersion: privacy.revisionId };
   assert.equal((await fetch(`${base}/api/v1/public/inquiries`, { method: "POST", headers: { "content-type": "application/json", Origin: "https://other.example.test" }, body: JSON.stringify(valid) })).status, 403);
   assert.equal((await inquiry({ ...valid, consent: false })).status, 400);
@@ -59,6 +64,7 @@ try {
   await db`INSERT INTO cms_setting(key,value,updated_by) VALUES ('robots_enabled','true',${author.id})`;
   const sitemap = await (await get("/sitemap.xml")).text();
   assert.match(sitemap, /sample-service/);
+  assert.match(sitemap, /\/en\/team/);
   assert.doesNotMatch(sitemap, /\/en\/?<\/loc>/);
   assert.match(await (await get("/en/about")).text(), /Synthetic public title/);
   assert.equal((await db`SELECT category FROM catalog_service WHERE page_id=${service.id}`)[0].category, "synthetic-category");

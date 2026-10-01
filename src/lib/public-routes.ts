@@ -5,6 +5,7 @@ export const staticPagePaths = {
   home: "",
   services: "services",
   about: "about",
+  team: "team",
   contact: "contact",
   faq: "faq",
   privacy: "privacy",
