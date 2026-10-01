@@ -40,4 +40,27 @@ for (const page of pack.pages) {
 assert.deepEqual(seen, expected);
 const serialized = JSON.stringify(pack.pages);
 assert(!/\[CONFIRM\]|৳|30 days|7 days|working day|office hours/i.test(serialized), "unapproved terms in editorial pack");
+assert(!/genarate|code generate/i.test(serialized), "retired brand wording in editorial pack");
+
+// Team profile draft: owner-verified fields only, separated scripts, no personal contact details, no photo.
+const team = JSON.parse(readFileSync(new URL("../docs/PHASE-05-TEAM-PROFILE.json", import.meta.url), "utf8"));
+assert.equal(team.status, "editorial_draft");
+assert.equal(team.pages.length, 1);
+assert.equal(team.pages[0].page_key, "team");
+const script = (locale, text) => locale === "bn" ? !/[A-Za-z]/.test(text) && /[\u0980-\u09ff]/u.test(text)
+  : !/[\u0980-\u09ff]/u.test(text) && /[A-Za-z]/.test(text);
+for (const locale of ["en", "bn"]) {
+  const value = team.pages[0][locale];
+  for (const field of ["title", "description", "seoTitle", "seoDescription"]) assert(script(locale, value[field]), `team/${locale}/${field} script`);
+  assert(value.sections.length >= 1 && value.sections.length <= 20);
+  for (const section of value.sections) {
+    assert.equal(section.type, "profile");
+    for (const field of ["heading", "role", "body"]) assert(section[field].trim() && script(locale, section[field]), `team/${locale}/${field}`);
+    assert(section.skills.length <= 12 && section.skills.every((skill) => skill.length <= 80 && script(locale, skill)), `team/${locale}/skills`);
+    assert(section.links.length <= 6 && section.links.every((link) => script(locale, link.label) && new URL(link.url).protocol === "https:"), `team/${locale}/links`);
+    assert(section.mediaId === undefined, "no photo is part of the draft");
+  }
+}
+const teamText = JSON.stringify(team.pages);
+assert(!/@|mailto:|t\.me|genarate/i.test(teamText), "personal contact or retired brand wording in team draft");
 console.log("Phase 5 editorial draft passed structure, locale and explicit-approval checks");

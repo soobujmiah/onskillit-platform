@@ -214,6 +214,11 @@ html[lang="bn"] body { font-family: var(--font-bn), sans-serif; line-height: 1.7
 .public-article-team .public-sections { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
 .public-article-team .public-section-profile { border-top: 4px solid var(--action-primary-bg); }
 .public-section .public-profile-role { color: var(--text-primary); font-weight: 700; }
+.public-section .public-profile-relationship { color: var(--text-secondary); margin-block-start: 0; }
+.public-profile-photo { display: block; width: 160px; max-width: 100%; height: auto; aspect-ratio: 1; object-fit: cover; border-radius: var(--radius-field); }
+.public-profile-skills, .public-profile-links { display: flex; flex-wrap: wrap; gap: var(--space-xs); list-style: none; padding: 0; margin: var(--space-sm) 0 0; }
+.public-profile-skills li { border: 1px solid var(--border-default); border-radius: var(--radius-field); padding: var(--space-xs) var(--space-sm); overflow-wrap: anywhere; }
+.public-profile-links a { overflow-wrap: anywhere; }
 .public-button, .public-contact-form button { display: inline-flex; min-height: 48px; align-items: center; justify-content: center; padding: var(--space-sm) var(--space-lg); border: 0; border-radius: var(--radius-field); color: var(--action-primary-text); background: var(--action-primary-bg); font: inherit; font-weight: 700; text-decoration: none; cursor: pointer; }
 .public-button:hover, .public-contact-form button:hover { background: var(--action-primary-bg-hover); }
 .public-empty { min-height: 40vh; display: flex; flex-direction: column; justify-content: center; padding: clamp(1.5rem, 5vw, 4rem); border: 1px solid var(--border-default); border-radius: var(--radius-overlay); background: var(--surface-raised); }
@@ -238,3 +243,8 @@ html[lang="bn"] body { font-family: var(--font-bn), sans-serif; line-height: 1.7
 .public-contact-form .public-honeypot { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .public-contact-form button:disabled { opacity: .6; cursor: wait; }
 @media (max-width: 640px) { .public-hero::after { display: none; } .site-footer { display: block; } }
+
+.inquiry-message { display: block; white-space: pre-wrap; overflow-wrap: anywhere; margin-block: var(--space-xs); }
+.inquiry-record { overflow-wrap: anywhere; }
+.inquiry-redact { margin-block-start: var(--space-sm); }
+.inquiry-redact summary { cursor: pointer; font-weight: 700; }

@@ -2,6 +2,7 @@ import { createHmac } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { createDbClient, getDatabaseUrl } from "@/db/client";
 import { isLocale } from "@/i18n/locales";
+import { sendInquiryNotice } from "@/lib/inquiry-mail";
 
 export const runtime = "nodejs";
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -61,6 +62,7 @@ export async function POST(request: NextRequest) {
       { key: digest(`public-inquiry:ip:${ip}`), limit: 10, minutes: 60 },
       { key: digest(`public-inquiry:email:${email}`), limit: 5, minutes: 60 },
     ];
+    let receivedId: string | null = null;
     const result = await db.begin(async (tx) => {
       for (const rule of keys) {
         const rows = await tx<{ count: number }[]>`INSERT INTO identity_rate_limit(key_hash,count,window_start)
@@ -75,13 +77,16 @@ export async function POST(request: NextRequest) {
         WHERE p.page_key='privacy' AND p.state='published' AND p.published_revision_id=${body.consentVersion as string} LIMIT 1`;
       const contact = await tx`SELECT 1 FROM cms_page WHERE page_key='contact' AND state='published' LIMIT 1`;
       if (!privacy.length || !contact.length) return "UNAVAILABLE";
-      await tx`INSERT INTO public_inquiry(name,email,phone,message,locale,consent_version,source_path)
+      const inserted = await tx<{ id: string }[]>`INSERT INTO public_inquiry(name,email,phone,message,locale,consent_version,source_path)
         VALUES (${(body.name as string).trim()},${email},${typeof body.phone === "string" && body.phone.trim() ? body.phone.trim() : null},${(body.message as string).trim()},${body.locale as string},
-          ${body.consentVersion as string},${body.sourcePath as string})`;
+          ${body.consentVersion as string},${body.sourcePath as string}) RETURNING id`;
+      receivedId = inserted[0].id;
       return "OK";
     });
     if (result === "RATE_LIMITED") return fail("RATE_LIMITED", 429);
-    if (result !== "OK") return fail("UNAVAILABLE", 503);
+    if (result !== "OK" || !receivedId) return fail("UNAVAILABLE", 503);
+    // Committed first; delivery is best effort and never changes the response or the stored inquiry.
+    void sendInquiryNotice({ id: receivedId, locale: body.locale as "en" | "bn", sourcePath: body.sourcePath as string });
     return NextResponse.json({ status: "received" }, { status: 202, headers: { "Cache-Control": "no-store" } });
   } finally { await db.end(); }
 }

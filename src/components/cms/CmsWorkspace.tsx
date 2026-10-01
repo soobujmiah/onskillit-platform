@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 
 type Text = Record<string,string>;
 type LocaleContent = { title:string; slug:string; description:string; seoTitle:string; seoDescription:string;
-  sections:Array<{type:"hero"|"text"|"cta"|"profile";heading:string;body:string;role?:string;source:string;href?:string;mediaId?:string}> };
+  sections:Array<{type:"hero"|"text"|"cta"|"profile";heading:string;body:string;role?:string;source:string;href?:string;mediaId?:string;skills?:string[];links?:Array<{label:string;url:string}>;relationship?:string;status?:"active"|"hidden"}> };
 type Revision = {id:string;revision_no:number;en:LocaleContent;bn:LocaleContent;created_by:string;review:string|null};
 type Page = {id:string;page_key:string;kind:string;state:string;published_revision_id:string|null;latest_revision:number;title_en?:string|null;title_bn?:string|null};
 type Media = {id:string;filename:string;mime_type:string;byte_length:number;public:boolean;rights_reference:string;alt_en:string;alt_bn:string};
@@ -64,9 +64,19 @@ export function CmsWorkspace({locale,section,id,t,title}:{locale:string;section:
       <details className="cms-details"><summary>{t.searchDetails}</summary><Field label={t.seoTitle} value={value.seoTitle} onChange={v=>update("seoTitle",v)}/>
       <Field label={t.seoDescription} value={value.seoDescription} onChange={v=>update("seoDescription",v)} multiline/></details>
       <h3>{t.sections}</h3>{value.sections.map((s,index)=><fieldset key={index} className="cms-section"><legend>{index+1}. {t[s.type==="profile"?"profileSection":s.type]}</legend>
-        <label className="cms-field"><span>{t.kind}</span><select value={s.type} onChange={e=>{const sections=[...value.sections];const next={...s,type:e.target.value as typeof s.type};if(next.type==="cta")delete next.mediaId;else delete next.href;if(next.type!=="profile")delete next.role;else {next.role??="";delete next.mediaId;}sections[index]=next;set({...value,sections});}}><option value="hero">{t.hero}</option><option value="text">{t.text}</option><option value="cta">{t.cta}</option><option value="profile">{t.profileSection}</option></select></label>
+        <label className="cms-field"><span>{t.kind}</span><select value={s.type} onChange={e=>{const sections=[...value.sections];const next={...s,type:e.target.value as typeof s.type};if(next.type==="cta")delete next.mediaId;else delete next.href;if(next.type!=="profile"){delete next.role;delete next.skills;delete next.links;delete next.relationship;delete next.status;}else {next.role??="";}sections[index]=next;set({...value,sections});}}><option value="hero">{t.hero}</option><option value="text">{t.text}</option><option value="cta">{t.cta}</option><option value="profile">{t.profileSection}</option></select></label>
         {s.type==="profile"&&<p className="cms-help">{t.profileHelp}</p>}
-        {(["heading",...(s.type==="profile"?["role"]:[]),"body","source",...(s.type==="cta"?["href"]:s.type==="profile"?[]:["mediaId"])] as Array<"heading"|"role"|"body"|"source"|"href"|"mediaId">).map(key=><Field key={key} label={t[key=== "href"?"link":key]} value={s[key]??""} multiline={key==="body"} onChange={v=>{const sections=[...value.sections];const next={...s,[key]:v};if(key==="mediaId"&&!v)delete next.mediaId;if(key==="href"&&!v)delete next.href;sections[index]=next;set({...value,sections});}}/>)}</fieldset>)}
+        {(["heading",...(s.type==="profile"?["role"]:[]),"body","source",...(s.type==="cta"?["href"]:["mediaId"])] as Array<"heading"|"role"|"body"|"source"|"href"|"mediaId">).map(key=><Field key={key} label={t[key=== "href"?"link":key]} value={s[key]??""} multiline={key==="body"} onChange={v=>{const sections=[...value.sections];const next={...s,[key]:v};if(key==="mediaId"&&!v)delete next.mediaId;if(key==="href"&&!v)delete next.href;sections[index]=next;set({...value,sections});}}/>)}
+        {s.type==="profile"&&<>
+          <Field label={t.relationship} value={s.relationship??""} onChange={v=>{const sections=[...value.sections];const next:LocaleContent["sections"][number]={...s,relationship:v};if(!v)delete next.relationship;sections[index]=next;set({...value,sections});}}/>
+          <Field label={t.skills} value={(s.skills??[]).join("\n")} multiline onChange={v=>{const sections=[...value.sections];const next:LocaleContent["sections"][number]={...s,skills:v.split("\n").map(x=>x.trim()).filter(Boolean)};if(!next.skills?.length)delete next.skills;sections[index]=next;set({...value,sections});}}/>
+          <p className="cms-help">{t.skillsHelp}</p>
+          <Field label={t.profileLinks} value={(s.links??[]).map(l=>`${l.label} | ${l.url}`).join("\n")} multiline onChange={v=>{const sections=[...value.sections];const links=v.split("\n").map(x=>x.trim()).filter(Boolean).map(line=>{const at=line.lastIndexOf("|");return at<0?{label:line,url:""}:{label:line.slice(0,at).trim(),url:line.slice(at+1).trim()};});const next:LocaleContent["sections"][number]={...s,links};if(!links.length)delete next.links;sections[index]=next;set({...value,sections});}}/>
+          <p className="cms-help">{t.profileLinksHelp}</p>
+          <label className="cms-field"><span>{t.profileStatus}</span><select value={s.status??"active"} onChange={e=>{const sections=[...value.sections];const next:LocaleContent["sections"][number]={...s,status:e.target.value as "active"|"hidden"};if(next.status==="active")delete next.status;sections[index]=next;set({...value,sections});}}><option value="active">{t.profileActive}</option><option value="hidden">{t.profileHidden}</option></select></label>
+          <p className="cms-help">{t.profileOrderHelp}</p>
+        </>}
+      </fieldset>)}
       <button type="button" onClick={()=>set({...value,sections:[...value.sections,{type:"text",heading:"",body:"",source:""}]})}>{t.addSection}</button>
     </fieldset>;
   }

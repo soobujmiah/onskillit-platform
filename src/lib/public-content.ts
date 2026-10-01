@@ -46,6 +46,19 @@ export async function publishedPage(key: string, locale: Locale): Promise<Public
   }
 }
 
+/** Alt text for public media referenced by profile sections; non-public or unknown IDs are omitted. */
+export async function publicMediaAlts(ids: string[], locale: Locale): Promise<Record<string, string>> {
+  const unique = [...new Set(ids)].filter((id) => /^[0-9a-f-]{36}$/i.test(id)).slice(0, 40);
+  const databaseUrl = getDatabaseUrl();
+  if (!unique.length || !databaseUrl) return {};
+  const db = createDbClient(databaseUrl);
+  try {
+    const rows = await db<{ id: string; alt: string }[]>`SELECT id,${db(locale === "en" ? "alt_en" : "alt_bn")} AS alt
+      FROM cms_media WHERE public=true AND mime_type IN ('image/png','image/jpeg','image/webp') AND id IN ${db(unique)}`;
+    return Object.fromEntries(rows.filter((row) => row.alt?.trim()).map((row) => [row.id, row.alt]));
+  } finally { await db.end(); }
+}
+
 export async function publishedServices(locale: Locale): Promise<PublicPage[]> {
   const databaseUrl = getDatabaseUrl();
   if (!databaseUrl) return [];

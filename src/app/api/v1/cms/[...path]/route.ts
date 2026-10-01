@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { database, hasPermission, readSession, sameOrigin, validCsrf } from "@/lib/identity";
-import { content, hash, mimeOf, UUID, localeProse, type LocaleContent } from "@/lib/cms";
+import { content, hash, mimeOf, UUID, localeProse, workflowMode, type LocaleContent } from "@/lib/cms";
 
 export const runtime = "nodejs";
 type Body = Record<string, unknown>;
@@ -90,9 +90,9 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
       const id=part.split("/")[1]; if (!UUID.test(id)) return bad("NOT_FOUND",404);
       const result=await db.begin(async tx=>{ const rows=await tx`SELECT id,uploaded_by,rights_reference,alt_en,alt_bn FROM cms_media WHERE id=${id} FOR UPDATE`;
         if (!rows.length) return "NOT_FOUND";
-        if (rows[0].uploaded_by===session.userId || !rows[0].rights_reference || !rows[0].alt_en || !rows[0].alt_bn) return "INDEPENDENT_APPROVAL_REQUIRED";
+        if ((workflowMode()==="separated" && rows[0].uploaded_by===session.userId) || !rows[0].rights_reference || !rows[0].alt_en || !rows[0].alt_bn) return "INDEPENDENT_APPROVAL_REQUIRED";
         await tx`UPDATE cms_media SET public=true WHERE id=${id}`;
-        await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.media_publish','success',${requestId},${tx.json({media_id:id})})`;
+        await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.media_publish','success',${requestId},${tx.json({media_id:id,workflow_mode:workflowMode()})})`;
         return "OK"; });
       return result==="OK"?json({status:"public"}):bad(result,result==="NOT_FOUND"?404:409);
     }
@@ -147,10 +147,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         const result=await db.begin(async tx=>{ await tx`SELECT id FROM cms_page WHERE id=${id} AND state<>'archived' FOR UPDATE`;
           const revision=await tx`SELECT id,created_by,en,bn FROM cms_revision WHERE page_id=${id} AND id=${body.revision_id as string}`;
           if (!revision.length) return "NOT_FOUND";
-          if (revision[0].created_by===session.userId) return "SELF_REVIEW_DENIED";
+          if (workflowMode()==="separated" && revision[0].created_by===session.userId) return "SELF_REVIEW_DENIED";
           if (body.decision==="approved" && (!content(revision[0].en,true,"en") || !content(revision[0].bn,true,"bn"))) return "LOCALE_INCOMPLETE";
           await tx`INSERT INTO cms_review(revision_id,reviewer_id,decision,note) VALUES (${revision[0].id},${session.userId},${body.decision as string},${body.note as string})`;
-          await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.review','success',${requestId},${tx.json({page_id:id,revision_id:revision[0].id,decision:body.decision as string})})`;
+          await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.review','success',${requestId},${tx.json({page_id:id,revision_id:revision[0].id,decision:body.decision as string,workflow_mode:workflowMode()})})`;
           return "OK"; }); return result==="OK"?json({status:"recorded"}):bad(result,result==="NOT_FOUND"?404:409);
       }
       if (action==="publish") {
@@ -160,7 +160,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
           const latest=await tx`SELECT id,created_by,en,bn FROM cms_revision WHERE page_id=${id} ORDER BY revision_no DESC LIMIT 1`;
           if (!latest.length || latest[0].id!==body.revision_id) return "REVISION_CONFLICT";
           const review=await tx`SELECT decision,reviewer_id FROM cms_review WHERE revision_id=${latest[0].id} ORDER BY created_at DESC,id DESC LIMIT 1`;
-          if (!review.length || review[0].decision!=="approved" || review[0].reviewer_id===session.userId || latest[0].created_by===session.userId) return "APPROVAL_REQUIRED";
+          if (!review.length || review[0].decision!=="approved" || (workflowMode()==="separated" && (review[0].reviewer_id===session.userId || latest[0].created_by===session.userId))) return "APPROVAL_REQUIRED";
           if (!content(latest[0].en,true,"en") || !content(latest[0].bn,true,"bn")) return "LOCALE_INCOMPLETE";
           const mediaIds=new Set<string>();
           for (const locale of ["en","bn"] as const) for (const section of (latest[0][locale] as {sections:Array<{mediaId?:string}>}).sections)
@@ -175,7 +175,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
             if (clash.length) return "SLUG_IN_USE"; }
           await tx`UPDATE cms_page SET published_revision_id=${latest[0].id},state='published',updated_at=now() WHERE id=${id}`;
           await tx`INSERT INTO cms_publication(page_id,revision_id,action,actor_id) VALUES (${id},${latest[0].id},'publish',${session.userId})`;
-          await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.publish','success',${requestId},${tx.json({page_id:id,revision_id:latest[0].id})})`;
+          await tx`INSERT INTO identity_audit(actor_user_id,action,outcome,request_id,metadata) VALUES (${session.userId},'cms.publish','success',${requestId},${tx.json({page_id:id,revision_id:latest[0].id,workflow_mode:workflowMode()})})`;
           return "OK"; }); return result==="OK"?json({status:"published"}):bad(result,result==="NOT_FOUND"?404:409);
       }
       if (action==="rollback") {

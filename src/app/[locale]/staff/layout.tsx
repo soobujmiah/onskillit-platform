@@ -21,6 +21,7 @@ export default async function StaffLayout({ children, params }: {
       { path: "content/navigation", label: getDictionary(locale).cms.navigation, permission: "pages.read" },
       { path: "content/media", label: getDictionary(locale).cms.media, permission: "media.read" },
       { path: "content/seo", label: getDictionary(locale).cms.seo, permission: "pages.read" },
+      { path: "crm/leads", label: getDictionary(locale).inquiries.nav, permission: "inquiries.read" },
       { path: "settings/site", label: getDictionary(locale).cms.siteSettings, permission: "settings.site" },
     ];
     const allowed = [];

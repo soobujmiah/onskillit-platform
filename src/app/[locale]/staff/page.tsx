@@ -11,7 +11,7 @@ export default async function StaffIndex({ params }: { params: Promise<{ locale:
     for (const [section, permission] of [
       ["users", "users.read"], ["roles", "roles.read"], ["audit", "audit.read"],
       ["content/pages", "pages.read"], ["content/media", "media.read"],
-      ["settings/site", "settings.site"],
+      ["crm/leads", "inquiries.read"], ["settings/site", "settings.site"],
     ]) {
       if (await hasAnyPermission(db, session.userId, permission)) redirect(`/${locale}/staff/${section}`);
     }
