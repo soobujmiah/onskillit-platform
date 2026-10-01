@@ -1,7 +1,14 @@
 name: Phase 5 GitHub Pages preview
 on:
   push:
-    branches: [phase-05/public-core]
+    branches: [main]
+    paths:
+      - docs/PHASE-05-CMS-COPY.json
+      - scripts/build_pages_preview.py
+      - scripts/check_public_copy.mjs
+      - scripts/pages-preview.css
+      - scripts/pages-preview.js
+      - .github/workflows/pages-preview.yml
   workflow_dispatch:
 permissions:
   contents: read
