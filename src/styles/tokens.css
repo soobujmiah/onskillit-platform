@@ -149,6 +149,15 @@ html[lang="bn"] body { font-family: var(--font-bn), sans-serif; line-height: 1.7
 .identity-record { padding: var(--space-sm); overflow-wrap: anywhere; }
 .staff-shell { width: min(100%, 72rem); margin: 0 auto; }
 .staff-nav { display: flex; flex-wrap: wrap; gap: var(--space-md); padding: var(--space-md); }
+.staff-mobile-menu { display: none; }
+@media (max-width: 600px) {
+  .staff-desktop-nav { display: none; }
+  .staff-mobile-menu { display: block; margin: var(--space-md); border: 1px solid var(--border-default); border-radius: var(--radius-field); background: var(--surface-raised); }
+  .staff-mobile-menu summary { cursor: pointer; padding: var(--space-md); font-weight: 700; }
+  .staff-mobile-menu summary:focus-visible { outline: 2px solid var(--action-primary-bg); outline-offset: 2px; }
+  .staff-mobile-menu .staff-nav { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-sm); padding-top: 0; }
+  .staff-mobile-menu .staff-nav a { min-width: 0; overflow-wrap: anywhere; padding: var(--space-xs) 0; }
+}
 .staff-nav a { color: var(--text-primary); min-height: 44px; display: inline-flex; align-items: center; }
 
 /* PHASE-04 staff CMS components. Semantic color tokens remain defined above. */

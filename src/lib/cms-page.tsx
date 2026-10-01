@@ -15,6 +15,6 @@ export async function cmsPage(locale: string, section: "pages"|"editor"|"navigat
     if (!await hasPermission(db,session.userId,permission)) redirect(`/${locale}/forbidden`);
     const t=getDictionary(locale).cms;
     const title=section==="editor"?t.editor:section==="settings"?t.siteSettings:t[section];
-    return <CmsWorkspace locale={locale} section={section} id={id} t={t} title={title}/>;
+    return <CmsWorkspace key={`${section}:${id ?? ""}`} locale={locale} section={section} id={id} t={t} title={title}/>;
   } finally { await db.end(); }
 }

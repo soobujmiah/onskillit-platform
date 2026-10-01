@@ -12,6 +12,7 @@ for (const locale of ["en","bn"] as const) {
     await expect(page).toHaveURL(new RegExp(`/${locale}/learn/profile$`));
     await page.getByRole("link",{name:locale==="bn"?"কর্মী কার্যক্ষেত্র":"Staff workspace"}).click();
     await expect(page).toHaveURL(new RegExp(`/${locale}/staff/(users|content/pages)$`));
+    await page.locator(".staff-mobile-menu summary").click();
     await page.getByRole("navigation",{name:locale==="bn"?"কর্মীদের দিকনির্দেশনা":"Staff navigation"}).getByRole("link",{name:locale==="bn"?"পাতাসমূহ":"Pages"}).click();
     await expect(page).toHaveURL(new RegExp(`/${locale}/staff/content/pages$`));
     const routes=[
@@ -24,6 +25,7 @@ for (const locale of ["en","bn"] as const) {
     for(const [route,title,name] of routes){
       await page.goto(`/${locale}/staff/${route}`);
       await expect(page.getByRole("heading",{name:title,level:1})).toBeVisible();
+      await expect(page.getByText(locale==="bn"?"তথ্য আসছে…":"Loading content…")).toBeHidden();
       await expect(page.locator("html")).toHaveAttribute("lang",locale);
       expect(await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth)).toBeLessThanOrEqual(0);
       await page.screenshot({path:testInfo.outputPath(`${name}.png`),fullPage:true});
