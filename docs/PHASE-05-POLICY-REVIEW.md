@@ -8,6 +8,7 @@ Source: owner content brief (2026-09-29) and the owner's decisions of 2026-10-01
 |---|---|
 | Brand | **OnSkillIT** only. |
 | Jurisdiction | A Bangladesh-registered business whose website serves international visitors. Bangladesh is the relevant jurisdiction only where a legal document requires one. |
+| Visitor-facing wording | International: businesses and organizations worldwide; no unsupported customer or country claims. |
 | Registration number | Exists in the owner's certificate; **never shown publicly**. The authorized signatory stays internal until supplied. |
 | Inquiry retention | Up to **12 months**, or until the person asks for deletion, **whichever comes first**. |
 | Other retention categories | No periods invented. A technically necessary separate lifecycle (redaction receipts, application records, logs, backups) is flagged for owner review, not asserted. |
@@ -76,11 +77,11 @@ Our accessibility target for the OnSkillIT website is [WCAG 2.1 Level AA](https:
 ## Still open for owner or qualified review before publication
 
 1. **Final approval** of the six texts above by the owner. Owner decisions are applied; the wording itself is not yet approved.
-2. **Backup lifecycle.** The notice avoids a number on purpose. The deployment's real backup cycle and the retention of redaction receipts, application records and logs must be documented and approved (technically necessary lifecycles are flagged, not invented). Until then, confirm the backup sentence is acceptable as written.
+2. **Backup and other lifecycles.** The notice avoids a number on purpose. What the code does today is recorded in the technical lifecycle table in `OPERATIONS.md` (receipts and audit events have no expiry, rate-limit counters and logs have no purge job in this repository, and no backup mechanism exists). The owner must decide whether limits are wanted and record the real backup cycle once known. Until then, confirm the backup sentence is acceptable as written.
 3. **Governing law and jurisdiction clause.** Only "registered in Bangladesh" is stated. Whether the terms should name Bangladesh law or a dispute forum is a decision for the owner and a qualified adviser.
 4. **Qualified review** of privacy and terms, including cross-border processing for international visitors, as `LEGAL-IDENTITY.md` requires. This repository does not provide it.
 5. **Provider disclosure.** The text refers to the services configured for each deployment. The owner should confirm the sentence "Ask the privacy contact which services are in use" is an acceptable commitment.
-6. **Public wording that implies a Bangladesh-only audience.** The owner-confirmed tagline and the About and service copy currently say "Bangladeshi businesses", "businesses in Bangladesh" and "clients across Bangladesh". The owner now wants the site suitable for international visitors. Rewriting those confirmed statements would change business claims, so it is **not done here** and needs the owner's replacement wording.
+6. **International wording — resolved 2026-10-01.** The owner supplied replacement sentences, now applied to the unpublished editorial drafts: "Technology, digital solutions and IT services for businesses and organizations worldwide." and "We build practical digital solutions for businesses and organizations worldwide." Where a sentence only named Bangladesh, the geography was dropped, and no customer or country claim was added. The Bangla lines are translations of the owner's English and need the owner's Bangla review.
 7. **Registered issuer name for invoices and contracts** and the authorized signatory remain internal and unfilled; neither the registration number nor the signatory appears in any public text.
 
 ## Review sources and limits

@@ -64,4 +64,25 @@ The notification contains only a reference, language, source page and a sign-in 
 
 ## CMS-managed site content (2026-10-01)
 
-Apply migration `0006_site_content` before using the Site settings screen. Contact details, brand, footer, logo and visitor-facing text can be changed from the CMS without a deployment; the built-in values are only defaults. Because settings and text edits are not reviewed like page content (ADR 0013), grant `settings.site` only to people trusted to publish those changes.
+Apply migrations `0006_site_content` and `0007_site_change_review` before using the Site settings screen. Contact details, brand, footer, logo and visitor-facing text are changed from the CMS through propose, review and publish (ADR 0014); the built-in values are only defaults, and no deployment is needed. Deployment and security configuration is the opposite case: it is protected environment configuration and is never entered through the CMS.
+
+## Inquiry flow and enabling it
+
+The flow is: public form, privacy-notice consent check against the published privacy revision, rate-limit check, database storage, protected staff view, then the email notice. Public capture is enabled only when all of these are true: an approved Privacy page is published through the CMS workflow, the contact page is published, and the protected environment holds `INQUIRY_RATE_SECRET` (32+ characters). For notices, `SMTP_HOST`, `SMTP_FROM`, `PUBLIC_BASE_URL` and `INQUIRY_NOTIFY_TO` must also be set; without them the inquiry is still stored and visible to staff. There is no separate enable switch. Before controlled enablement an operator must also confirm that staff accounts with `inquiries.read` exist and that the retention procedure has an owner and a schedule.
+
+## Technical lifecycle of stored data (as implemented, 2026-10-01)
+
+This records what the code does today. It is not a retention policy. Only the inquiry period is owner-approved.
+
+| Data | Current behavior | Owner decision needed |
+|---|---|---|
+| Inquiry name, email, phone, message | Kept until redacted: at the owner-approved 12 months by `scripts/purge_expired_inquiries.ts` (operator-run, not scheduled by the application) or earlier on a reviewed request. | Who runs the procedure and how often. |
+| Inquiry receipt (id, language, source page, consent revision, time, request and review references) | Kept after redaction. A database trigger forbids deleting a receipt, and no expiry exists. | Whether a limit is wanted and what it is. |
+| Audit events | Append-only. No purge procedure exists. | Whether a limit is wanted and what it is. |
+| Public-form rate-limit counters | Keyed hashes (HMAC with `INQUIRY_RATE_SECRET`), not raw addresses. No purge job exists. | Whether a clean-up period is wanted. |
+| Application and notification logs | Written to process output; retention is set by the deployment platform. Notification failures log an error code only. | The platform's log retention. |
+| Notification email | Carries only a reference, language, page and sign-in link, never visitor details. Mailbox retention is outside this application. | Recipient mailbox practices. |
+| Backups | This repository implements no backup mechanism. Targets in this document are proposals, not capabilities. A deleted or redacted inquiry can remain in any backup taken earlier until that copy expires. | The real backup schedule and expiry, to be recorded here once known. |
+
+The privacy draft therefore makes no instant-deletion claim for backups and states no period for receipts or logs.
+
